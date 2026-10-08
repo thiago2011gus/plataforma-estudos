@@ -101,6 +101,7 @@ body.dark .theme-control{display:flex}
     <div class="nav-item" data-view="reviews"><span class="nav-icon">↻</span>Revisões</div>
     <div class="nav-item" data-view="questions"><span class="nav-icon">✓</span>Questões</div>
     <div class="nav-item" data-view="notes"><span class="nav-icon">✎</span>Anotações</div>
+    <div class="nav-item" data-view="research"><span class="nav-icon">⌕</span>Oráculo Jurídico</div>
     <div class="nav-item" data-view="feynman"><span class="nav-icon">✦</span>IA · Feynman</div>
   </div>
 </aside>
@@ -240,6 +241,82 @@ body.dark .theme-control{display:flex}
           <div class="preview-pill">74% concluído</div>
         </div>
         <div class="desc">A prévia reage às suas escolhas para você encontrar o visual que mais gosta.</div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="view" id="view-research">
+
+    <div class="page-head">
+      <div>
+        <div class="section-title" style="font-size:23px">Oráculo Jurídico</div>
+        <div class="desc">Transforme uma dúvida jurídica em uma pesquisa estruturada e continue no ChatGPT com seu plano.</div>
+      </div>
+      <span class="ai-badge">✦ Pesquisa jurídica</span>
+    </div>
+
+    <div class="ai-layout">
+
+      <div class="card ai-side">
+        <div class="section-title">Como funciona</div>
+
+        <div class="ai-step"><div class="step-num">1</div><div><div class="step-title">Faça a pergunta</div><div class="step-text">Escreva a dúvida como ela surgiu durante o estudo ou no trabalho.</div></div></div>
+        <div class="ai-step"><div class="step-num">2</div><div><div class="step-title">Defina o foco</div><div class="step-text">Escolha se quer legislação, jurisprudência, doutrina ou uma pesquisa completa.</div></div></div>
+        <div class="ai-step"><div class="step-num">3</div><div><div class="step-title">Pesquise com fontes</div><div class="step-text">O ChatGPT será orientado a priorizar fontes oficiais e indicar de onde veio cada conclusão.</div></div></div>
+        <div class="ai-step"><div class="step-num">4</div><div><div class="step-title">Volte para o estudo</div><div class="step-text">Use o resultado para compreender o tema, comparar entendimentos e revisar o ponto estudado.</div></div></div>
+
+        <div style="margin-top:18px;padding:13px;border:1px solid var(--line);border-radius:10px;background:var(--surface2);font-size:11px;line-height:1.55;color:var(--muted)">
+          <strong style="color:var(--text)">Regra do Oráculo:</strong><br>não tratar uma resposta plausível como suficiente. A pesquisa deve distinguir texto legal, jurisprudência, doutrina e interpretação.
+        </div>
+      </div>
+
+      <div class="card ai-main">
+        <div class="ai-top">
+          <div>
+            <div class="section-title">Pesquisar um tema jurídico</div>
+            <div class="desc">O Study prepara o contexto. O ChatGPT faz a pesquisa e consulta a web quando necessário.</div>
+          </div>
+          <select class="select" id="researchSubject"></select>
+        </div>
+
+        <div class="ai-form">
+          <input class="search" id="researchQuestion" style="width:100%" placeholder="Ex.: qual é a diferença entre interpretação conforme e declaração de inconstitucionalidade sem redução de texto?">
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <select class="select" id="researchType">
+              <option value="complete">Pesquisa completa</option>
+              <option value="legislation">Legislação e normas</option>
+              <option value="jurisprudence">Jurisprudência</option>
+              <option value="doctrine">Doutrina e conceitos</option>
+              <option value="case">Aplicação a caso concreto</option>
+            </select>
+            <select class="select" id="researchDepth">
+              <option value="focused">Objetiva</option>
+              <option value="deep">Aprofundada</option>
+            </select>
+          </div>
+
+          <textarea id="researchContext" placeholder="Contexto adicional (opcional): explique o que você já sabe, o ponto que gerou a dúvida, artigo, decisão ou caso que está estudando."></textarea>
+
+          <div class="ai-actions">
+            <div class="ai-actions-left">
+              <button class="btn btn-secondary" onclick="clearLegalResearch()">Limpar</button>
+              <button class="btn btn-secondary" onclick="copyLegalResearchPrompt()">Copiar pesquisa</button>
+            </div>
+            <button class="btn btn-primary" onclick="openLegalResearch()">⌕ Pesquisar no ChatGPT</button>
+          </div>
+        </div>
+
+        <div class="ai-result" id="researchResult">
+          <h4>Sua pesquisa será preparada aqui</h4>
+          <div class="ai-placeholder">Faça uma pergunta jurídica e escolha o tipo de pesquisa. O Study montará um protocolo para o ChatGPT pesquisar com rigor e indicar as fontes.</div>
+        </div>
+
+        <div class="chat-box">
+          <div class="section-title" style="margin-bottom:10px">Critérios de pesquisa</div>
+          <div class="chat-msg ai" id="researchMessage">A pesquisa será orientada a priorizar fontes oficiais, indicar a data das informações e separar fato, norma, jurisprudência e interpretação.</div>
+        </div>
       </div>
     </div>
   </section>
@@ -577,7 +654,7 @@ function renderSubjectsPage(){
 }
 
 function renderTimerSubjects(){
-  ['timerSubject','timerSubject2'].forEach(id=>{
+  ['timerSubject','timerSubject2','researchSubject','feynmanSubject'].forEach(id=>{
     const el=document.getElementById(id); if(!el)return;
     const previous=el.value;
     el.innerHTML=subjects.length?subjects.map(s=>`<option value="${s.id}">${escapeHtml(s.name)}</option>`).join(''):`<option value="">Cadastre uma matéria</option>`;
@@ -599,6 +676,7 @@ function showView(name){
     reviews:['Revisões','Acompanhe suas revisões pendentes.'],
     questions:['Questões','Controle seu desempenho por matéria e assunto.'],
     notes:['Anotações','Centralize suas notas de estudo.'],
+    research:['Oráculo Jurídico','Pesquise legislação, jurisprudência e conceitos com rigor.'],
     settings:['Configurações','Personalize o visual e a experiência da plataforma.'],
     feynman:['IA · Método Feynman','Aprenda explicando. Use a IA para encontrar lacunas na sua compreensão.']
   };
@@ -758,6 +836,94 @@ function renderFeynmanSubjects(){
 }
 
 
+let preparedLegalResearchPrompt = '';
+
+function getLegalResearchContext(){
+  const subjectEl=document.getElementById('researchSubject');
+  const questionEl=document.getElementById('researchQuestion');
+  const typeEl=document.getElementById('researchType');
+  const depthEl=document.getElementById('researchDepth');
+  const contextEl=document.getElementById('researchContext');
+  return {
+    subject:subjectEl?.selectedOptions?.[0]?.textContent?.trim()||'',
+    question:questionEl?.value?.trim()||'',
+    type:typeEl?.value||'complete',
+    typeLabel:typeEl?.selectedOptions?.[0]?.textContent?.trim()||'Pesquisa completa',
+    depth:depthEl?.value||'focused',
+    depthLabel:depthEl?.selectedOptions?.[0]?.textContent?.trim()||'Objetiva',
+    context:contextEl?.value?.trim()||''
+  };
+}
+
+function buildLegalResearchPrompt(){
+  const c=getLegalResearchContext();
+  if(!c.question){alert('Informe primeiro a dúvida jurídica que você quer pesquisar.');return '';}
+  const depthInstruction=c.depth==='deep'
+    ? 'Faça uma pesquisa aprofundada. Compare fontes relevantes, identifique divergências e explique a evolução do entendimento quando isso for pertinente.'
+    : 'Faça uma pesquisa objetiva, mas suficiente para responder com segurança. Não omita ressalvas relevantes.';
+  const typeInstruction={
+    legislation:'Priorize Constituição, leis, decretos e atos normativos oficiais diretamente relacionados à pergunta. Identifique o dispositivo relevante e sua vigência quando pertinente.',
+    jurisprudence:'Priorize jurisprudência oficial dos tribunais competentes. Diferencie precedente específico, jurisprudência reiterada, súmula, tema repetitivo/repercussão geral e simples decisão isolada.',
+    doctrine:'Explique os conceitos doutrinários com precisão. Diferencie posições doutrinárias quando houver divergência e não atribua uma tese a autor sem fonte verificável.',
+    case:'Analise a aplicação ao caso descrito, separando fatos fornecidos, premissas jurídicas e conclusão. Não invente fatos nem trate hipótese como precedente.',
+    complete:'Combine legislação, jurisprudência e doutrina apenas quando cada uma for útil para responder à pergunta.'
+  }[c.type]||'Combine legislação, jurisprudência e doutrina apenas quando cada uma for útil para responder à pergunta.';
+  return (`Você atuará como meu pesquisador jurídico do Study., com foco em Direito brasileiro.\n\n`+
+`OBJETIVO\nResponder à dúvida abaixo por meio de pesquisa jurídica verificável, não apenas por conhecimento geral do modelo.\n\n`+
+`CONTEXTO DA SESSÃO\nMatéria: ${c.subject||'Não informada'}\nTipo: ${c.typeLabel}\nProfundidade: ${c.depthLabel}\n\n`+
+`DÚVIDA JURÍDICA\n${c.question}\n\n`+
+`CONTEXTO ADICIONAL\n${c.context||'(Não informado)'}\n\n`+
+`PROTOCOLO DO ORÁCULO JURÍDICO\n\n`+
+`1. Pesquise na web quando a pergunta depender de legislação, jurisprudência, atos normativos, decisões ou entendimentos que possam ter mudado.\n`+
+`2. Priorize fontes primárias e oficiais: Planalto e órgãos legislativos para legislação; STF, STJ, TST, TRFs, TJs e demais tribunais competentes para jurisprudência; órgãos oficiais para atos normativos.\n`+
+`3. Não invente artigos, súmulas, temas, precedentes, números de processos, autores ou posições doutrinárias.\n`+
+`4. Para cada afirmação jurídica relevante, indique a fonte correspondente e, quando possível, a data.\n`+
+`5. Diferencie claramente: texto da norma; interpretação doutrinária; jurisprudência; entendimento consolidado; e sua própria síntese.\n`+
+`6. Se houver divergência relevante, apresente os entendimentos concorrentes e explique qual é o ponto de divergência.\n`+
+`7. Se uma fonte oficial não estiver disponível ou não puder ser verificada, diga isso explicitamente em vez de preencher a lacuna por inferência.\n`+
+`8. Se a pergunta envolver direito positivo vigente, confirme a redação atual antes de concluir.\n`+
+`9. Não trate uma decisão isolada como se fosse entendimento consolidado.\n`+
+`10. Termine com uma síntese curta: 'O que preciso saber para a prova/prática'.\n\n`+
+`TIPO DE PESQUISA\n${typeInstruction}\n\n`+
+`NÍVEL DE PESQUISA\n${depthInstruction}\n\n`+
+`FORMATO DA RESPOSTA\n1. Resposta direta\n2. Fundamento jurídico\n3. Jurisprudência relevante, se houver\n4. Divergências ou ressalvas\n5. Aplicação prática/exemplo, se útil\n6. Fontes consultadas\n7. O que preciso saber para a prova/prática\n\n`+
+`IMPORTANTE\nNão apresente uma longa aula genérica. Pesquise a pergunta específica e seja preciso sobre o que foi efetivamente verificado.`).trim();
+}
+
+function prepareLegalResearch(){
+  const prompt=buildLegalResearchPrompt();
+  if(!prompt)return;
+  preparedLegalResearchPrompt=prompt;
+  const result=document.getElementById('researchResult');
+  if(result)result.innerHTML=`<h4>✓ Pesquisa preparada</h4><div class="ai-placeholder" style="margin-bottom:14px">O protocolo foi configurado para priorizar fontes oficiais, verificar atualidade e separar norma, jurisprudência e interpretação.</div><div style="padding:14px;border:1px solid var(--line);border-radius:10px;font-size:11px;line-height:1.6;max-height:190px;overflow:auto">${escapeHtml(prompt)}</div>`;
+}
+
+async function copyLegalResearchPrompt(){
+  if(!preparedLegalResearchPrompt)preparedLegalResearchPrompt=buildLegalResearchPrompt();
+  if(!preparedLegalResearchPrompt)return;
+  try{await navigator.clipboard.writeText(preparedLegalResearchPrompt);const m=document.getElementById('researchMessage');if(m)m.innerHTML='✓ Pesquisa copiada. Agora clique em <strong>Pesquisar no ChatGPT</strong> e cole a mensagem.';}catch(e){alert('Não foi possível copiar automaticamente. Use a prévia para copiar o texto manualmente.');}
+  prepareLegalResearch();
+}
+
+async function openLegalResearch(){
+  if(!preparedLegalResearchPrompt)preparedLegalResearchPrompt=buildLegalResearchPrompt();
+  if(!preparedLegalResearchPrompt)return;
+  try{await navigator.clipboard.writeText(preparedLegalResearchPrompt);}catch(e){}
+  window.open('https://chatgpt.com/','_blank');
+  const m=document.getElementById('researchMessage');
+  if(m)m.innerHTML='✓ Pesquisa copiada. O ChatGPT foi aberto. Cole o protocolo na conversa e peça a pesquisa.';
+  prepareLegalResearch();
+}
+
+function clearLegalResearch(){
+  ['researchQuestion','researchContext'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const type=document.getElementById('researchType');if(type)type.value='complete';
+  const depth=document.getElementById('researchDepth');if(depth)depth.value='focused';
+  preparedLegalResearchPrompt='';
+  const result=document.getElementById('researchResult');if(result)result.innerHTML='<h4>Sua pesquisa será preparada aqui</h4><div class="ai-placeholder">Faça uma pergunta jurídica e escolha o tipo de pesquisa.</div>';
+  const m=document.getElementById('researchMessage');if(m)m.textContent='A pesquisa será orientada a priorizar fontes oficiais, indicar a data das informações e separar fato, norma, jurisprudência e interpretação.';
+}
+
 let preparedFeynmanPrompt = '';
 
 function getFeynmanLauncherContext(){
@@ -909,15 +1075,40 @@ Se houver aparente contradição, não aponte imediatamente a resposta. Faça um
 16. TOM
 Seja rigoroso, claro, paciente e direto. Não elogie genericamente. Elogie apenas quando houver uma qualidade específica na resposta que mereça ser destacada.
 
-17. ENCERRAMENTO DA SESSÃO
-Não encerre apenas porque eu acertei algumas perguntas. Considere que há domínio quando eu demonstrar compreensão conceitual, precisão, capacidade de explicar, distinguir e aplicar o conhecimento.
+17. FEEDBACK REAL E CONTROLE DE CICLOS
+A sessão não deve ficar presa em um ciclo infinito de “pergunta → resposta → nova pergunta”. O objetivo é diagnosticar e consolidar, não prolongar a conversa indefinidamente.
 
-Ao encerrar, apresente um relatório curto com:
+Depois de cada resposta, faça internamente três coisas: (a) diagnostique o que ela demonstra; (b) identifique a lacuna mais importante; (c) decida se ainda falta evidência para avaliar meu domínio.
+
+Quando já houver evidência suficiente sobre um ponto, NÃO faça outra pergunta apenas para continuar a sessão. Dê feedback objetivo e avance para outro aspecto ou encerre a etapa.
+
+Após aproximadamente 3 respostas substantivas minhas, faça obrigatoriamente um CHECKPOINT DE FEEDBACK, salvo se eu estiver no meio de uma correção essencial. O checkpoint deve ser curto e concreto, contendo:
+- O que já demonstrei compreender;
+- O que ainda está frágil ou incorreto;
+- O que mudou ou melhorou em relação ao início;
+- O próximo ponto que vale testar.
+
+Depois do checkpoint, faça no máximo UMA pergunta de continuidade, se ainda houver uma lacuna relevante. Se não houver, encerre a sessão ou passe para a consolidação.
+
+Se eu pedir explicitamente “qual foi meu erro?”, “o que eu entendi?”, “como estou indo?” ou equivalente, INTERROMPA O CICLO DE PERGUNTAS e forneça feedback real imediatamente. Não responda com outra pergunta.
+
+18. CRITÉRIO DE ENCERRAMENTO
+Não mantenha a sessão aberta artificialmente. Encerre quando já houver evidência suficiente para avaliar meu domínio ou quando uma lacuna central tiver sido suficientemente diagnosticada.
+
+Considere que há domínio quando eu demonstrar compreensão conceitual, precisão, capacidade de explicar, distinguir e aplicar o conhecimento. Não é necessário testar todas as técnicas do protocolo em toda sessão.
+
+Ao encerrar, apresente um relatório curto e concreto com:
 - nível de domínio estimado;
-- pontos que demonstrei dominar;
-- principais lacunas;
-- ponto que merece revisão;
-- uma pergunta final de consolidação, se apropriado.
+- o que eu demonstrei dominar;
+- erros ou lacunas relevantes;
+- evolução observada durante a sessão;
+- o que devo revisar;
+- uma pergunta final de consolidação somente se ela realmente agregar valor.
+
+19. REGRA CONTRA AULA E REGRA CONTRA CICLO
+Não transforme a sessão em aula expositiva, mas também não use “uma pergunta por vez” como desculpa para evitar feedback. O tutor deve alternar DIAGNÓSTICO, PERGUNTA e FEEDBACK.
+A sequência ideal é:
+DIAGNOSTICAR → PERGUNTAR → REAVALIAR → DAR FEEDBACK → TESTAR O PONTO SEGUINTE → CONSOLIDAR.
 
 IMPORTANTE
 
@@ -953,6 +1144,8 @@ Analise minha explicação segundo o Protocolo Feynman do Study.
 Não reescreva minha resposta inteira e não faça uma aula sobre o assunto.
 
 Identifique o ponto mais importante que precisa ser aprofundado e faça apenas UMA pergunta para testar minha compreensão.
+
+Não prolongue a sessão artificialmente. Quando houver evidência suficiente, dê feedback concreto e encerre ou avance para a consolidação.
 
 Aguarde minha resposta antes de continuar.
 `;
