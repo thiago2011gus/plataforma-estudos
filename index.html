@@ -245,62 +245,231 @@ body.dark .theme-control{display:flex}
   </section>
 
   <section class="view" id="view-feynman">
-    <div class="page-head">
-      <div><div class="section-title" style="font-size:23px">IA · Método Feynman</div><div class="desc">Explique um assunto com palavras simples e use a IA para testar a qualidade da sua compreensão.</div></div>
-      <span class="ai-badge">✦ Foco em compreensão</span>
-    </div>
 
-    <div class="ai-layout">
-      <div class="card ai-side">
-        <div class="section-title">Como funciona</div>
-        <div class="ai-step"><div class="step-num">1</div><div><div class="step-title">Escolha um tema</div><div class="step-text">Defina a matéria e o ponto que você quer dominar.</div></div></div>
-        <div class="ai-step"><div class="step-num">2</div><div><div class="step-title">Explique sem consultar</div><div class="step-text">Escreva como se estivesse ensinando para alguém que nunca viu o assunto.</div></div></div>
-        <div class="ai-step"><div class="step-num">3</div><div><div class="step-title">Receba perguntas</div><div class="step-text">A IA identifica lacunas, simplifica conceitos e desafia sua explicação.</div></div></div>
-        <div class="ai-step"><div class="step-num">4</div><div><div class="step-title">Refaça a explicação</div><div class="step-text">Volte aos pontos frágeis e tente explicar novamente, com mais clareza.</div></div></div>
+  <div class="page-head">
+    <div>
+      <div class="section-title" style="font-size:23px">
+        IA · Método Feynman
       </div>
 
-      <div class="card ai-main">
-        <div class="ai-top">
-          <div>
-            <div class="section-title">Sua explicação</div>
-            <div class="desc">Quanto mais natural e completa, melhor será a análise.</div>
-          </div>
-          <select class="select" id="feynmanSubject"></select>
-        </div>
-        <div class="ai-status" id="aiStatus">IA conectada pelo Netlify Function.</div>
+      <div class="desc">
+        Prepare sua sessão de estudo e continue no ChatGPT usando seu plano.
+      </div>
+    </div>
 
-        <div class="ai-form">
-          <div>
-            <input class="search" id="feynmanTopic" style="width:100%" placeholder="Tema: ex. lançamento tributário, poder de polícia...">
-          </div>
-          <textarea id="feynmanText" placeholder="Explique o assunto com suas próprias palavras. Evite copiar definições do livro ou da lei."></textarea>
-          <div class="ai-actions">
-            <div class="ai-actions-left">
-              <button class="btn btn-secondary" onclick="loadFeynmanPrompt()">Me faça uma pergunta</button>
-              <button class="btn btn-secondary" onclick="clearFeynman()">Limpar</button>
-            </div>
-            <button class="btn btn-primary" onclick="evaluateFeynman()">Analisar com IA</button>
-          </div>
-        </div>
+    <span class="ai-badge">
+      ✦ Foco em compreensão
+    </span>
+  </div>
 
-        <div class="ai-result" id="feynmanResult">
-          <h4>A análise aparecerá aqui</h4>
-          <div class="ai-placeholder">A IA analisará sua explicação, apontará acertos e lacunas e fará uma pergunta de aprofundamento. Sua chave fica protegida no Netlify.</div>
-        </div>
 
-        <div class="chat-box">
-          <div class="section-title" style="margin-bottom:10px">Conversa guiada</div>
-          <div class="chat-messages" id="chatMessages">
-            <div class="chat-msg ai">Explique um tema acima. Depois eu vou desafiar sua explicação com perguntas no estilo Feynman.</div>
+  <div class="ai-layout">
+
+    <div class="card ai-side">
+
+      <div class="section-title">
+        Como funciona
+      </div>
+
+      <div class="ai-step">
+        <div class="step-num">1</div>
+
+        <div>
+          <div class="step-title">
+            Escolha um tema
           </div>
-          <div class="toolbar">
-            <input class="search" id="chatInput" style="flex:1;width:auto" placeholder="Digite uma resposta ou dúvida..." onkeydown="if(event.key==='Enter')sendChat()">
-            <button class="btn btn-primary" onclick="sendChat()">Enviar</button>
+
+          <div class="step-text">
+            Defina exatamente o que você quer dominar.
           </div>
         </div>
       </div>
+
+
+      <div class="ai-step">
+        <div class="step-num">2</div>
+
+        <div>
+          <div class="step-title">
+            Explique sem consultar
+          </div>
+
+          <div class="step-text">
+            Escreva com suas próprias palavras, como se ensinasse alguém.
+          </div>
+        </div>
+      </div>
+
+
+      <div class="ai-step">
+        <div class="step-num">3</div>
+
+        <div>
+          <div class="step-title">
+            Desafie sua compreensão
+          </div>
+
+          <div class="step-text">
+            O ChatGPT fará perguntas para encontrar suas lacunas.
+          </div>
+        </div>
+      </div>
+
+
+      <div class="ai-step">
+        <div class="step-num">4</div>
+
+        <div>
+          <div class="step-title">
+            Refaça a explicação
+          </div>
+
+          <div class="step-text">
+            Volte aos pontos frágeis e explique novamente.
+          </div>
+        </div>
+      </div>
+
     </div>
-  </section>
+
+
+    <div class="card ai-main">
+
+      <div class="ai-top">
+
+        <div>
+          <div class="section-title">
+            Preparar sessão
+          </div>
+
+          <div class="desc">
+            A plataforma prepara o contexto para você continuar no ChatGPT.
+          </div>
+        </div>
+
+        <select class="select" id="feynmanSubject"></select>
+
+      </div>
+
+
+      <div class="ai-form">
+
+        <div>
+
+          <input
+            class="search"
+            id="feynmanTopic"
+            style="width:100%"
+            placeholder="Tema: ex. lançamento tributário, poder de polícia..."
+          >
+
+        </div>
+
+
+        <textarea
+          id="feynmanText"
+          placeholder="Explique o assunto com suas próprias palavras. Evite consultar o material enquanto escreve."
+        ></textarea>
+
+
+        <div class="ai-actions">
+
+          <div class="ai-actions-left">
+
+            <button
+              class="btn btn-secondary"
+              onclick="feynmanQuestionPrompt()"
+            >
+              Quero ser questionado
+            </button>
+
+            <button
+              class="btn btn-secondary"
+              onclick="clearFeynmanLauncher()"
+            >
+              Limpar
+            </button>
+
+          </div>
+
+
+          <button
+            class="btn btn-primary"
+            onclick="startFeynmanSession()"
+          >
+            ✦ Iniciar sessão Feynman
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="ai-result"
+        id="feynmanResult"
+      >
+
+        <h4>
+          Sua sessão será preparada aqui
+        </h4>
+
+        <div class="ai-placeholder">
+          Escolha a matéria, informe o tema e explique o que você entende.
+          Depois clique em <strong>Iniciar sessão Feynman</strong>.
+        </div>
+
+      </div>
+
+
+      <div class="chat-box">
+
+        <div
+          class="section-title"
+          style="margin-bottom:10px"
+        >
+          Continuar no ChatGPT
+        </div>
+
+
+        <div
+          class="chat-msg ai"
+          id="feynmanLauncherMessage"
+        >
+          O seu plano ChatGPT será usado para conduzir a sessão.
+          A plataforma apenas prepara o contexto.
+        </div>
+
+
+        <div
+          class="toolbar"
+          style="margin-top:12px"
+        >
+
+          <button
+            class="btn btn-secondary"
+            onclick="copyFeynmanPrompt()"
+          >
+            Copiar prompt
+          </button>
+
+
+          <button
+            class="btn btn-primary"
+            onclick="openChatGPT()"
+          >
+            Abrir ChatGPT ↗
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
 </main>
 </div>
 
@@ -589,156 +758,354 @@ function renderFeynmanSubjects(){
 }
 
 
-let feynmanHistory=[];
+let preparedFeynmanPrompt = '';
 
-function setAiStatus(message, loading=false){
-  const el=document.getElementById('aiStatus');
-  if(!el)return;
-  el.textContent=message;
-  el.classList.toggle('loading',loading);
-}
+function getFeynmanLauncherContext(){
 
-function getCurrentFeynmanContext(){
-  const subjectEl=document.getElementById('feynmanSubject');
-  const topicEl=document.getElementById('feynmanTopic');
-  const textEl=document.getElementById('feynmanText');
-  const subjectName=subjectEl?.selectedOptions?.[0]?.textContent||'';
+  const subjectEl = document.getElementById('feynmanSubject');
+  const topicEl = document.getElementById('feynmanTopic');
+  const textEl = document.getElementById('feynmanText');
+
+  const subject =
+    subjectEl?.selectedOptions?.[0]?.textContent?.trim() || '';
+
+  const topic =
+    topicEl?.value?.trim() || '';
+
+  const explanation =
+    textEl?.value?.trim() || '';
+
   return {
-    subject:subjectName.trim(),
-    topic:(topicEl?.value||'').trim(),
-    explanation:(textEl?.value||'').trim()
+    subject,
+    topic,
+    explanation
   };
 }
 
-async function callFeynmanAPI(action, extra={}){
-  const context=getCurrentFeynmanContext();
 
-  if(action==='analyze' && !context.explanation){
-    throw new Error('Escreva primeiro a sua explicação.');
+function buildFeynmanPrompt(mode = 'full'){
+
+  const context = getFeynmanLauncherContext();
+
+  if(!context.topic){
+
+    alert('Informe primeiro o tema que você quer estudar.');
+
+    return '';
   }
-  if(action==='chat' && !context.topic && !context.explanation){
-    throw new Error('Escolha um tema e/ou escreva uma explicação antes de conversar com a IA.');
+
+
+  let prompt = `Você será meu tutor de estudos pelo Método Feynman.
+
+CONTEXTO DA SESSÃO
+
+Matéria:
+${context.subject || 'Não informada'}
+
+Tema:
+${context.topic}
+
+OBJETIVO
+
+Quero realmente compreender o assunto, e não apenas decorar definições.
+
+REGRAS DA SESSÃO
+
+1. Não entregue imediatamente a resposta.
+
+2. Primeiro avalie minha explicação.
+
+3. Identifique a principal lacuna ou confusão conceitual.
+
+4. Faça apenas UMA pergunta por vez.
+
+5. Prefira perguntas que me obriguem a explicar com minhas próprias palavras.
+
+6. Quando útil, peça:
+- um exemplo;
+- um contraexemplo;
+- uma comparação;
+- uma consequência prática;
+- uma distinção entre conceitos próximos.
+
+7. Se eu cometer um erro jurídico, indique que existe um problema, mas me conduza para que eu próprio corrija.
+
+8. Não invente artigos de lei, súmulas, precedentes ou jurisprudência.
+
+9. Como estou estudando Direito brasileiro, seja rigoroso com a terminologia jurídica.
+
+10. Ao final de cada resposta minha, escolha o ponto mais importante a ser aprofundado.
+
+11. Não transforme a sessão em uma aula expositiva. O objetivo é testar minha compreensão.
+
+12. Se a questão depender de legislação, jurisprudência ou entendimento atual, deixe claro quando for necessário verificar a fonte atualizada.
+
+`;
+
+  if(mode === 'question'){
+
+    prompt += `
+COMECE A SESSÃO
+
+Ainda não quero explicar o assunto.
+
+Faça uma pergunta inicial que teste minha compreensão sobre:
+
+${context.topic}
+
+Faça apenas UMA pergunta.
+`;
+
+  }else{
+
+    prompt += `
+MINHA EXPLICAÇÃO INICIAL
+
+${context.explanation || '(Ainda não escrevi minha explicação.)'}
+
+COMECE A ANÁLISE
+
+Avalie minha explicação.
+
+Não reescreva a resposta inteira.
+
+Identifique o ponto mais importante que precisa ser aprofundado e faça UMA pergunta para testar minha compreensão.
+`;
+
   }
 
-  const payload={
-    action,
-    subject:context.subject,
-    topic:context.topic,
-    explanation:context.explanation,
-    history:feynmanHistory.slice(-10),
-    ...extra
-  };
-
-  const response=await fetch('/.netlify/functions/feynman',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(payload)
-  });
-
-  let data={};
-  try{data=await response.json()}catch(e){}
-
-  if(!response.ok){
-    throw new Error(data.error||'Não foi possível obter resposta da IA.');
-  }
-  if(!data.text)throw new Error('A IA não retornou um texto válido.');
-  return data.text;
+  return prompt.trim();
 }
 
-function formatAiText(text){
-  return escapeHtml(text)
-    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
-    .replace(/^### (.*)$/gm,'<strong>$1</strong>')
-    .replace(/\n\n/g,'<br><br>')
-    .replace(/\n/g,'<br>');
+
+function startFeynmanSession(){
+
+  const prompt = buildFeynmanPrompt('full');
+
+  if(!prompt) return;
+
+  preparedFeynmanPrompt = prompt;
+
+  const result =
+    document.getElementById('feynmanResult');
+
+  result.innerHTML = `
+
+    <h4>✓ Sessão preparada</h4>
+
+    <div class="ai-placeholder" style="margin-bottom:14px">
+
+      O tutor Feynman foi configurado para:
+
+      <br><br>
+
+      • identificar lacunas na sua compreensão<br>
+      • fazer uma pergunta por vez<br>
+      • evitar entregar a resposta imediatamente<br>
+      • exigir exemplos e distinções quando necessário<br>
+      • trabalhar com o contexto de Direito brasileiro
+
+    </div>
+
+    <div style="
+      padding:14px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      font-size:11px;
+      line-height:1.6;
+      max-height:180px;
+      overflow:auto;
+    ">
+
+      ${escapeHtml(prompt)}
+
+    </div>
+
+  `;
+
+  const message =
+    document.getElementById('feynmanLauncherMessage');
+
+  if(message){
+
+    message.innerHTML =
+      'Sessão preparada. Clique em <strong>Copiar prompt</strong> e depois em <strong>Abrir ChatGPT</strong>.';
+
+  }
+
 }
 
-async function evaluateFeynman(){
-  const result=document.getElementById('feynmanResult');
-  const context=getCurrentFeynmanContext();
 
-  if(!context.explanation){
-    alert('Escreva primeiro a sua explicação.');
-    return;
+function feynmanQuestionPrompt(){
+
+  const prompt = buildFeynmanPrompt('question');
+
+  if(!prompt) return;
+
+  preparedFeynmanPrompt = prompt;
+
+  const result =
+    document.getElementById('feynmanResult');
+
+  result.innerHTML = `
+
+    <h4>✓ Pergunta preparada</h4>
+
+    <div class="ai-placeholder">
+      O ChatGPT começará a sessão fazendo uma pergunta sobre o tema.
+    </div>
+
+    <div style="
+      margin-top:12px;
+      padding:14px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      font-size:11px;
+      line-height:1.6;
+    ">
+
+      ${escapeHtml(prompt)}
+
+    </div>
+
+  `;
+
+}
+
+
+async function copyFeynmanPrompt(){
+
+  if(!preparedFeynmanPrompt){
+
+    preparedFeynmanPrompt =
+      buildFeynmanPrompt('full');
+
   }
+
+  if(!preparedFeynmanPrompt) return;
+
 
   try{
-    setAiStatus('Analisando sua explicação…',true);
-    result.innerHTML=`<h4>Analisando com IA…</h4><div class="ai-placeholder">Aguarde alguns segundos enquanto o tutor Feynman lê sua explicação.</div>`;
-    const text=await callFeynmanAPI('analyze');
 
-    result.innerHTML=`
-      <h4>Análise Feynman</h4>
-      <div class="ai-result-text" style="margin-top:11px;font-size:11px;line-height:1.65">${formatAiText(text)}</div>
+    await navigator.clipboard.writeText(
+      preparedFeynmanPrompt
+    );
+
+    const message =
+      document.getElementById(
+        'feynmanLauncherMessage'
+      );
+
+    if(message){
+
+      message.innerHTML =
+        '✓ Prompt copiado. Agora clique em <strong>Abrir ChatGPT</strong> e cole a mensagem.';
+
+    }
+
+  }catch(error){
+
+    alert(
+      'Não foi possível copiar automaticamente. Selecione e copie o prompt manualmente.'
+    );
+
+  }
+
+}
+
+
+async function openChatGPT(){
+
+  if(!preparedFeynmanPrompt){
+
+    preparedFeynmanPrompt =
+      buildFeynmanPrompt('full');
+
+  }
+
+  if(!preparedFeynmanPrompt) return;
+
+
+  try{
+
+    await navigator.clipboard.writeText(
+      preparedFeynmanPrompt
+    );
+
+  }catch(error){
+
+    // Mesmo que a cópia automática falhe, o ChatGPT será aberto.
+  }
+
+
+  window.open(
+    'https://chatgpt.com/',
+    '_blank'
+  );
+
+
+  const message =
+    document.getElementById(
+      'feynmanLauncherMessage'
+    );
+
+  if(message){
+
+    message.innerHTML =
+      '✓ Prompt copiado. O ChatGPT foi aberto. Cole o prompt na conversa para iniciar a sessão.';
+
+  }
+
+}
+
+
+function clearFeynmanLauncher(){
+
+  const topic =
+    document.getElementById('feynmanTopic');
+
+  const text =
+    document.getElementById('feynmanText');
+
+  if(topic) topic.value = '';
+
+  if(text) text.value = '';
+
+  preparedFeynmanPrompt = '';
+
+
+  const result =
+    document.getElementById('feynmanResult');
+
+  if(result){
+
+    result.innerHTML = `
+
+      <h4>Sua sessão será preparada aqui</h4>
+
+      <div class="ai-placeholder">
+
+        Escolha a matéria, informe o tema e explique o que você entende.
+
+      </div>
+
     `;
 
-    feynmanHistory.push({role:'user',content:`Expliquei ${context.topic||'o tema'} assim: ${context.explanation}`});
-    feynmanHistory.push({role:'assistant',content:text});
-    addChatMessage('ai',formatAiText(text));
-    setAiStatus('Análise concluída.',false);
-  }catch(error){
-    result.innerHTML=`<h4>Não foi possível analisar agora</h4><div class="ai-error">${escapeHtml(error.message)}</div>`;
-    setAiStatus('Verifique a configuração da conexão com a IA.',false);
   }
-}
 
-async function loadFeynmanPrompt(){
-  const topic=document.getElementById('feynmanTopic')?.value.trim()||'o tema escolhido';
-  try{
-    setAiStatus('Gerando uma pergunta…',true);
-    const text=await callFeynmanAPI('question',{questionType:'feynman_prompt',topic});
-    addChatMessage('ai',formatAiText(text));
-    feynmanHistory.push({role:'assistant',content:text});
-    setAiStatus('Pergunta gerada.',false);
-  }catch(error){
-    addChatMessage('ai',`<span style="color:var(--danger)">${escapeHtml(error.message)}</span>`);
-    setAiStatus('Erro na conexão com a IA.',false);
+
+  const message =
+    document.getElementById(
+      'feynmanLauncherMessage'
+    );
+
+  if(message){
+
+    message.textContent =
+      'O seu plano ChatGPT será usado para conduzir a sessão. A plataforma apenas prepara o contexto.';
+
   }
-}
 
-function clearFeynman(){
-  if(document.getElementById('feynmanText'))document.getElementById('feynmanText').value='';
-  if(document.getElementById('feynmanTopic'))document.getElementById('feynmanTopic').value='';
-  feynmanHistory=[];
-  const chat=document.getElementById('chatMessages');
-  if(chat)chat.innerHTML=`<div class="chat-msg ai">Explique um tema acima. Depois eu vou desafiar sua explicação com perguntas no estilo Feynman.</div>`;
-  document.getElementById('feynmanResult').innerHTML=`<h4>A análise aparecerá aqui</h4><div class="ai-placeholder">Comece explicando um assunto com suas próprias palavras.</div>`;
-  setAiStatus('IA conectada pelo Netlify Function.',false);
-}
-
-function addChatMessage(role,content){
-  const box=document.getElementById('chatMessages');if(!box)return;
-  box.insertAdjacentHTML('beforeend',`<div class="chat-msg ${role}">${content}</div>`);
-  box.scrollTop=box.scrollHeight;
-}
-
-async function sendChat(){
-  const input=document.getElementById('chatInput');if(!input)return;
-  const value=input.value.trim();if(!value)return;
-
-  addChatMessage('user',escapeHtml(value));
-  input.value='';
-  feynmanHistory.push({role:'user',content:value});
-
-  try{
-    setAiStatus('Pensando…',true);
-    const text=await callFeynmanAPI('chat',{message:value});
-    addChatMessage('ai',formatAiText(text));
-    feynmanHistory.push({role:'assistant',content:text});
-    setAiStatus('Resposta recebida.',false);
-  }catch(error){
-    addChatMessage('ai',`<span style="color:var(--danger)">${escapeHtml(error.message)}</span>`);
-    setAiStatus('Erro na conexão com a IA.',false);
-  }
-}
-
-function renderFeynmanSubjects(){
-  const els=[document.getElementById('feynmanSubject')].filter(Boolean);
-  els.forEach(el=>{
-    const prev=el.value;
-    el.innerHTML=subjects.length?subjects.map(s=>`<option value="${s.id}">${escapeHtml(s.name)}</option>`).join(''):`<option value="">Nenhuma matéria</option>`;
-    if([...el.options].some(o=>o.value===prev))el.value=prev;
-  });
 }
 
 const THEME_KEY='study_theme';
