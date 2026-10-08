@@ -1029,7 +1029,22 @@ function renderReadings(){
 function openReadingModal(id=null){
  const r=id?getReadings().find(x=>x.id===id):null;
  document.body.insertAdjacentHTML('beforeend','<div class="modal-backdrop open" id="readingModal"><div class="modal"><h3>'+(r?'Editar leitura':'Nova leitura')+'</h3><p>Cadastre qualquer livro ou leitura.</p><div class="reading-modal-grid"><label>Título<input class="input" id="readingTitle" value="'+escapeHtml(r?.title||'')+'"></label><label>Autor<input class="input" id="readingAuthor" value="'+escapeHtml(r?.author||'')+'"></label><label>Categoria<select class="select" id="readingCategory"><option>Literatura</option><option>Direito</option><option>Filosofia</option><option>Acadêmico</option><option>Desenvolvimento pessoal</option><option>Outro</option></select></label><label class="reading-format-field">Formato<select class="select" id="readingFormat"><option>Kindle</option><option>Livro físico</option><option>PDF/e-book</option><option>Audiobook</option></select></label><label>Status<select class="select" id="readingStatus"><option value="want">Quero ler</option><option value="reading">Lendo</option><option value="paused">Pausado</option><option value="done">Concluído</option></select></label><label>Acompanhamento<select class="select" id="readingMode"><option value="pages">Páginas</option><option value="percent">Percentual</option></select></label><label>Total de páginas<input class="input" id="readingTotal" type="number" value="'+(r?.total||'')+'"></label><label>Página atual<input class="input" id="readingCurrent" type="number" value="'+(r?.current||'')+'"></label><label class="reading-percent-field reading-field-hidden" id="readingPercentField">Progresso atual<div class="reading-progress-input"><input class="input" id="readingPercent" type="number" min="0" max="100" step="1" value="'+(r?.progress||0)+'"><span class="reading-progress-unit">%</span></div></label><label class="reading-kindle-field reading-field-hidden" id="readingKindlePositionField">Posição atual<input class="input" id="readingPosition" type="number" min="0" value="'+(r?.position||'')+'"><span class="reading-helper">Número da posição exibida pelo Kindle.</span></label><label class="full">Observações<textarea class="input" id="readingNotes" rows="3">'+escapeHtml(r?.notes||'')+'</textarea></label></div><div class="modal-actions"><button class="btn btn-secondary" onclick="document.getElementById(\'readingModal\').remove()">Cancelar</button><button class="btn btn-primary" onclick="saveReadingModal(\''+(id||'')+'\')">Salvar</button></div></div></div>');
- if(r){document.getElementById('readingCategory').value=r.category||'Literatura';document.getElementById('readingFormat').value=r.format||'Kindle';document.getElementById('readingStatus').value=r.status||'reading';document.getElementById('readingMode').value=r.progressMode||(r.format==='Kindle'?'percent':'pages');document.getElementById('readingPercent').value=r?.progress||0;document.getElementById('readingPosition').value=r?.position||'';document.getElementById('readingMode').addEventListener('change',updateReadingModeUI);document.getElementById('readingFormat').addEventListener('change',updateReadingModeUI);updateReadingModeUI()}
+ const formatEl=document.getElementById('readingFormat');
+ const modeEl=document.getElementById('readingMode');
+ const categoryEl=document.getElementById('readingCategory');
+ const statusEl=document.getElementById('readingStatus');
+ if(r){
+   categoryEl.value=r.category||'Literatura';
+   formatEl.value=r.format||'Kindle';
+   statusEl.value=r.status||'reading';
+   modeEl.value=r.progressMode||(r.format==='Kindle'?'percent':'pages');
+   document.getElementById('readingPercent').value=r.progress||0;
+   document.getElementById('readingPosition').value=r.position||'';
+ }
+ if(formatEl.value==='Kindle') modeEl.value='percent';
+ formatEl.addEventListener('change',updateReadingModeUI);
+ modeEl.addEventListener('change',updateReadingModeUI);
+ updateReadingModeUI();
 }
 function updateReadingModeUI(){
  const mode=document.getElementById('readingMode')?.value||'pages';
