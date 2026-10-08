@@ -7,12 +7,13 @@
 <style>
 :root{
   --bg:#f6f5f1;--surface:#fff;--surface2:#f9f9f6;--text:#202825;--muted:#78807c;
+  --dark-bg:#181c1a;--dark-surface:#1f2623;--dark-surface2:#242c29;--dark-line:#303934;
   --line:#e7e7e1;--accent:#2f6254;--accent-light:#e8f1ed;--danger:#a95757;
   --shadow:0 8px 30px rgba(32,40,37,.05)
 }
 body.dark{
-  --bg:#151917;--surface:#1d2421;--surface2:#222a27;--text:#edf2ef;--muted:#9da9a3;
-  --line:#303934;--accent:#78ae9d;--accent-light:#243a33;--danger:#e58f8f;
+  --text:#edf2ef;--muted:#9da9a3;
+  --accent:#78ae9d;--accent-light:#243a33;--danger:#e58f8f;
   --shadow:0 8px 30px rgba(0,0,0,.20)
 }
 *{box-sizing:border-box}
@@ -33,6 +34,11 @@ button:disabled{cursor:not-allowed;opacity:.55}
 .date-chip{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 14px;color:var(--muted);font-size:12px}
 .theme-toggle{width:40px;height:40px;border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-size:17px;transition:.2s}
 .theme-toggle:hover{background:var(--surface2);transform:translateY(-1px)}
+.theme-control{display:none;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:0 10px;height:40px}
+body.dark .theme-control{display:flex}
+.theme-control-label{font-size:11px;color:var(--muted);white-space:nowrap}
+.theme-slider{width:105px;accent-color:var(--accent);cursor:pointer}
+.theme-value{font-size:10px;color:var(--muted);width:32px;text-align:right;font-variant-numeric:tabular-nums}
 .view{display:none}.view.active{display:block}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow)}
 .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}.metric{padding:19px 20px}
@@ -58,8 +64,24 @@ button:disabled{cursor:not-allowed;opacity:.55}
 .modal{width:min(520px,100%);background:#fff;border-radius:16px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.18)}.modal h3{margin:0;font-size:18px}.modal p{font-size:12px;color:var(--muted);margin:6px 0 18px}
 .field{margin-bottom:13px}.field label{display:block;font-size:11px;color:var(--muted);margin-bottom:6px}.field input,.field textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px 11px;outline:0;background:var(--surface);color:var(--text)}.field textarea{min-height:110px;resize:vertical}.modal{color:var(--text)}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
 .toast{position:fixed;right:22px;bottom:22px;background:#26322e;color:#fff;padding:11px 14px;border-radius:10px;font-size:12px;opacity:0;transform:translateY(8px);transition:.2s;z-index:40}.toast.show{opacity:1;transform:none}
-@media(max-width:1050px){.metrics{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.subjects-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:720px){.sidebar{position:static;width:auto;border-right:0;border-bottom:1px solid var(--line);padding:16px}.nav-item{display:none}.nav-item.active{display:flex}.nav-group{margin-top:10px}.main{margin-left:0;padding:20px 15px}.topbar{flex-direction:column;gap:12px}.topbar-actions{width:100%;justify-content:space-between}.metrics{grid-template-columns:1fr 1fr}.subjects-grid{grid-template-columns:1fr}.page-head{align-items:stretch;flex-direction:column}.toolbar{align-items:stretch;flex-direction:column}.search{width:100%}}
+
+/* SETTINGS */
+.settings-shell{display:grid;grid-template-columns:1.05fr .95fr;gap:18px}
+.settings-group{padding:21px}.settings-group+.settings-group{margin-top:18px}
+.settings-row{display:grid;grid-template-columns:180px 1fr auto;gap:18px;align-items:center;padding:15px 0;border-bottom:1px solid var(--line)}
+.settings-row:last-child{border-bottom:0}.settings-label{font-size:13px;font-weight:650}.settings-help{font-size:10px;color:var(--muted);margin-top:4px}
+.color-options{display:flex;gap:8px;flex-wrap:wrap}.swatch{width:30px;height:30px;border-radius:50%;border:2px solid transparent;padding:0;box-shadow:0 0 0 1px rgba(0,0,0,.08);cursor:pointer}.swatch.active{border-color:var(--text);box-shadow:0 0 0 2px var(--surface)}
+.range-wrap{display:flex;align-items:center;gap:10px}.range{width:100%;accent-color:var(--accent)}.range-number{min-width:38px;text-align:right;font-size:11px;color:var(--muted)}
+.segmented{display:inline-flex;background:var(--surface2);border:1px solid var(--line);border-radius:9px;padding:3px;gap:3px}.seg{border:0;background:transparent;color:var(--muted);padding:7px 10px;border-radius:7px;font-size:11px}.seg.active{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.preview-panel{padding:24px;display:flex;flex-direction:column;gap:16px;justify-content:center;min-height:100%}.preview-title{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:750}.preview-card{padding:20px;border:1px solid var(--line);border-radius:var(--card-radius,15px);background:var(--surface);box-shadow:var(--shadow)}.preview-kicker{font-size:11px;color:var(--muted)}.preview-big{font-size:calc(28px * var(--font-scale,1));font-weight:750;margin-top:6px}.preview-pill{display:inline-flex;margin-top:10px;padding:7px 9px;border-radius:8px;background:var(--accent-light);color:var(--accent);font-size:11px;font-weight:650}
+
+/* FEYNMAN / IA */
+.ai-layout{display:grid;grid-template-columns:330px 1fr;gap:18px}.ai-side{padding:21px}.ai-step{display:flex;gap:11px;padding:13px 0;border-bottom:1px solid var(--line)}.ai-step:last-child{border-bottom:0}.step-num{width:25px;height:25px;border-radius:50%;background:var(--accent-light);color:var(--accent);display:grid;place-items:center;font-size:11px;font-weight:750;flex:none}.step-title{font-size:12px;font-weight:700}.step-text{font-size:10px;color:var(--muted);margin-top:4px;line-height:1.45}
+.ai-main{padding:21px}.ai-top{display:flex;justify-content:space-between;gap:15px;align-items:flex-start;margin-bottom:16px}.ai-status{font-size:10px;color:var(--muted);margin-top:7px}.ai-status.loading{color:var(--accent)}.ai-error{margin-top:12px;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--surface2);color:var(--danger);font-size:11px;line-height:1.5}.ai-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:8px;background:var(--accent-light);color:var(--accent);font-size:10px;font-weight:700}.ai-form{display:grid;gap:12px}.ai-form textarea{width:100%;min-height:170px;border:1px solid var(--line);border-radius:12px;background:var(--surface2);color:var(--text);padding:14px;resize:vertical;outline:0}.ai-form textarea:focus{border-color:var(--accent)}.ai-actions{display:flex;justify-content:space-between;align-items:center;gap:10px}.ai-actions-left{display:flex;gap:8px;align-items:center}.ai-result{margin-top:18px;padding:17px;border:1px dashed var(--line);border-radius:12px;background:var(--surface2)}.ai-result h4{margin:0;font-size:13px}.score{display:flex;align-items:center;gap:11px;margin:13px 0}.score-ring{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:var(--accent-light);color:var(--accent);font-size:13px;font-weight:750}.ai-feedback{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.feedback-box{padding:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px}.feedback-box strong{font-size:11px}.feedback-box p{font-size:10px;color:var(--muted);line-height:1.5;margin:6px 0 0}
+.ai-placeholder{margin-top:18px;padding:14px;border-radius:10px;background:var(--surface2);color:var(--muted);font-size:11px;line-height:1.5}.chat-box{margin-top:18px;border-top:1px solid var(--line);padding-top:18px}.chat-messages{display:grid;gap:10px;max-height:220px;overflow:auto;margin-bottom:10px}.chat-msg{max-width:82%;padding:10px 12px;border-radius:11px;font-size:11px;line-height:1.5}.chat-msg.user{margin-left:auto;background:var(--accent);color:#fff}.chat-msg.ai{background:var(--surface2);border:1px solid var(--line)}
+
+@media(max-width:1050px){.metrics{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.subjects-grid{grid-template-columns:1fr 1fr}.settings-shell,.ai-layout{grid-template-columns:1fr}.preview-panel{min-height:auto}.settings-row{grid-template-columns:1fr}}
+@media(max-width:720px){.sidebar{position:static;width:auto;border-right:0;border-bottom:1px solid var(--line);padding:16px}.nav-item{display:none}.nav-item.active{display:flex}.nav-group{margin-top:10px}.main{margin-left:0;padding:20px 15px}.topbar{flex-direction:column;gap:12px}.topbar-actions{width:100%;justify-content:space-between}.theme-control{flex:1;justify-content:center}.theme-slider{flex:1;max-width:130px}.metrics{grid-template-columns:1fr 1fr}.subjects-grid{grid-template-columns:1fr}.page-head{align-items:stretch;flex-direction:column}.toolbar{align-items:stretch;flex-direction:column}.search{width:100%}}
 </style>
 </head>
 <body>
@@ -71,6 +93,7 @@ button:disabled{cursor:not-allowed;opacity:.55}
     <div class="nav-item active" data-view="dashboard"><span class="nav-icon">⌂</span>Dashboard</div>
     <div class="nav-item" data-view="plan"><span class="nav-icon">◷</span>Meu plano</div>
     <div class="nav-item" data-view="subjects"><span class="nav-icon">▣</span>Matérias</div>
+    <div class="nav-item" data-view="settings"><span class="nav-icon">⚙</span>Configurações</div>
   </div>
   <div class="nav-group">
     <div class="nav-title">Estudo</div>
@@ -78,6 +101,7 @@ button:disabled{cursor:not-allowed;opacity:.55}
     <div class="nav-item" data-view="reviews"><span class="nav-icon">↻</span>Revisões</div>
     <div class="nav-item" data-view="questions"><span class="nav-icon">✓</span>Questões</div>
     <div class="nav-item" data-view="notes"><span class="nav-icon">✎</span>Anotações</div>
+    <div class="nav-item" data-view="feynman"><span class="nav-icon">✦</span>IA · Feynman</div>
   </div>
 </aside>
 
@@ -88,6 +112,11 @@ button:disabled{cursor:not-allowed;opacity:.55}
       <p class="page-sub" id="pageSub">Vamos avançar um pouco mais hoje?</p>
     </div>
     <div class="topbar-actions">
+      <div class="theme-control" id="themeControl">
+        <span class="theme-control-label">Escuro</span>
+        <input class="theme-slider" id="themeSlider" type="range" min="0" max="100" step="1" value="50" aria-label="Intensidade do modo escuro">
+        <span class="theme-value" id="themeValue">50%</span>
+      </div>
       <button class="theme-toggle" id="themeToggle" aria-label="Alternar modo escuro" title="Alternar modo escuro">☾</button>
       <div class="date-chip" id="dateChip"></div>
     </div>
@@ -140,6 +169,138 @@ button:disabled{cursor:not-allowed;opacity:.55}
   <section class="view" id="view-reviews"><div class="card section-card"><div class="section-title">Revisões</div><div class="empty">A estrutura está preparada. Vamos transformar esta tela em revisão espaçada na próxima etapa.</div></div></section>
   <section class="view" id="view-questions"><div class="card section-card"><div class="section-title">Questões</div><div class="empty">Na próxima etapa: registro de questões, acertos, erros e desempenho por matéria.</div></div></section>
   <section class="view" id="view-notes"><div class="card section-card"><div class="section-title">Anotações</div><div class="empty">Na próxima etapa: notas vinculadas a matérias e tópicos.</div></div></section>
+
+  <section class="view" id="view-settings">
+    <div class="page-head">
+      <div><div class="section-title" style="font-size:23px">Configurações</div><div class="desc">Personalize visualmente a plataforma sem editar código.</div></div>
+      <button class="btn btn-secondary" onclick="resetAppearance()">Restaurar padrão</button>
+    </div>
+
+    <div class="settings-shell">
+      <div>
+        <div class="card settings-group">
+          <div class="section-title">Aparência</div>
+          <div class="desc" style="margin-bottom:4px">As alterações são aplicadas na hora e ficam salvas neste navegador.</div>
+
+          <div class="settings-row">
+            <div><div class="settings-label">Cor principal</div><div class="settings-help">Usada em botões, progresso e destaques.</div></div>
+            <div class="color-options" id="accentOptions">
+              <button class="swatch" data-accent="#2f6254" style="background:#2f6254" title="Verde"></button>
+              <button class="swatch" data-accent="#315f7a" style="background:#315f7a" title="Azul"></button>
+              <button class="swatch" data-accent="#765c8a" style="background:#765c8a" title="Uva"></button>
+              <button class="swatch" data-accent="#8a6540" style="background:#8a6540" title="Caramelo"></button>
+              <button class="swatch" data-accent="#8b4d5b" style="background:#8b4d5b" title="Vinho"></button>
+              <button class="swatch" data-accent="#4f6f5f" style="background:#4f6f5f" title="Oliva"></button>
+            </div>
+            <span></span>
+          </div>
+
+          <div class="settings-row">
+            <div><div class="settings-label">Tamanho da fonte</div><div class="settings-help">Aumente ou diminua toda a interface.</div></div>
+            <div class="range-wrap"><input class="range" id="fontScale" type="range" min="90" max="115" value="100" step="1"><span class="range-number" id="fontScaleValue">100%</span></div>
+            <span></span>
+          </div>
+
+          <div class="settings-row">
+            <div><div class="settings-label">Arredondamento</div><div class="settings-help">Define o estilo dos cartões e controles.</div></div>
+            <div class="segmented" id="radiusOptions">
+              <button class="seg" data-radius="10px">Suave</button>
+              <button class="seg active" data-radius="15px">Padrão</button>
+              <button class="seg" data-radius="20px">Arredondado</button>
+            </div>
+            <span></span>
+          </div>
+
+          <div class="settings-row">
+            <div><div class="settings-label">Densidade</div><div class="settings-help">Mais espaço ou mais informação na tela.</div></div>
+            <div class="segmented" id="densityOptions">
+              <button class="seg" data-density="compact">Compacta</button>
+              <button class="seg active" data-density="comfortable">Confortável</button>
+            </div>
+            <span></span>
+          </div>
+
+          <div class="settings-row">
+            <div><div class="settings-label">Modo de interface</div><div class="settings-help">O botão do topo continua controlando claro/escuro.</div></div>
+            <div class="segmented" id="themeModeOptions">
+              <button class="seg" data-theme-mode="light">Claro</button>
+              <button class="seg" data-theme-mode="dark">Escuro</button>
+            </div>
+            <span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card preview-panel">
+        <div class="preview-title">Pré-visualização</div>
+        <div class="preview-card">
+          <div class="preview-kicker">Exemplo de cartão</div>
+          <div class="preview-big">Direito Tributário</div>
+          <div class="bar"><div class="fill" style="width:74%"></div></div>
+          <div class="preview-pill">74% concluído</div>
+        </div>
+        <div class="desc">A prévia reage às suas escolhas para você encontrar o visual que mais gosta.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="view-feynman">
+    <div class="page-head">
+      <div><div class="section-title" style="font-size:23px">IA · Método Feynman</div><div class="desc">Explique um assunto com palavras simples e use a IA para testar a qualidade da sua compreensão.</div></div>
+      <span class="ai-badge">✦ Foco em compreensão</span>
+    </div>
+
+    <div class="ai-layout">
+      <div class="card ai-side">
+        <div class="section-title">Como funciona</div>
+        <div class="ai-step"><div class="step-num">1</div><div><div class="step-title">Escolha um tema</div><div class="step-text">Defina a matéria e o ponto que você quer dominar.</div></div></div>
+        <div class="ai-step"><div class="step-num">2</div><div><div class="step-title">Explique sem consultar</div><div class="step-text">Escreva como se estivesse ensinando para alguém que nunca viu o assunto.</div></div></div>
+        <div class="ai-step"><div class="step-num">3</div><div><div class="step-title">Receba perguntas</div><div class="step-text">A IA identifica lacunas, simplifica conceitos e desafia sua explicação.</div></div></div>
+        <div class="ai-step"><div class="step-num">4</div><div><div class="step-title">Refaça a explicação</div><div class="step-text">Volte aos pontos frágeis e tente explicar novamente, com mais clareza.</div></div></div>
+      </div>
+
+      <div class="card ai-main">
+        <div class="ai-top">
+          <div>
+            <div class="section-title">Sua explicação</div>
+            <div class="desc">Quanto mais natural e completa, melhor será a análise.</div>
+          </div>
+          <select class="select" id="feynmanSubject"></select>
+        </div>
+        <div class="ai-status" id="aiStatus">IA conectada pelo Netlify Function.</div>
+
+        <div class="ai-form">
+          <div>
+            <input class="search" id="feynmanTopic" style="width:100%" placeholder="Tema: ex. lançamento tributário, poder de polícia...">
+          </div>
+          <textarea id="feynmanText" placeholder="Explique o assunto com suas próprias palavras. Evite copiar definições do livro ou da lei."></textarea>
+          <div class="ai-actions">
+            <div class="ai-actions-left">
+              <button class="btn btn-secondary" onclick="loadFeynmanPrompt()">Me faça uma pergunta</button>
+              <button class="btn btn-secondary" onclick="clearFeynman()">Limpar</button>
+            </div>
+            <button class="btn btn-primary" onclick="evaluateFeynman()">Analisar com IA</button>
+          </div>
+        </div>
+
+        <div class="ai-result" id="feynmanResult">
+          <h4>A análise aparecerá aqui</h4>
+          <div class="ai-placeholder">A IA analisará sua explicação, apontará acertos e lacunas e fará uma pergunta de aprofundamento. Sua chave fica protegida no Netlify.</div>
+        </div>
+
+        <div class="chat-box">
+          <div class="section-title" style="margin-bottom:10px">Conversa guiada</div>
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-msg ai">Explique um tema acima. Depois eu vou desafiar sua explicação com perguntas no estilo Feynman.</div>
+          </div>
+          <div class="toolbar">
+            <input class="search" id="chatInput" style="flex:1;width:auto" placeholder="Digite uma resposta ou dúvida..." onkeydown="if(event.key==='Enter')sendChat()">
+            <button class="btn btn-primary" onclick="sendChat()">Enviar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 </div>
 
@@ -255,7 +416,7 @@ function renderTimerSubjects(){
   });
 }
 
-function renderAll(){renderDashboard();renderSubjectsPage();renderTimerSubjects();renderTimer()}
+function renderAll(){renderDashboard();renderSubjectsPage();renderTimerSubjects();renderFeynmanSubjects();renderTimer();applyAppearance()}
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
 
 function showView(name){
@@ -268,7 +429,9 @@ function showView(name){
     timer:['Cronômetro','Registre o tempo efetivamente estudado.'],
     reviews:['Revisões','Acompanhe suas revisões pendentes.'],
     questions:['Questões','Controle seu desempenho por matéria e assunto.'],
-    notes:['Anotações','Centralize suas notas de estudo.']
+    notes:['Anotações','Centralize suas notas de estudo.'],
+    settings:['Configurações','Personalize o visual e a experiência da plataforma.'],
+    feynman:['IA · Método Feynman','Aprenda explicando. Use a IA para encontrar lacunas na sua compreensão.']
   };
   if(titles[name]){document.getElementById('pageTitle').textContent=titles[name][0];document.getElementById('pageSub').textContent=titles[name][1]}
 }
@@ -357,7 +520,260 @@ function toast(msg){
   const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');
   clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove('show'),2200);
 }
+
+const APPEARANCE_KEY='study_appearance';
+
+const appearanceDefaults={
+  accent:'#2f6254',
+  fontScale:100,
+  radius:'15px',
+  density:'comfortable'
+};
+
+function loadAppearance(){
+  try{return {...appearanceDefaults,...JSON.parse(localStorage.getItem(APPEARANCE_KEY)||'{}')}}
+  catch(e){return {...appearanceDefaults}}
+}
+let appearance=loadAppearance();
+
+function saveAppearance(){localStorage.setItem(APPEARANCE_KEY,JSON.stringify(appearance))}
+function applyAppearance(){
+  const root=document.documentElement;
+  root.style.setProperty('--accent',appearance.accent);
+  root.style.setProperty('--font-scale',String(appearance.fontScale/100));
+  root.style.setProperty('--card-radius',appearance.radius);
+
+  // Recalculate a readable light accent background from the chosen accent.
+  const c=hexToRgb(appearance.accent);
+  const mixToWhite=(x)=>Math.round(x+(255-x)*0.86);
+  root.style.setProperty('--accent-light',`rgb(${mixToWhite(c.r)},${mixToWhite(c.g)},${mixToWhite(c.b)})`);
+
+  document.body.style.fontSize=`${appearance.fontScale}%`;
+  document.body.classList.toggle('density-compact',appearance.density==='compact');
+  document.querySelectorAll('#accentOptions .swatch').forEach(x=>x.classList.toggle('active',x.dataset.accent===appearance.accent));
+  document.querySelectorAll('#radiusOptions .seg').forEach(x=>x.classList.toggle('active',x.dataset.radius===appearance.radius));
+  document.querySelectorAll('#densityOptions .seg').forEach(x=>x.classList.toggle('active',x.dataset.density===appearance.density));
+  const fs=document.getElementById('fontScale');
+  const fv=document.getElementById('fontScaleValue');
+  if(fs)fs.value=appearance.fontScale;
+  if(fv)fv.textContent=appearance.fontScale+'%';
+}
+function resetAppearance(){
+  appearance={...appearanceDefaults};
+  saveAppearance();applyAppearance();toast('Visual restaurado.');
+}
+document.querySelectorAll('#accentOptions .swatch').forEach(b=>b.addEventListener('click',()=>{
+  appearance.accent=b.dataset.accent;saveAppearance();applyAppearance();toast('Cor principal atualizada.');
+}));
+document.getElementById('fontScale')?.addEventListener('input',e=>{
+  appearance.fontScale=Number(e.target.value);saveAppearance();applyAppearance();
+});
+document.querySelectorAll('#radiusOptions .seg').forEach(b=>b.addEventListener('click',()=>{
+  appearance.radius=b.dataset.radius;saveAppearance();applyAppearance();
+}));
+document.querySelectorAll('#densityOptions .seg').forEach(b=>b.addEventListener('click',()=>{
+  appearance.density=b.dataset.density;saveAppearance();applyAppearance();
+}));
+document.querySelectorAll('#themeModeOptions .seg').forEach(b=>b.addEventListener('click',()=>{
+  const theme=b.dataset.themeMode;localStorage.setItem(THEME_KEY,theme);applyTheme(theme);
+}));
+applyAppearance();
+
+function renderFeynmanSubjects(){
+  const els=[document.getElementById('feynmanSubject')].filter(Boolean);
+  els.forEach(el=>{
+    const prev=el.value;
+    el.innerHTML=subjects.length?subjects.map(s=>`<option value="${s.id}">${escapeHtml(s.name)}</option>`).join(''):`<option value="">Nenhuma matéria</option>`;
+    if([...el.options].some(o=>o.value===prev))el.value=prev;
+  });
+}
+
+
+let feynmanHistory=[];
+
+function setAiStatus(message, loading=false){
+  const el=document.getElementById('aiStatus');
+  if(!el)return;
+  el.textContent=message;
+  el.classList.toggle('loading',loading);
+}
+
+function getCurrentFeynmanContext(){
+  const subjectEl=document.getElementById('feynmanSubject');
+  const topicEl=document.getElementById('feynmanTopic');
+  const textEl=document.getElementById('feynmanText');
+  const subjectName=subjectEl?.selectedOptions?.[0]?.textContent||'';
+  return {
+    subject:subjectName.trim(),
+    topic:(topicEl?.value||'').trim(),
+    explanation:(textEl?.value||'').trim()
+  };
+}
+
+async function callFeynmanAPI(action, extra={}){
+  const context=getCurrentFeynmanContext();
+
+  if(action==='analyze' && !context.explanation){
+    throw new Error('Escreva primeiro a sua explicação.');
+  }
+  if(action==='chat' && !context.topic && !context.explanation){
+    throw new Error('Escolha um tema e/ou escreva uma explicação antes de conversar com a IA.');
+  }
+
+  const payload={
+    action,
+    subject:context.subject,
+    topic:context.topic,
+    explanation:context.explanation,
+    history:feynmanHistory.slice(-10),
+    ...extra
+  };
+
+  const response=await fetch('/.netlify/functions/feynman',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
+  });
+
+  let data={};
+  try{data=await response.json()}catch(e){}
+
+  if(!response.ok){
+    throw new Error(data.error||'Não foi possível obter resposta da IA.');
+  }
+  if(!data.text)throw new Error('A IA não retornou um texto válido.');
+  return data.text;
+}
+
+function formatAiText(text){
+  return escapeHtml(text)
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/^### (.*)$/gm,'<strong>$1</strong>')
+    .replace(/\n\n/g,'<br><br>')
+    .replace(/\n/g,'<br>');
+}
+
+async function evaluateFeynman(){
+  const result=document.getElementById('feynmanResult');
+  const context=getCurrentFeynmanContext();
+
+  if(!context.explanation){
+    alert('Escreva primeiro a sua explicação.');
+    return;
+  }
+
+  try{
+    setAiStatus('Analisando sua explicação…',true);
+    result.innerHTML=`<h4>Analisando com IA…</h4><div class="ai-placeholder">Aguarde alguns segundos enquanto o tutor Feynman lê sua explicação.</div>`;
+    const text=await callFeynmanAPI('analyze');
+
+    result.innerHTML=`
+      <h4>Análise Feynman</h4>
+      <div class="ai-result-text" style="margin-top:11px;font-size:11px;line-height:1.65">${formatAiText(text)}</div>
+    `;
+
+    feynmanHistory.push({role:'user',content:`Expliquei ${context.topic||'o tema'} assim: ${context.explanation}`});
+    feynmanHistory.push({role:'assistant',content:text});
+    addChatMessage('ai',formatAiText(text));
+    setAiStatus('Análise concluída.',false);
+  }catch(error){
+    result.innerHTML=`<h4>Não foi possível analisar agora</h4><div class="ai-error">${escapeHtml(error.message)}</div>`;
+    setAiStatus('Verifique a configuração da conexão com a IA.',false);
+  }
+}
+
+async function loadFeynmanPrompt(){
+  const topic=document.getElementById('feynmanTopic')?.value.trim()||'o tema escolhido';
+  try{
+    setAiStatus('Gerando uma pergunta…',true);
+    const text=await callFeynmanAPI('question',{questionType:'feynman_prompt',topic});
+    addChatMessage('ai',formatAiText(text));
+    feynmanHistory.push({role:'assistant',content:text});
+    setAiStatus('Pergunta gerada.',false);
+  }catch(error){
+    addChatMessage('ai',`<span style="color:var(--danger)">${escapeHtml(error.message)}</span>`);
+    setAiStatus('Erro na conexão com a IA.',false);
+  }
+}
+
+function clearFeynman(){
+  if(document.getElementById('feynmanText'))document.getElementById('feynmanText').value='';
+  if(document.getElementById('feynmanTopic'))document.getElementById('feynmanTopic').value='';
+  feynmanHistory=[];
+  const chat=document.getElementById('chatMessages');
+  if(chat)chat.innerHTML=`<div class="chat-msg ai">Explique um tema acima. Depois eu vou desafiar sua explicação com perguntas no estilo Feynman.</div>`;
+  document.getElementById('feynmanResult').innerHTML=`<h4>A análise aparecerá aqui</h4><div class="ai-placeholder">Comece explicando um assunto com suas próprias palavras.</div>`;
+  setAiStatus('IA conectada pelo Netlify Function.',false);
+}
+
+function addChatMessage(role,content){
+  const box=document.getElementById('chatMessages');if(!box)return;
+  box.insertAdjacentHTML('beforeend',`<div class="chat-msg ${role}">${content}</div>`);
+  box.scrollTop=box.scrollHeight;
+}
+
+async function sendChat(){
+  const input=document.getElementById('chatInput');if(!input)return;
+  const value=input.value.trim();if(!value)return;
+
+  addChatMessage('user',escapeHtml(value));
+  input.value='';
+  feynmanHistory.push({role:'user',content:value});
+
+  try{
+    setAiStatus('Pensando…',true);
+    const text=await callFeynmanAPI('chat',{message:value});
+    addChatMessage('ai',formatAiText(text));
+    feynmanHistory.push({role:'assistant',content:text});
+    setAiStatus('Resposta recebida.',false);
+  }catch(error){
+    addChatMessage('ai',`<span style="color:var(--danger)">${escapeHtml(error.message)}</span>`);
+    setAiStatus('Erro na conexão com a IA.',false);
+  }
+}
+
+function renderFeynmanSubjects(){
+  const els=[document.getElementById('feynmanSubject')].filter(Boolean);
+  els.forEach(el=>{
+    const prev=el.value;
+    el.innerHTML=subjects.length?subjects.map(s=>`<option value="${s.id}">${escapeHtml(s.name)}</option>`).join(''):`<option value="">Nenhuma matéria</option>`;
+    if([...el.options].some(o=>o.value===prev))el.value=prev;
+  });
+}
+
 const THEME_KEY='study_theme';
+function hexToRgb(hex){
+  const n=hex.replace('#','');
+  return {
+    r:parseInt(n.slice(0,2),16),
+    g:parseInt(n.slice(2,4),16),
+    b:parseInt(n.slice(4,6),16)
+  };
+}
+function mixHex(lightHex,darkHex,t){
+  const a=hexToRgb(lightHex),b=hexToRgb(darkHex);
+  const mix=(x,y)=>Math.round(x+(y-x)*t).toString(16).padStart(2,'0');
+  return '#'+mix(a.r,b.r)+mix(a.g,b.g)+mix(a.b,b.b);
+}
+function setThemeColors(darkness){
+  const t=Math.max(0,Math.min(1,Number(darkness)/100));
+  const root=document.documentElement;
+  if(document.body.classList.contains('dark')){
+    root.style.setProperty('--bg',mixHex('#272e2b','#090b0a',t));
+    root.style.setProperty('--surface',mixHex('#303936','#101412',t));
+    root.style.setProperty('--surface2',mixHex('#37423e','#161b19',t));
+    root.style.setProperty('--line',mixHex('#46534d','#242b28',t));
+    root.style.setProperty('--accent',mixHex('#91c1b2','#5b8d7e',t));
+    root.style.setProperty('--accent-light',mixHex('#dbeee7','#20332d',t));
+  }else{
+    root.style.setProperty('--bg','#f6f5f1');
+    root.style.setProperty('--surface','#ffffff');
+    root.style.setProperty('--surface2','#f9f9f6');
+    root.style.setProperty('--line','#e7e7e1');
+    root.style.setProperty('--accent','#2f6254');
+    root.style.setProperty('--accent-light','#e8f1ed');
+  }
+}
 function applyTheme(theme){
   const dark=theme==='dark';
   document.body.classList.toggle('dark',dark);
@@ -367,7 +783,18 @@ function applyTheme(theme){
     btn.setAttribute('aria-label',dark?'Ativar modo claro':'Ativar modo escuro');
     btn.setAttribute('title',dark?'Ativar modo claro':'Ativar modo escuro');
   }
+  setThemeColors(Number(localStorage.getItem('study_darkness')||50));
 }
+function applyDarkness(value){
+  const v=Math.max(0,Math.min(100,Number(value)||0));
+  const slider=document.getElementById('themeSlider');
+  const valueEl=document.getElementById('themeValue');
+  if(slider) slider.value=v;
+  if(valueEl) valueEl.textContent=v+'%';
+  localStorage.setItem('study_darkness',String(v));
+  if(document.body.classList.contains('dark')) setThemeColors(v);
+}
+
 function toggleTheme(){
   const dark=!document.body.classList.contains('dark');
   const theme=dark?'dark':'light';
@@ -375,6 +802,10 @@ function toggleTheme(){
   applyTheme(theme);
 }
 applyTheme(localStorage.getItem(THEME_KEY)||'light');
+const themeSlider=document.getElementById('themeSlider');
+if(themeSlider){
+  themeSlider.addEventListener('input',e=>applyDarkness(e.target.value));
+}
 document.getElementById('themeToggle').addEventListener('click',toggleTheme);
 document.getElementById('dateChip').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
 renderAll();
