@@ -90,6 +90,10 @@ body.dark .theme-control{display:flex}
 .modal{width:min(520px,100%);background:#fff;border-radius:16px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.18)}.modal h3{margin:0;font-size:18px}.modal p{font-size:12px;color:var(--muted);margin:6px 0 18px}
 .field{margin-bottom:13px}.field label{display:block;font-size:11px;color:var(--muted);margin-bottom:6px}.field input,.field textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px 11px;outline:0;background:var(--surface);color:var(--text)}.field textarea{min-height:110px;resize:vertical}.modal{color:var(--text)}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
 .toast{position:fixed;right:22px;bottom:22px;background:#26322e;color:#fff;padding:11px 14px;border-radius:10px;font-size:12px;opacity:0;transform:translateY(8px);transition:.2s;z-index:40}.toast.show{opacity:1;transform:none}
+/* GAMIFICAÇÃO */
+.gamification-dashboard-card{display:grid;grid-template-columns:1fr 170px;gap:18px;margin-bottom:18px;padding:20px}
+.gamification-dashboard-main{min-width:0}.gamification-kicker{font-size:9px;color:var(--accent);font-weight:800;letter-spacing:1.1px}.gamification-level-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-top:5px}.gamification-level{font-size:21px;font-weight:780}.gamification-xp{font-size:11px;color:var(--muted);margin-top:3px}.gamification-rank{font-size:10px;color:var(--accent);background:var(--accent-light);padding:6px 8px;border-radius:8px;font-weight:700}.xp-track{height:7px;background:var(--surface2);border-radius:20px;overflow:hidden;margin-top:13px}.xp-track>div{height:100%;width:0;background:var(--accent);border-radius:20px;transition:width .3s}.xp-track.large{height:9px}.gamification-next{font-size:9px;color:var(--muted);margin-top:6px}.gamification-dashboard-side{border-left:1px solid var(--line);padding-left:18px}.game-mini-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}.game-mini-value{font-size:18px;font-weight:760;margin-top:3px}.game-hero{display:grid;grid-template-columns:1.1fr 1.6fr 150px;gap:24px;align-items:center;padding:24px;margin-bottom:18px}.game-hero-level{font-size:30px;font-weight:800;letter-spacing:-.8px;margin-top:4px}.game-hero-rank{font-size:12px;color:var(--muted);margin-top:3px}.game-hero-xp strong{font-size:18px}.game-hero-streak{border-left:1px solid var(--line);padding-left:22px;text-align:center}.game-hero-streak span{font-size:18px}.game-hero-streak strong{display:block;font-size:26px;margin-top:3px}.game-hero-streak small{font-size:9px;color:var(--muted)}.game-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.mission{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid var(--line)}.mission:last-child{border-bottom:0}.mission-check{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--muted);font-size:12px;flex:none}.mission.done .mission-check{background:var(--accent);border-color:var(--accent);color:#fff}.mission-main{flex:1;min-width:0}.mission-title{font-size:12px;font-weight:650}.mission-detail{font-size:9px;color:var(--muted);margin-top:3px}.achievement-list{display:grid;grid-template-columns:1fr 1fr;gap:8px}.achievement{padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}.achievement.locked{opacity:.48}.achievement-icon{font-size:16px;float:left;margin-right:9px}.achievement-title{font-size:11px;font-weight:700}.achievement-desc{font-size:9px;color:var(--muted);margin-top:3px;line-height:1.4}.reward-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.reward-row:last-child{border-bottom:0}.reward-main{flex:1}.reward-title{font-size:12px;font-weight:700}.reward-desc{font-size:9px;color:var(--muted);margin-top:3px}.reward-cost{font-size:11px;color:var(--accent);font-weight:750;white-space:nowrap}.reward-actions{display:flex;gap:6px}@media(max-width:720px){.gamification-dashboard-card{grid-template-columns:1fr}.gamification-dashboard-side{border-left:0;border-top:1px solid var(--line);padding:12px 0 0;display:flex;gap:10px;align-items:center}.game-hero,.game-grid{grid-template-columns:1fr}.game-hero-streak{border-left:0;border-top:1px solid var(--line);padding:14px 0 0}.achievement-list{grid-template-columns:1fr}}
+
 /* DARK MODE — acabamento visual */
 body.dark .sidebar{background:#151a18;border-color:#29312e}
 body.dark .nav-item{color:#aeb9b3}
@@ -157,6 +161,7 @@ body.dark .reading-card:hover{border-color:#3a4742}
     <div class="nav-title">Estudo</div>
     <div class="nav-item" data-view="timer"><span class="nav-icon">◉</span>Cronômetro</div>
     <div class="nav-item" data-view="stats"><span class="nav-icon">▥</span>Estatísticas</div>
+    <div class="nav-item" data-view="gamification"><span class="nav-icon">◇</span>Conquistas</div>
     <div class="nav-item" data-view="agenda"><span class="nav-icon">▦</span>Agenda</div>
     <div class="nav-item" data-view="reading"><span class="nav-icon">📖</span>Leituras</div>
     <div class="nav-item" data-view="reviews"><span class="nav-icon">↻</span>Revisões</div>
@@ -193,6 +198,16 @@ body.dark .reading-card:hover{border-color:#3a4742}
       <div class="card metric"><div class="metric-label">Progresso geral</div><div class="metric-value" id="dashProgress">0%</div><div class="metric-detail">Com base nos seus tópicos</div></div>
       <div class="card metric"><div class="metric-label">Dias consecutivos</div><div class="metric-value" id="dashStreak">0</div><div class="metric-detail">Sequência atual</div></div>
       <div class="card metric"><div class="metric-label">Tópicos a revisar</div><div class="metric-value" id="dashReviews">0</div><div class="metric-detail">Espaço reservado para revisão</div></div>
+    </div>
+
+    <div class="card section-card gamification-dashboard-card">
+      <div class="gamification-dashboard-main">
+        <div class="gamification-kicker">PROGRESSÃO</div>
+        <div class="gamification-level-row"><div><div class="gamification-level" id="dashGameLevel">Nível 1</div><div class="gamification-xp" id="dashGameXP">0 XP</div></div><div class="gamification-rank" id="dashGameRank">Iniciante</div></div>
+        <div class="xp-track"><div id="dashGameBar"></div></div>
+        <div class="gamification-next" id="dashGameNext">0 / 100 XP para o próximo nível</div>
+      </div>
+      <div class="gamification-dashboard-side"><div class="game-mini-label">Sequência</div><div class="game-mini-value" id="dashGameStreak">0 dias</div><div class="game-mini-label" style="margin-top:12px">Conquistas</div><div class="game-mini-value" id="dashGameAchievements">0</div></div>
     </div>
 
     <div class="grid2">
@@ -276,6 +291,22 @@ body.dark .reading-card:hover{border-color:#3a4742}
     </div>
   </div>
 </section>
+  <section class="view" id="view-gamification">
+    <div class="page-head">
+      <div><div class="section-title" style="font-size:23px">Conquistas</div><div class="desc">Uma camada de progressão discreta para valorizar constância e domínio.</div></div>
+      <span class="ai-badge">◇ Progressão</span>
+    </div>
+    <div class="game-hero card">
+      <div><div class="gamification-kicker">SEU PROGRESSO</div><div class="game-hero-level" id="gameLevel">Nível 1</div><div class="game-hero-rank" id="gameRank">Iniciante</div></div>
+      <div class="game-hero-xp"><strong id="gameXP">0 XP</strong><div class="xp-track large"><div id="gameBar"></div></div><div id="gameNext" class="gamification-next">0 / 100 XP</div></div>
+      <div class="game-hero-streak"><span>🔥</span><strong id="gameStreak">0</strong><small>dias de constância</small></div>
+    </div>
+    <div class="game-grid">
+      <div class="card section-card"><div class="head"><div class="section-title">Missões de hoje</div></div><div id="gameMissions"></div></div>
+      <div class="card section-card"><div class="head"><div class="section-title">Conquistas</div></div><div id="gameAchievements" class="achievement-list"></div></div>
+    </div>
+    <div class="card section-card" style="margin-top:18px"><div class="head"><div><div class="section-title">Minhas recompensas</div><div class="desc">Cadastre recompensas pessoais e resgate quando tiver XP suficiente.</div></div><button class="btn btn-primary" onclick="addGameReward()">+ Nova recompensa</button></div><div id="gameRewards"></div></div>
+  </section>
   <section class="view" id="view-stats">
     <div class="page-head">
       <div><div class="section-title" style="font-size:23px">Estatísticas</div><div class="desc">Veja como seu tempo de estudo está distribuído por período, matéria e assunto.</div></div>
@@ -795,6 +826,7 @@ function totalStats(){
 
 function renderDashboard(){
   renderDashboardPlan();
+  renderGamification();
   const st=totalStats();
   document.getElementById('dashProgress').textContent=st.pct+'%';
   document.getElementById('dashReviews').textContent='0';
@@ -858,7 +890,54 @@ function renderTimerTopics(){
   });
 }
 
-function renderAll(){renderDashboard();renderSubjectsPage();renderTimerSubjects();renderFeynmanSubjects();renderTimer();renderPlan();renderStats();renderAgenda();renderReadings();applyAppearance()}
+function renderAll(){renderDashboard();renderSubjectsPage();renderTimerSubjects();renderFeynmanSubjects();renderTimer();renderPlan();renderStats();renderAgenda();renderReadings();renderGamification();applyAppearance()}
+
+
+/* GAMIFICAÇÃO */
+const GAME_KEY='study_gamification_v1';
+const GAME_REWARDS_KEY='study_gamification_rewards_v1';
+const GAME_CLAIMS_KEY='study_gamification_claims_v1';
+const GAME_LEVELS=['Iniciante','Discente','Estudioso','Pesquisador','Analista','Jurista em formação','Especialista','Mestre da matéria','Referência'];
+const GAME_ACHIEVEMENTS=[
+ {id:'first-session',icon:'◷',title:'Primeiro passo',desc:'Conclua sua primeira sessão de estudo.',test:g=>g.sessions>=1},
+ {id:'ten-hours',icon:'◌',title:'Dez horas',desc:'Acumule 10 horas de estudo registrado.',test:g=>g.studySeconds>=36000},
+ {id:'seven-days',icon:'🔥',title:'Constância',desc:'Estude em 7 dias diferentes.',test:g=>g.activeDays>=7},
+ {id:'topic-ten',icon:'✓',title:'Base construída',desc:'Conclua 10 tópicos.',test:g=>g.topics>=10},
+ {id:'feynman-ten',icon:'✦',title:'Feynman',desc:'Inicie 10 sessões Feynman.',test:g=>g.feynman>=10},
+ {id:'reading-five',icon:'▤',title:'Leitor',desc:'Conclua 5 leituras.',test:g=>g.readings>=5},
+ {id:'trail-ten',icon:'→',title:'Em movimento',desc:'Conclua 10 etapas da trilha.',test:g=>g.trail>=10},
+ {id:'hundred-xp',icon:'◆',title:'Primeira centena',desc:'Alcance 100 XP.',test:g=>g.xp>=100}
+];
+function getGame(){try{return JSON.parse(localStorage.getItem(GAME_KEY)||'{}')}catch(e){return{}}}
+function saveGame(g){localStorage.setItem(GAME_KEY,JSON.stringify(g))}
+function getGameClaims(){try{return JSON.parse(localStorage.getItem(GAME_CLAIMS_KEY)||'{}')}catch(e){return{}}}
+function saveGameClaims(x){localStorage.setItem(GAME_CLAIMS_KEY,JSON.stringify(x))}
+function getGameRewards(){try{return JSON.parse(localStorage.getItem(GAME_REWARDS_KEY)||'[]')}catch(e){return[]}}
+function saveGameRewards(x){localStorage.setItem(GAME_REWARDS_KEY,JSON.stringify(x))}
+function gameEnsure(){const g=getGame();return {xp:Number(g.xp)||0,sessions:Number(g.sessions)||0,studySeconds:Number(g.studySeconds)||0,topics:Number(g.topics)||0,feynman:Number(g.feynman)||0,readings:Number(g.readings)||0,trail:Number(g.trail)||0}}
+function gameLevel(xp){return Math.floor(Math.max(0,xp)/100)+1}
+function gameRank(level){return GAME_LEVELS[Math.min(level-1,GAME_LEVELS.length-1)]}
+function gameAward(xp,reason,claim){if(xp<=0)return false;const claims=getGameClaims();if(claim&&claims[claim])return false;if(claim)claims[claim]=1;const g=gameEnsure();g.xp+=xp;saveGame(g);saveGameClaims(claims);if(reason)toast('+'+xp+' XP · '+reason);renderGamification();return true}
+function gameActiveDays(){return new Set(getStudyLog().map(x=>x.date)).size}
+function gameStreak(){const dates=new Set(getStudyLog().map(x=>x.date));let d=new Date(),count=0;while(dates.has(localDateKey(d))){count++;d.setDate(d.getDate()-1)}return count}
+function gameStats(){const g=gameEnsure();g.activeDays=gameActiveDays();return g}
+function renderGamification(){
+ const g=gameStats(),level=gameLevel(g.xp),base=(level-1)*100,next=level*100,inside=g.xp-base,pct=Math.min(100,inside/100*100),rank=gameRank(level),streak=gameStreak();
+ ['gameLevel','dashGameLevel'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='Nível '+level});
+ ['gameXP','dashGameXP'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=g.xp+' XP'});
+ ['gameRank','dashGameRank'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=rank});
+ ['gameBar','dashGameBar'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.width=pct+'%'});
+ const nextText=(next-g.xp)+' XP para o próximo nível';const e1=document.getElementById('gameNext');if(e1)e1.textContent=nextText;const e2=document.getElementById('dashGameNext');if(e2)e2.textContent=inside+' / 100 XP · '+nextText;
+ const se=document.getElementById('gameStreak');if(se)se.textContent=streak;const ds=document.getElementById('dashGameStreak');if(ds)ds.textContent=streak+' '+(streak===1?'dia':'dias');
+ const unlocked=GAME_ACHIEVEMENTS.filter(a=>a.test(g)).length;const ae=document.getElementById('dashGameAchievements');if(ae)ae.textContent=unlocked+'/'+GAME_ACHIEVEMENTS.length;
+ const al=document.getElementById('gameAchievements');if(al)al.innerHTML=GAME_ACHIEVEMENTS.map(a=>'<div class="achievement '+(a.test(g)?'':'locked')+'"><span class="achievement-icon">'+a.icon+'</span><div class="achievement-title">'+escapeHtml(a.title)+(a.test(g)?' · ✓':'')+'</div><div class="achievement-desc">'+escapeHtml(a.desc)+'</div></div>').join('');
+ renderGameMissions(g);renderGameRewards(g.xp);
+}
+function renderGameMissions(g){const el=document.getElementById('gameMissions');if(!el)return;const today=localDateKey();const todaySec=getStudyLog().filter(x=>x.date===today).reduce((a,x)=>a+x.seconds,0);const topicsToday=getGameClaims()['topic:'+today]||0;const trailToday=getGameClaims()['trail:'+today]||0;const missions=[{title:'Estude por 30 minutos',detail:Math.min(30,Math.floor(todaySec/60))+' / 30 min',done:todaySec>=1800},{title:'Conclua 1 tópico',detail:topicsToday?'Concluído':'Ainda não concluído',done:!!topicsToday},{title:'Avance uma etapa da trilha',detail:trailToday?'Concluído':'Ainda não concluído',done:!!trailToday}];el.innerHTML=missions.map(m=>'<div class="mission '+(m.done?'done':'')+'"><div class="mission-check">'+(m.done?'✓':'')+'</div><div class="mission-main"><div class="mission-title">'+m.title+'</div><div class="mission-detail">'+m.detail+'</div></div></div>').join('')}
+function renderGameRewards(xp){const el=document.getElementById('gameRewards');if(!el)return;const a=getGameRewards();if(!a.length){el.innerHTML='<div class="empty">Nenhuma recompensa cadastrada. Crie uma que faça sentido para você.</div>';return}el.innerHTML=a.map(r=>'<div class="reward-row"><div class="reward-main"><div class="reward-title">'+escapeHtml(r.title)+'</div><div class="reward-desc">'+escapeHtml(r.description||'')+'</div></div><div class="reward-cost">'+r.cost+' XP</div><div class="reward-actions"><button class="small-btn" '+(xp<r.cost?'disabled':'')+' onclick="redeemGameReward(\''+r.id+'\')">Resgatar</button><button class="small-btn" onclick="deleteGameReward(\''+r.id+'\')">×</button></div></div>').join('')}
+function addGameReward(){const title=prompt('Nome da recompensa:');if(!title?.trim())return;const cost=Math.max(1,Number(prompt('Quantos XP custa?','500'))||500);const description=prompt('Descrição opcional:','Uma recompensa para você mesmo.');const a=getGameRewards();a.push({id:'gr'+Date.now(),title:title.trim(),cost,description:(description||'').trim()});saveGameRewards(a);renderGamification();toast('Recompensa criada.')}
+function redeemGameReward(id){const a=getGameRewards(),r=a.find(x=>x.id===id),g=gameEnsure();if(!r||g.xp<r.cost)return;if(!confirm('Resgatar “'+r.title+'” por '+r.cost+' XP?'))return;g.xp-=r.cost;saveGame(g);renderGamification();toast('Recompensa resgatada. Aproveite.')}
+function deleteGameReward(id){if(!confirm('Excluir esta recompensa?'))return;saveGameRewards(getGameRewards().filter(x=>x.id!==id));renderGamification()}
 
 function renderStats(){
   const log=getStudyLog(),today=localDateKey();
@@ -926,7 +1005,7 @@ function openAgendaModal(id=null){
 }
 function closeAgendaModal(){document.getElementById('agendaModal')?.remove();window.editingAgendaId=null}
 function saveAgendaModal(){const title=document.getElementById('agendaTitle').value.trim(),date=document.getElementById('agendaDate').value;if(!title||!date){toast('Informe o compromisso e a data.');return}const a=getAgenda(),id=window.editingAgendaId||'a'+Date.now(),old=a.find(x=>x.id===id),item={id,title,date,start:document.getElementById('agendaStart').value,end:document.getElementById('agendaEnd').value,type:document.getElementById('agendaType').value,subjectId:document.getElementById('agendaSubject').value,notes:document.getElementById('agendaNotes').value.trim(),done:old?.done||false};const i=a.findIndex(x=>x.id===id);if(i>=0)a[i]=item;else a.push(item);saveAgenda(a);agendaSelected=date;agendaDate=new Date(date+'T12:00:00');agendaDate.setDate(1);closeAgendaModal();renderAgenda();toast('Compromisso salvo.')}
-function toggleAgendaDone(id){const a=getAgenda(),e=a.find(x=>x.id===id);if(e){e.done=!e.done;saveAgenda(a);renderAgenda()}}
+function toggleAgendaDone(id){const a=getAgenda(),e=a.find(x=>x.id===id);if(e){const was=e.done;e.done=!e.done;saveAgenda(a);if(!was)gameAward(10,'compromisso concluído','agenda:'+id);renderAgenda();renderGamification()}}
 function deleteAgenda(id){if(confirm('Excluir este compromisso?')){saveAgenda(getAgenda().filter(e=>e.id!==id));renderAgenda()}}
  
 // LEITURAS
@@ -950,7 +1029,7 @@ function openReadingModal(id=null){
 }
 function saveReadingModal(id){const title=document.getElementById('readingTitle').value.trim();if(!title){toast('Informe o título.');return}const a=getReadings(),old=a.find(x=>x.id===id),mode=document.getElementById('readingMode').value,total=Number(document.getElementById('readingTotal').value)||0,current=Number(document.getElementById('readingCurrent').value)||0,item={id:id||'r'+Date.now(),title,author:document.getElementById('readingAuthor').value.trim(),category:document.getElementById('readingCategory').value,format:document.getElementById('readingFormat').value,status:document.getElementById('readingStatus').value,progressMode:mode,total,current,progress:mode==='pages'&&total?current/total*100:0,notes:document.getElementById('readingNotes').value.trim(),diary:old?.diary||[]};const i=a.findIndex(x=>x.id===item.id);if(i>=0)a[i]=item;else a.push(item);saveReadings(a);document.getElementById('readingModal')?.remove();renderReadings();toast('Leitura salva.')}
 function openReadingProgressModal(id){const r=getReadings().find(x=>x.id===id);if(!r)return;document.body.insertAdjacentHTML('beforeend','<div class="modal-backdrop open" id="readingProgressModal"><div class="modal"><h3>Atualizar progresso</h3><p>'+escapeHtml(r.title)+'</p><div class="field"><label>'+(r.progressMode==='pages'?'Página atual':'Percentual')+'</label><input class="input" id="readingProgressInput" type="number" value="'+(r.progressMode==='pages'?r.current:r.progress)+'"></div><div class="modal-actions"><button class="btn btn-secondary" onclick="document.getElementById(\'readingProgressModal\').remove()">Cancelar</button><button class="btn btn-primary" onclick="saveReadingProgress(\''+id+'\')">Salvar</button></div></div></div>')}
-function saveReadingProgress(id){const a=getReadings(),r=a.find(x=>x.id===id),v=Number(document.getElementById('readingProgressInput').value)||0;if(!r)return;if(r.progressMode==='pages'){r.current=Math.min(r.total||v,v);r.progress=r.total?r.current/r.total*100:0}else r.progress=Math.min(100,v);if(r.progress>=100)r.status='done';else if(r.status==='want')r.status='reading';saveReadings(a);document.getElementById('readingProgressModal')?.remove();renderReadings()}
+function saveReadingProgress(id){const a=getReadings(),r=a.find(x=>x.id===id),v=Number(document.getElementById('readingProgressInput').value)||0;if(!r)return;if(r.progressMode==='pages'){r.current=Math.min(r.total||v,v);r.progress=r.total?r.current/r.total*100:0}else r.progress=Math.min(100,v);const becameDone=r.progress>=100&&r.status!=='done';if(r.progress>=100)r.status='done';else if(r.status==='want')r.status='reading';saveReadings(a);if(becameDone){const awarded=gameAward(30,'leitura concluída','reading:'+id);if(awarded){const g=gameEnsure();g.readings++;saveGame(g)}}document.getElementById('readingProgressModal')?.remove();renderReadings()}
 function addReadingDiary(id){const r=getReadings().find(x=>x.id===id);if(!r)return;const text=prompt('Escreva sua nota de leitura:');if(!text?.trim())return;const a=getReadings(),x=a.find(y=>y.id===id);x.diary=x.diary||[];x.diary.push({date:localDateKey(new Date()),progress:Number(readingProgress(x).toFixed(1)),text:text.trim()});saveReadings(a);renderReadings();toast('Nota adicionada ao diário.')}
 
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
@@ -966,6 +1045,7 @@ function showView(name){
     reviews:['Revisões','Acompanhe suas revisões pendentes.'],
     questions:['Questões','Controle seu desempenho por matéria e assunto.'],
     stats:['Estatísticas','Entenda onde e como você está estudando.'],
+    gamification:['Conquistas','Veja sua progressão, constância e recompensas.'],
     agenda:['Agenda','Organize seus compromissos de estudo e sua rotina.'],
     reading:['Leituras','Acompanhe seus livros e o seu diário de leitura.'],
     notes:['Anotações','Centralize suas notas de estudo.'],
@@ -1085,7 +1165,10 @@ function endTopicDrag(){
 
 function toggleTopic(sid,index){
   const s=subjects.find(x=>x.id===sid); if(!s)return;
-  s.topics[index].done=!s.topics[index].done;saveSubjects();
+  const wasDone=!!s.topics[index].done;
+  s.topics[index].done=!wasDone;saveSubjects();
+  if(!wasDone){const claim='topic:'+sid+'|'+s.topics[index].name;const awarded=gameAward(20,'tópico concluído',claim);if(awarded){const g=gameEnsure();g.topics++;saveGame(g);const day=localDateKey();const claims=getGameClaims();claims['topic:'+day]=1;saveGameClaims(claims);}}
+
 }
 function addTopic(sid){
   const el=document.getElementById('newTopic-'+sid); if(!el)return;
@@ -1126,6 +1209,8 @@ function recordStudySession(){
   const log=getStudyLog();
   log.push({date:new Date().toISOString().slice(0,10),seconds:currentSessionSeconds,subjectId,topicId,startedAt:sessionStartedAt||new Date().toISOString()});
   saveStudyLog(log);
+  const xp=Math.floor(currentSessionSeconds/300)*2;
+  if(xp>0){const g=gameEnsure();g.sessions++;g.studySeconds+=currentSessionSeconds;saveGame(g);gameAward(xp,'tempo de estudo');}else{const g=gameEnsure();g.sessions++;g.studySeconds+=currentSessionSeconds;saveGame(g);}
   currentSessionSeconds=0;sessionStartedAt=null;
   renderStats();
 }
@@ -1378,6 +1463,9 @@ function completeTrailStep(){
   const current=getTrailIndex();
   if(current>=steps.length-1){toast('Você chegou ao fim da trilha. Parabéns!');return}
   localStorage.setItem(SCHEDULE_UNDO_KEY,String(current));
+  gameAward(25,'etapa da trilha concluída','trail:'+current);
+  const claims=getGameClaims();claims['trail:'+localDateKey()]=1;saveGameClaims(claims);
+  const g=gameEnsure();g.trail++;saveGame(g);
   setTrailIndex(current+1);
   toast('Etapa concluída. Próxima etapa liberada.');
 }
@@ -1924,6 +2012,8 @@ async function openChatGPT(){
     // Mesmo que a cópia automática falhe, o ChatGPT será aberto.
   }
 
+
+  gameAward(15,'sessão Feynman','feynman:'+localDateKey()+'|'+(getFeynmanLauncherContext().topic||'sem-tema')+'|'+Date.now());
 
   window.open(
     'https://chatgpt.com/',
