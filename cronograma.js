@@ -2697,11 +2697,11 @@ window.STUDY_SCHEDULE = {
       content: "",
       questions: ""
     },
-    {
+     {
       day: "Domingo",
       subjects: [],
       content: "",
       questions: ""
     }
   ]
-}
+};
