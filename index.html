@@ -1,876 +1,353 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Study — Plataforma de Estudos</title>
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg: #f6f5f2;
-            --sidebar: #ffffff;
-            --card: #ffffff;
-            --text: #202124;
-            --muted: #7a7d82;
-            --border: #e8e7e3;
-            --accent: #2f5d50;
-            --accent-light: #e7f0ec;
-            --dark: #1f2a27;
-            --danger: #b85c5c;
-        }
-
-        body {
-            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-        }
-
-        .app {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* SIDEBAR */
-
-        .sidebar {
-            width: 245px;
-            background: var(--sidebar);
-            border-right: 1px solid var(--border);
-            padding: 26px 18px;
-            position: fixed;
-            left: 0;
-            top: 0;
-            bottom: 0;
-        }
-
-        .brand {
-            padding: 0 10px 30px;
-        }
-
-        .brand-name {
-            font-size: 21px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        .brand-subtitle {
-            margin-top: 5px;
-            font-size: 12px;
-            color: var(--muted);
-        }
-
-        .nav-section {
-            margin-top: 25px;
-        }
-
-        .nav-title {
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            color: #9a9d9f;
-            padding: 0 11px 8px;
-            font-weight: 700;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 11px;
-            padding: 11px;
-            margin-bottom: 3px;
-            border-radius: 10px;
-            font-size: 14px;
-            color: #55595b;
-            cursor: pointer;
-            transition: .2s;
-        }
-
-        .nav-item:hover {
-            background: #f5f5f3;
-        }
-
-        .nav-item.active {
-            background: var(--accent-light);
-            color: var(--accent);
-            font-weight: 600;
-        }
-
-        .nav-icon {
-            width: 20px;
-            text-align: center;
-        }
-
-        /* MAIN */
-
-        .main {
-            margin-left: 245px;
-            width: calc(100% - 245px);
-            padding: 34px 42px;
-        }
-
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 32px;
-        }
-
-        .greeting h1 {
-            font-size: 29px;
-            letter-spacing: -0.8px;
-        }
-
-        .greeting p {
-            margin-top: 7px;
-            color: var(--muted);
-            font-size: 14px;
-        }
-
-        .today {
-            background: var(--card);
-            border: 1px solid var(--border);
-            padding: 11px 15px;
-            border-radius: 11px;
-            font-size: 13px;
-            color: var(--muted);
-        }
-
-        /* CARDS */
-
-        .metrics {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .metric {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            padding: 20px;
-        }
-
-        .metric-label {
-            font-size: 12px;
-            color: var(--muted);
-            margin-bottom: 10px;
-        }
-
-        .metric-value {
-            font-size: 27px;
-            font-weight: 700;
-        }
-
-        .metric-detail {
-            margin-top: 7px;
-            font-size: 11px;
-            color: var(--muted);
-        }
-
-        .content-grid {
-            display: grid;
-            grid-template-columns: 1.4fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            padding: 23px;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .card-title {
-            font-size: 16px;
-            font-weight: 700;
-        }
-
-        .card-link {
-            font-size: 12px;
-            color: var(--accent);
-            cursor: pointer;
-        }
-
-        /* STUDY SESSION */
-
-        .session {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 14px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .session:last-child {
-            border-bottom: none;
-        }
-
-        .session-time {
-            width: 75px;
-            font-size: 12px;
-            color: var(--muted);
-        }
-
-        .session-dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background: var(--accent);
-        }
-
-        .session-info {
-            flex: 1;
-        }
-
-        .session-name {
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .session-type {
-            font-size: 11px;
-            color: var(--muted);
-            margin-top: 4px;
-        }
-
-        .session-status {
-            font-size: 11px;
-            background: #f1f1ee;
-            padding: 6px 9px;
-            border-radius: 8px;
-            color: var(--muted);
-        }
-
-        .session-status.done {
-            background: var(--accent-light);
-            color: var(--accent);
-        }
-
-        /* TIMER */
-
-        .timer {
-            text-align: center;
-        }
-
-        .timer-subject {
-            font-size: 13px;
-            color: var(--muted);
-            margin-bottom: 14px;
-        }
-
-        .timer-display {
-            font-size: 53px;
-            letter-spacing: -2px;
-            font-weight: 700;
-            margin: 8px 0 22px;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .timer-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        button {
-            border: none;
-            cursor: pointer;
-            font-family: inherit;
-        }
-
-        .btn {
-            padding: 11px 18px;
-            border-radius: 9px;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .btn-primary {
-            background: var(--accent);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: #f0f0ed;
-            color: #4f5354;
-        }
-
-        /* SUBJECTS */
-
-        .subjects-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-        }
-
-        .subject {
-            border: 1px solid var(--border);
-            border-radius: 13px;
-            padding: 17px;
-        }
-
-        .subject-top {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-            align-items: center;
-            margin-bottom: 14px;
-        }
-
-        .subject-name {
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .subject-percent {
-            font-size: 12px;
-            color: var(--accent);
-            font-weight: 700;
-        }
-
-        .progress {
-            height: 7px;
-            background: #ecece8;
-            border-radius: 100px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: var(--accent);
-            border-radius: 100px;
-        }
-
-        .subject-info {
-            margin-top: 9px;
-            font-size: 11px;
-            color: var(--muted);
-        }
-
-        /* REVIEWS */
-
-        .review-item {
-            padding: 13px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .review-item:last-child {
-            border-bottom: none;
-        }
-
-        .review-title {
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .review-detail {
-            font-size: 11px;
-            color: var(--muted);
-            margin-top: 4px;
-        }
-
-        .review-date {
-            float: right;
-            font-size: 10px;
-            color: var(--accent);
-            background: var(--accent-light);
-            padding: 4px 7px;
-            border-radius: 6px;
-        }
-
-        /* RESPONSIVE */
-
-        @media (max-width: 1050px) {
-            .metrics {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .content-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .subjects-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 720px) {
-            .sidebar {
-                display: none;
-            }
-
-            .main {
-                margin-left: 0;
-                width: 100%;
-                padding: 22px 17px;
-            }
-
-            .topbar {
-                align-items: flex-start;
-                gap: 15px;
-                flex-direction: column;
-            }
-
-            .metrics {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .subjects-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .timer-display {
-                font-size: 43px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study. — Plataforma de Estudos</title>
+<style>
+:root{
+  --bg:#f6f5f1;--surface:#fff;--surface2:#f9f9f6;--text:#202825;--muted:#78807c;
+  --line:#e7e7e1;--accent:#2f6254;--accent-light:#e8f1ed;--danger:#a95757;
+  --shadow:0 8px 30px rgba(32,40,37,.05)
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+button:disabled{cursor:not-allowed;opacity:.55}
+.app{min-height:100vh}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;background:var(--surface);border-right:1px solid var(--line);padding:24px 16px;z-index:10}
+.brand{padding:0 10px 28px}.brand-title{font-size:22px;font-weight:750;letter-spacing:-.7px}.brand-sub{font-size:11px;color:var(--muted);margin-top:5px}
+.nav-group{margin-top:22px}.nav-title{font-size:10px;letter-spacing:1.2px;color:#9ca39f;text-transform:uppercase;font-weight:750;padding:0 10px 8px}
+.nav-item{display:flex;align-items:center;gap:11px;padding:11px 10px;margin:3px 0;border-radius:10px;color:#555d59;font-size:14px}
+.nav-item:hover{background:var(--surface2)}.nav-item.active{background:var(--accent-light);color:var(--accent);font-weight:650}.nav-icon{width:18px;text-align:center;font-size:13px}
+.main{margin-left:240px;padding:32px 40px;max-width:1500px}
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px}
+.page-title{font-size:29px;letter-spacing:-.8px;margin:0}.page-sub{margin:6px 0 0;font-size:14px;color:var(--muted)}
+.date-chip{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 14px;color:var(--muted);font-size:12px}
+.view{display:none}.view.active{display:block}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow)}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}.metric{padding:19px 20px}
+.metric-label{font-size:12px;color:var(--muted)}.metric-value{font-size:27px;font-weight:760;margin-top:9px}.metric-detail{font-size:11px;color:var(--muted);margin-top:6px}
+.grid2{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;margin-bottom:18px}
+.section-card{padding:21px}.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.section-title{font-size:16px;font-weight:720}
+.link-btn{border:0;background:none;color:var(--accent);font-size:12px;padding:0}.btn{border:0;border-radius:9px;padding:10px 14px;font-size:13px;font-weight:650}.btn-primary{background:var(--accent);color:#fff}.btn-secondary{background:#efefeb;color:#555d59}.btn-danger{background:#f7e8e8;color:var(--danger)}
+.session{display:grid;grid-template-columns:70px 10px 1fr auto;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}.session:last-child{border-bottom:0}
+.time{font-size:11px;line-height:1.35;color:var(--muted)}.dot{width:9px;height:9px;border-radius:50%;background:var(--accent)}
+.sname{font-size:13px;font-weight:650}.stype{font-size:11px;color:var(--muted);margin-top:4px}.status{font-size:10px;padding:6px 8px;border-radius:7px;background:#f1f1ed;color:#6b726e}.status.done{background:var(--accent-light);color:var(--accent)}
+.timer{padding:22px;text-align:center}.timer-label{font-size:12px;color:var(--muted);margin-bottom:8px}.timer-display{font-size:55px;font-weight:760;letter-spacing:-2px;font-variant-numeric:tabular-nums;margin:18px 0 20px}.timer-actions{display:flex;justify-content:center;gap:9px}.select{border:1px solid var(--line);background:#fff;border-radius:9px;padding:9px 10px;font-size:12px;color:var(--text)}
+.subjects-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.subject-card{padding:17px;border:1px solid var(--line);border-radius:13px}
+.subject-top{display:flex;justify-content:space-between;gap:12px}.subject-name{font-size:14px;font-weight:700}.percent{font-size:12px;color:var(--accent);font-weight:720}
+.bar{height:7px;background:#ecece7;border-radius:20px;overflow:hidden;margin:13px 0 8px}.fill{height:100%;background:var(--accent);border-radius:20px}.subject-meta{font-size:11px;color:var(--muted)}
+.review{padding:13px 0;border-bottom:1px solid var(--line)}.review:last-child{border-bottom:0}.review-title{font-size:13px;font-weight:650}.review-sub{font-size:11px;color:var(--muted);margin-top:4px}.badge{float:right;font-size:10px;color:var(--accent);background:var(--accent-light);padding:4px 7px;border-radius:6px}
+.page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin-bottom:18px}.desc{margin-top:5px;font-size:13px;color:var(--muted)}.toolbar{display:flex;gap:9px;align-items:center}.search{width:240px;border:1px solid var(--line);border-radius:9px;background:#fff;padding:10px 12px;outline:0}.search:focus{border-color:#afc6bd}
+.subject-list{display:grid;gap:14px}.subject-detail{padding:19px}.subject-detail-head{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}.subject-detail-title{font-size:17px;font-weight:750}.subject-detail-sub{margin-top:5px;font-size:11px;color:var(--muted)}.subject-actions{display:flex;gap:7px}
+.small-btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 10px;font-size:11px}.small-btn:hover{background:var(--surface2)}
+.topics{border-top:1px solid var(--line);margin-top:16px}.topic{display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.topic:last-child{border-bottom:0}.topic input{accent-color:var(--accent);width:15px;height:15px}.topic-name{font-size:13px}.topic.done .topic-name{text-decoration:line-through;color:#979e9b}
+.topic-actions{display:flex;gap:5px}.topic-add{display:flex;gap:8px;margin-top:12px}.topic-add input{flex:1;border:1px solid var(--line);border-radius:8px;padding:9px 10px;outline:0}.topic-add input:focus{border-color:#afc6bd}
+.empty{text-align:center;padding:30px;color:var(--muted);font-size:13px}
+.modal-backdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(25,31,29,.3);z-index:30}.modal-backdrop.open{display:flex}
+.modal{width:min(520px,100%);background:#fff;border-radius:16px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.18)}.modal h3{margin:0;font-size:18px}.modal p{font-size:12px;color:var(--muted);margin:6px 0 18px}
+.field{margin-bottom:13px}.field label{display:block;font-size:11px;color:var(--muted);margin-bottom:6px}.field input,.field textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px 11px;outline:0}.field textarea{min-height:110px;resize:vertical}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.toast{position:fixed;right:22px;bottom:22px;background:#26322e;color:#fff;padding:11px 14px;border-radius:10px;font-size:12px;opacity:0;transform:translateY(8px);transition:.2s;z-index:40}.toast.show{opacity:1;transform:none}
+@media(max-width:1050px){.metrics{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.subjects-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:720px){.sidebar{position:static;width:auto;border-right:0;border-bottom:1px solid var(--line);padding:16px}.nav-item{display:none}.nav-item.active{display:flex}.nav-group{margin-top:10px}.main{margin-left:0;padding:20px 15px}.topbar{flex-direction:column;gap:12px}.date-chip{align-self:flex-start}.metrics{grid-template-columns:1fr 1fr}.subjects-grid{grid-template-columns:1fr}.page-head{align-items:stretch;flex-direction:column}.toolbar{align-items:stretch;flex-direction:column}.search{width:100%}}
+</style>
 </head>
-
 <body>
-
 <div class="app">
-
-    <aside class="sidebar">
-
-        <div class="brand">
-            <div class="brand-name">Study.</div>
-            <div class="brand-subtitle">Minha plataforma de estudos</div>
-        </div>
-
-        <div class="nav-section">
-
-            <div class="nav-title">Principal</div>
-
-            <div class="nav-item active">
-                <span class="nav-icon">⌂</span>
-                Dashboard
-            </div>
-
-            <div class="nav-item">
-                <span class="nav-icon">◷</span>
-                Meu plano
-            </div>
-
-            <div class="nav-item">
-                <span class="nav-icon">▣</span>
-                Matérias
-            </div>
-
-        </div>
-
-        <div class="nav-section">
-
-            <div class="nav-title">Estudo</div>
-
-            <div class="nav-item">
-                <span class="nav-icon">◉</span>
-                Cronômetro
-            </div>
-
-            <div class="nav-item">
-                <span class="nav-icon">↻</span>
-                Revisões
-            </div>
-
-            <div class="nav-item">
-                <span class="nav-icon">✓</span>
-                Questões
-            </div>
-
-            <div class="nav-item">
-                <span class="nav-icon">✎</span>
-                Anotações
-            </div>
-
-        </div>
-
-    </aside>
-
-    <main class="main">
-
-        <div class="topbar">
-
-            <div class="greeting">
-                <h1>Bom dia, Thiago.</h1>
-                <p>Vamos avançar um pouco mais hoje?</p>
-            </div>
-
-            <div class="today" id="date"></div>
-
-        </div>
-
-        <!-- MÉTRICAS -->
-
-        <section class="metrics">
-
-            <div class="metric">
-                <div class="metric-label">Tempo estudado hoje</div>
-                <div class="metric-value" id="todayStudy">0h 00</div>
-                <div class="metric-detail">Meta: 3h00</div>
-            </div>
-
-            <div class="metric">
-                <div class="metric-label">Progresso geral</div>
-                <div class="metric-value">68%</div>
-                <div class="metric-detail">+4% nesta semana</div>
-            </div>
-
-            <div class="metric">
-                <div class="metric-label">Dias consecutivos</div>
-                <div class="metric-value">8</div>
-                <div class="metric-detail">Melhor sequência: 14</div>
-            </div>
-
-            <div class="metric">
-                <div class="metric-label">Revisões pendentes</div>
-                <div class="metric-value">6</div>
-                <div class="metric-detail">3 são prioridade hoje</div>
-            </div>
-
-        </section>
-
-        <!-- PRINCIPAL -->
-
-        <section class="content-grid">
-
-            <div class="card">
-
-                <div class="card-header">
-                    <div class="card-title">Plano de hoje</div>
-                    <div class="card-link">Ver plano completo</div>
-                </div>
-
-                <div class="session">
-                    <div class="session-time">08:00<br>09:30</div>
-                    <div class="session-dot"></div>
-
-                    <div class="session-info">
-                        <div class="session-name">Direito Tributário</div>
-                        <div class="session-type">Estudo teórico · 1h30</div>
-                    </div>
-
-                    <div class="session-status done">Concluído</div>
-                </div>
-
-                <div class="session">
-                    <div class="session-time">10:00<br>11:00</div>
-                    <div class="session-dot"></div>
-
-                    <div class="session-info">
-                        <div class="session-name">Direito Administrativo</div>
-                        <div class="session-type">Lei seca + questões · 1h</div>
-                    </div>
-
-                    <div class="session-status">Próximo</div>
-                </div>
-
-                <div class="session">
-                    <div class="session-time">14:00<br>15:00</div>
-                    <div class="session-dot"></div>
-
-                    <div class="session-info">
-                        <div class="session-name">Revisão — Tributário</div>
-                        <div class="session-type">Revisão espaçada · 1h</div>
-                    </div>
-
-                    <div class="session-status">Pendente</div>
-                </div>
-
-            </div>
-
-            <!-- TIMER -->
-
-            <div class="card timer">
-
-                <div class="card-header">
-                    <div class="card-title">Sessão de estudo</div>
-                </div>
-
-                <div class="timer-subject">Direito Administrativo</div>
-
-                <div class="timer-display" id="timer">00:00:00</div>
-
-                <div class="timer-buttons">
-
-                    <button
-                        class="btn btn-primary"
-                        id="startBtn"
-                        onclick="toggleTimer()">
-                        Iniciar
-                    </button>
-
-                    <button
-                        class="btn btn-secondary"
-                        onclick="resetTimer()">
-                        Reiniciar
-                    </button>
-
-                </div>
-
-            </div>
-
-        </section>
-
-        <!-- MATÉRIAS -->
-
-        <section class="card" style="margin-bottom: 20px;">
-
-            <div class="card-header">
-                <div class="card-title">Progresso das matérias</div>
-                <div class="card-link">Gerenciar matérias</div>
-            </div>
-
-            <div class="subjects-grid">
-
-                <div class="subject">
-
-                    <div class="subject-top">
-                        <div class="subject-name">Direito Tributário</div>
-                        <div class="subject-percent">78%</div>
-                    </div>
-
-                    <div class="progress">
-                        <div class="progress-bar" style="width: 78%;"></div>
-                    </div>
-
-                    <div class="subject-info">
-                        24 de 31 tópicos concluídos
-                    </div>
-
-                </div>
-
-                <div class="subject">
-
-                    <div class="subject-top">
-                        <div class="subject-name">Direito Administrativo</div>
-                        <div class="subject-percent">64%</div>
-                    </div>
-
-                    <div class="progress">
-                        <div class="progress-bar" style="width: 64%;"></div>
-                    </div>
-
-                    <div class="subject-info">
-                        18 de 28 tópicos concluídos
-                    </div>
-
-                </div>
-
-                <div class="subject">
-
-                    <div class="subject-top">
-                        <div class="subject-name">Direito Constitucional</div>
-                        <div class="subject-percent">41%</div>
-                    </div>
-
-                    <div class="progress">
-                        <div class="progress-bar" style="width: 41%;"></div>
-                    </div>
-
-                    <div class="subject-info">
-                        15 de 36 tópicos concluídos
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-        <!-- REVISÕES -->
-
-        <section class="card">
-
-            <div class="card-header">
-
-                <div class="card-title">
-                    Revisões de hoje
-                </div>
-
-                <div class="card-link">
-                    Ver todas
-                </div>
-
-            </div>
-
-            <div class="review-item">
-
-                <span class="review-date">
-                    Hoje
-                </span>
-
-                <div class="review-title">
-                    Crédito Tributário
-                </div>
-
-                <div class="review-detail">
-                    Direito Tributário · revisão de 7 dias
-                </div>
-
-            </div>
-
-            <div class="review-item">
-
-                <span class="review-date">
-                    Hoje
-                </span>
-
-                <div class="review-title">
-                    Poder de Polícia
-                </div>
-
-                <div class="review-detail">
-                    Direito Administrativo · revisão de 24h
-                </div>
-
-            </div>
-
-            <div class="review-item">
-
-                <span class="review-date">
-                    Hoje
-                </span>
-
-                <div class="review-title">
-                    Competência Tributária
-                </div>
-
-                <div class="review-detail">
-                    Direito Tributário · revisão de 30 dias
-                </div>
-
-            </div>
-
-        </section>
-
-    </main>
-
+<aside class="sidebar">
+  <div class="brand"><div class="brand-title">Study.</div><div class="brand-sub">Minha plataforma de estudos</div></div>
+  <div class="nav-group">
+    <div class="nav-title">Principal</div>
+    <div class="nav-item active" data-view="dashboard"><span class="nav-icon">⌂</span>Dashboard</div>
+    <div class="nav-item" data-view="plan"><span class="nav-icon">◷</span>Meu plano</div>
+    <div class="nav-item" data-view="subjects"><span class="nav-icon">▣</span>Matérias</div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-title">Estudo</div>
+    <div class="nav-item" data-view="timer"><span class="nav-icon">◉</span>Cronômetro</div>
+    <div class="nav-item" data-view="reviews"><span class="nav-icon">↻</span>Revisões</div>
+    <div class="nav-item" data-view="questions"><span class="nav-icon">✓</span>Questões</div>
+    <div class="nav-item" data-view="notes"><span class="nav-icon">✎</span>Anotações</div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div>
+      <h1 class="page-title" id="pageTitle">Bom dia, Thiago.</h1>
+      <p class="page-sub" id="pageSub">Vamos avançar um pouco mais hoje?</p>
+    </div>
+    <div class="date-chip" id="dateChip"></div>
+  </div>
+
+  <section class="view active" id="view-dashboard">
+    <div class="metrics">
+      <div class="card metric"><div class="metric-label">Tempo estudado hoje</div><div class="metric-value" id="dashStudy">0h 00</div><div class="metric-detail">Meta diária: 3h00</div></div>
+      <div class="card metric"><div class="metric-label">Progresso geral</div><div class="metric-value" id="dashProgress">0%</div><div class="metric-detail">Com base nos seus tópicos</div></div>
+      <div class="card metric"><div class="metric-label">Dias consecutivos</div><div class="metric-value" id="dashStreak">0</div><div class="metric-detail">Sequência atual</div></div>
+      <div class="card metric"><div class="metric-label">Tópicos a revisar</div><div class="metric-value" id="dashReviews">0</div><div class="metric-detail">Espaço reservado para revisão</div></div>
+    </div>
+
+    <div class="grid2">
+      <div class="card section-card">
+        <div class="head"><div class="section-title">Plano de hoje</div><button class="link-btn" onclick="showView('plan')">Ver plano completo</button></div>
+        <div class="session"><div class="time">08:00<br>09:30</div><div class="dot"></div><div><div class="sname">Direito Tributário</div><div class="stype">Estudo teórico · 1h30</div></div><div class="status done">Concluído</div></div>
+        <div class="session"><div class="time">10:00<br>11:00</div><div class="dot"></div><div><div class="sname">Direito Administrativo</div><div class="stype">Lei seca + questões · 1h</div></div><div class="status">Próximo</div></div>
+        <div class="session"><div class="time">14:00<br>15:00</div><div class="dot"></div><div><div class="sname">Revisão — Tributário</div><div class="stype">Revisão espaçada · 1h</div></div><div class="status">Pendente</div></div>
+      </div>
+      <div class="card timer">
+        <div class="head"><div class="section-title">Sessão de estudo</div></div>
+        <div class="timer-label">Matéria atual</div>
+        <select class="select" id="timerSubject"></select>
+        <div class="timer-display" id="timerDisplay">00:00:00</div>
+        <div class="timer-actions"><button class="btn btn-primary" id="timerToggle" onclick="toggleTimer()">Iniciar</button><button class="btn btn-secondary" onclick="resetTimer()">Reiniciar</button></div>
+      </div>
+    </div>
+
+    <div class="card section-card" style="margin-bottom:18px">
+      <div class="head"><div class="section-title">Progresso das matérias</div><button class="link-btn" onclick="showView('subjects')">Gerenciar matérias</button></div>
+      <div class="subjects-grid" id="dashboardSubjects"></div>
+    </div>
+    <div class="card section-card">
+      <div class="head"><div class="section-title">Revisões de hoje</div><button class="link-btn" onclick="showView('reviews')">Ver todas</button></div>
+      <div id="dashboardReviews"></div>
+    </div>
+  </section>
+
+  <section class="view" id="view-subjects">
+    <div class="page-head">
+      <div><div class="section-title" style="font-size:23px">Matérias</div><div class="desc">Cadastre matérias e acompanhe o avanço por tópico.</div></div>
+      <div class="toolbar"><input class="search" id="subjectSearch" placeholder="Buscar matéria..." oninput="renderSubjectsPage()"><button class="btn btn-primary" onclick="openSubjectModal()">+ Nova matéria</button></div>
+    </div>
+    <div class="subject-list" id="subjectsList"></div>
+  </section>
+
+  <section class="view" id="view-plan"><div class="card section-card"><div class="section-title">Meu plano</div><div class="empty">O planejamento semanal e diário será o próximo módulo, usando as matérias cadastradas.</div></div></section>
+  <section class="view" id="view-timer"><div class="card timer"><div class="section-title">Cronômetro</div><div class="timer-label" style="margin-top:9px">Matéria atual</div><select class="select" id="timerSubject2"></select><div class="timer-display" id="timerDisplay2">00:00:00</div><div class="timer-actions"><button class="btn btn-primary" id="timerToggle2" onclick="toggleTimer()">Iniciar</button><button class="btn btn-secondary" onclick="resetTimer()">Reiniciar</button></div></div></section>
+  <section class="view" id="view-reviews"><div class="card section-card"><div class="section-title">Revisões</div><div class="empty">A estrutura está preparada. Vamos transformar esta tela em revisão espaçada na próxima etapa.</div></div></section>
+  <section class="view" id="view-questions"><div class="card section-card"><div class="section-title">Questões</div><div class="empty">Na próxima etapa: registro de questões, acertos, erros e desempenho por matéria.</div></div></section>
+  <section class="view" id="view-notes"><div class="card section-card"><div class="section-title">Anotações</div><div class="empty">Na próxima etapa: notas vinculadas a matérias e tópicos.</div></div></section>
+</main>
 </div>
 
+<div class="modal-backdrop" id="subjectModal">
+  <div class="modal">
+    <h3 id="modalTitle">Nova matéria</h3>
+    <p>Cadastre uma matéria e, opcionalmente, seus tópicos iniciais.</p>
+    <div class="field"><label>Nome da matéria</label><input id="subjectNameInput" placeholder="Ex.: Direito Tributário"></div>
+    <div class="field"><label>Tópicos (um por linha)</label><textarea id="subjectTopicsInput" placeholder="Sistema Tributário Nacional&#10;Competência Tributária&#10;Crédito Tributário"></textarea></div>
+    <div class="modal-actions"><button class="btn btn-secondary" onclick="closeSubjectModal()">Cancelar</button><button class="btn btn-primary" onclick="saveSubject()">Salvar matéria</button></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
 <script>
+const STORAGE_KEY='study_subjects_v2';
+const TIMER_KEY='study_timer_v2';
 
-    /* DATA */
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
 
-    const dateElement = document.getElementById("date");
+const defaults=[
+  {id:uid(),name:'Direito Tributário',topics:[
+    {name:'Sistema Tributário Nacional',done:true},
+    {name:'Competência Tributária',done:true},
+    {name:'Limitações ao Poder de Tributar',done:true},
+    {name:'Impostos',done:false},
+    {name:'Crédito Tributário',done:false},
+    {name:'Obrigação Tributária',done:false}
+  ]},
+  {id:uid(),name:'Direito Administrativo',topics:[
+    {name:'Princípios da Administração Pública',done:true},
+    {name:'Atos Administrativos',done:true},
+    {name:'Poder de Polícia',done:false},
+    {name:'Agentes Públicos',done:false},
+    {name:'Licitações e Contratos',done:false}
+  ]},
+  {id:uid(),name:'Direito Constitucional',topics:[
+    {name:'Direitos e Garantias Fundamentais',done:true},
+    {name:'Organização do Estado',done:false},
+    {name:'Poder Legislativo',done:false},
+    {name:'Poder Executivo',done:false},
+    {name:'Controle de Constitucionalidade',done:false}
+  ]}
+];
 
-    const today = new Date();
+function loadSubjects(){
+  const raw=localStorage.getItem(STORAGE_KEY);
+  if(!raw){localStorage.setItem(STORAGE_KEY,JSON.stringify(defaults));return defaults}
+  try{return JSON.parse(raw)}catch(e){localStorage.setItem(STORAGE_KEY,JSON.stringify(defaults));return defaults}
+}
+let subjects=loadSubjects();
 
-    dateElement.textContent =
-        today.toLocaleDateString("pt-BR", {
-            weekday: "long",
-            day: "2-digit",
-            month: "long"
-        });
+function saveSubjects(){localStorage.setItem(STORAGE_KEY,JSON.stringify(subjects));renderAll()}
 
-    /* TIMER */
+function subjectStats(s){
+  const total=s.topics.length, done=s.topics.filter(t=>t.done).length;
+  return {total,done,pct:total?Math.round(done/total*100):0}
+}
+function totalStats(){
+  const topics=subjects.flatMap(s=>s.topics), total=topics.length, done=topics.filter(t=>t.done).length;
+  return {total,done,pct:total?Math.round(done/total*100):0}
+}
 
-    let seconds = 0;
-    let timerRunning = false;
-    let timerInterval = null;
+function renderDashboard(){
+  const st=totalStats();
+  document.getElementById('dashProgress').textContent=st.pct+'%';
+  document.getElementById('dashReviews').textContent='0';
+  const ds=document.getElementById('dashboardSubjects');
+  ds.innerHTML=subjects.length?subjects.map(s=>{
+    const x=subjectStats(s);
+    return `<div class="subject-card">
+      <div class="subject-top"><div class="subject-name">${escapeHtml(s.name)}</div><div class="percent">${x.pct}%</div></div>
+      <div class="bar"><div class="fill" style="width:${x.pct}%"></div></div>
+      <div class="subject-meta">${x.done} de ${x.total} tópicos concluídos</div>
+    </div>`;
+  }).join(''):`<div class="empty">Nenhuma matéria cadastrada.</div>`;
 
-    function formatTime(totalSeconds) {
+  const rev=document.getElementById('dashboardReviews');
+  rev.innerHTML=`<div class="review"><span class="badge">Em breve</span><div class="review-title">Revisão espaçada</div><div class="review-sub">Na próxima etapa, o sistema poderá gerar revisões automaticamente.</div></div>`;
+}
 
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const secs = totalSeconds % 60;
+function renderSubjectsPage(){
+  const q=(document.getElementById('subjectSearch')?.value||'').toLowerCase().trim();
+  const list=subjects.filter(s=>s.name.toLowerCase().includes(q));
+  const el=document.getElementById('subjectsList');
+  if(!list.length){el.innerHTML=`<div class="card empty">Nenhuma matéria encontrada.</div>`;return}
+  el.innerHTML=list.map(s=>{
+    const st=subjectStats(s);
+    return `<div class="card subject-detail">
+      <div class="subject-detail-head">
+        <div><div class="subject-detail-title">${escapeHtml(s.name)}</div><div class="subject-detail-sub">${st.done} de ${st.total} tópicos concluídos · ${st.pct}%</div></div>
+        <div class="subject-actions"><button class="small-btn" onclick="renameSubject('${s.id}')">Renomear</button><button class="small-btn" onclick="deleteSubject('${s.id}')">Excluir</button></div>
+      </div>
+      <div class="bar"><div class="fill" style="width:${st.pct}%"></div></div>
+      <div class="topics">
+        ${s.topics.length?s.topics.map((t,i)=>`<div class="topic ${t.done?'done':''}">
+          <input type="checkbox" ${t.done?'checked':''} onchange="toggleTopic('${s.id}',${i})">
+          <div class="topic-name">${escapeHtml(t.name)}</div>
+          <div class="topic-actions"><button class="small-btn" onclick="renameTopic('${s.id}',${i})">Editar</button><button class="small-btn" onclick="deleteTopic('${s.id}',${i})">×</button></div>
+        </div>`).join(''):`<div class="empty">Ainda não há tópicos.</div>`}
+      </div>
+      <div class="topic-add"><input id="newTopic-${s.id}" placeholder="Adicionar tópico..." onkeydown="if(event.key==='Enter')addTopic('${s.id}')"><button class="small-btn" onclick="addTopic('${s.id}')">Adicionar</button></div>
+    </div>`;
+  }).join('');
+}
 
-        return (
-            String(hours).padStart(2, "0") + ":" +
-            String(minutes).padStart(2, "0") + ":" +
-            String(secs).padStart(2, "0")
-        );
-    }
+function renderTimerSubjects(){
+  ['timerSubject','timerSubject2'].forEach(id=>{
+    const el=document.getElementById(id); if(!el)return;
+    const previous=el.value;
+    el.innerHTML=subjects.length?subjects.map(s=>`<option value="${s.id}">${escapeHtml(s.name)}</option>`).join(''):`<option value="">Cadastre uma matéria</option>`;
+    if([...el.options].some(o=>o.value===previous))el.value=previous;
+  });
+}
 
-    function updateTimer() {
+function renderAll(){renderDashboard();renderSubjectsPage();renderTimerSubjects();renderTimer()}
+function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
 
-        document.getElementById("timer").textContent =
-            formatTime(seconds);
+function showView(name){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.view===name));
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));
+  const titles={
+    dashboard:['Bom dia, Thiago.','Vamos avançar um pouco mais hoje?'],
+    subjects:['Matérias','Cadastre e organize o conteúdo que você precisa estudar.'],
+    plan:['Meu plano','Organize suas sessões e metas.'],
+    timer:['Cronômetro','Registre o tempo efetivamente estudado.'],
+    reviews:['Revisões','Acompanhe suas revisões pendentes.'],
+    questions:['Questões','Controle seu desempenho por matéria e assunto.'],
+    notes:['Anotações','Centralize suas notas de estudo.']
+  };
+  if(titles[name]){document.getElementById('pageTitle').textContent=titles[name][0];document.getElementById('pageSub').textContent=titles[name][1]}
+}
+document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>showView(n.dataset.view)));
 
-        const hours = Math.floor(seconds / 3600);
-        const minutes = Math.floor((seconds % 3600) / 60);
+let modalEditId=null;
+function openSubjectModal(id=null){
+  modalEditId=id;
+  document.getElementById('modalTitle').textContent=id?'Editar matéria':'Nova matéria';
+  if(id){
+    const s=subjects.find(x=>x.id===id);
+    document.getElementById('subjectNameInput').value=s?.name||'';
+    document.getElementById('subjectTopicsInput').value='';
+  }else{
+    document.getElementById('subjectNameInput').value='';
+    document.getElementById('subjectTopicsInput').value='';
+  }
+  document.getElementById('subjectModal').classList.add('open');
+  setTimeout(()=>document.getElementById('subjectNameInput').focus(),50);
+}
+function closeSubjectModal(){document.getElementById('subjectModal').classList.remove('open');modalEditId=null}
+function saveSubject(){
+  const name=document.getElementById('subjectNameInput').value.trim();
+  if(!name){alert('Informe o nome da matéria.');return}
+  const topicLines=document.getElementById('subjectTopicsInput').value.split('\n').map(x=>x.trim()).filter(Boolean);
+  if(modalEditId){
+    const s=subjects.find(x=>x.id===modalEditId);
+    s.name=name;
+  }else{
+    subjects.push({id:uid(),name,topics:topicLines.map(t=>({name:t,done:false}))});
+  }
+  saveSubjects();closeSubjectModal();toast(modalEditId?'Matéria atualizada.':'Matéria criada.');
+}
+function renameSubject(id){
+  openSubjectModal(id);
+  document.getElementById('subjectTopicsInput').value='';
+}
+function deleteSubject(id){
+  const s=subjects.find(x=>x.id===id); if(!s)return;
+  if(!confirm(`Excluir a matéria "${s.name}"?`))return;
+  subjects=subjects.filter(x=>x.id!==id);saveSubjects();toast('Matéria excluída.');
+}
+function toggleTopic(sid,index){
+  const s=subjects.find(x=>x.id===sid); if(!s)return;
+  s.topics[index].done=!s.topics[index].done;saveSubjects();
+}
+function addTopic(sid){
+  const el=document.getElementById('newTopic-'+sid); if(!el)return;
+  const name=el.value.trim(); if(!name)return;
+  const s=subjects.find(x=>x.id===sid);s.topics.push({name,done:false});saveSubjects();toast('Tópico adicionado.');
+}
+function renameTopic(sid,index){
+  const s=subjects.find(x=>x.id===sid);const t=s.topics[index];const nv=prompt('Nome do tópico:',t.name);
+  if(nv===null)return;const name=nv.trim();if(!name)return;t.name=name;saveSubjects();
+}
+function deleteTopic(sid,index){
+  const s=subjects.find(x=>x.id===sid);if(!s)return;
+  s.topics.splice(index,1);saveSubjects();toast('Tópico removido.');
+}
 
-        document.getElementById("todayStudy").textContent =
-            hours + "h " +
-            String(minutes).padStart(2, "0");
-    }
+let timerSeconds=Number(localStorage.getItem(TIMER_KEY)||0);
+let timerRunning=false;
+let timerInterval=null;
+function fmt(sec){const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;return [h,m,s].map(x=>String(x).padStart(2,'0')).join(':')}
+function renderTimer(){
+  const value=fmt(timerSeconds);
+  const ids=['timerDisplay','timerDisplay2'];
+  ids.forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=value});
+  const totalMinutes=Math.floor(timerSeconds/60),h=Math.floor(totalMinutes/60),m=totalMinutes%60;
+  document.getElementById('dashStudy').textContent=`${h}h ${String(m).padStart(2,'0')}`;
+  ['timerToggle','timerToggle2'].forEach(id=>{const b=document.getElementById(id);if(b)b.textContent=timerRunning?'Pausar':'Iniciar'});
+}
+function toggleTimer(){
+  if(timerRunning){timerRunning=false;clearInterval(timerInterval);renderTimer();toast('Sessão pausada.');return}
+  if(!subjects.length){alert('Cadastre uma matéria antes de iniciar.');showView('subjects');return}
+  timerRunning=true;
+  timerInterval=setInterval(()=>{timerSeconds++;localStorage.setItem(TIMER_KEY,timerSeconds);renderTimer()},1000);
+  renderTimer();
+}
+function resetTimer(){
+  if(timerRunning){timerRunning=false;clearInterval(timerInterval)}
+  timerSeconds=0;localStorage.removeItem(TIMER_KEY);renderTimer();toast('Cronômetro reiniciado.');
+}
 
-    function toggleTimer() {
-
-        const button = document.getElementById("startBtn");
-
-        if (!timerRunning) {
-
-            timerRunning = true;
-
-            button.textContent = "Pausar";
-
-            timerInterval = setInterval(() => {
-
-                seconds++;
-
-                updateTimer();
-
-                localStorage.setItem(
-                    "studySeconds",
-                    seconds
-                );
-
-            }, 1000);
-
-        } else {
-
-            timerRunning = false;
-
-            button.textContent = "Continuar";
-
-            clearInterval(timerInterval);
-        }
-    }
-
-    function resetTimer() {
-
-        timerRunning = false;
-
-        clearInterval(timerInterval);
-
-        seconds = 0;
-
-        document.getElementById("startBtn").textContent =
-            "Iniciar";
-
-        updateTimer();
-
-        localStorage.removeItem("studySeconds");
-    }
-
-    /* RECUPERA TEMPO SALVO */
-
-    const savedSeconds =
-        localStorage.getItem("studySeconds");
-
-    if (savedSeconds) {
-        seconds = Number(savedSeconds);
-        updateTimer();
-    }
-
+function toast(msg){
+  const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');
+  clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove('show'),2200);
+}
+document.getElementById('dateChip').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
+renderAll();
 </script>
-
 </body>
 </html>
