@@ -22,7 +22,7 @@ button,input,textarea,select{font:inherit}
 button{cursor:pointer}
 button:disabled{cursor:not-allowed;opacity:.55}
 .app{min-height:100vh}
-.sidebar{transition:width .22s ease,transform .22s ease}
+.sidebar{transition:width .22s ease,transform .22s ease}.mobile-menu-head{display:flex;align-items:flex-start;justify-content:space-between}.mobile-menu-close{display:none;width:38px;height:38px;border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:9px;font-size:22px;line-height:1}
 .sidebar-toggle{width:34px;height:34px;border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;font-size:15px;flex:none;transition:.2s}
 .sidebar-toggle:hover{background:var(--surface2);transform:translateY(-1px)}
 .page-heading{display:flex;align-items:center;gap:10px}
@@ -205,7 +205,7 @@ body.dark .theme-control{display:flex}
 <body>
 <div class="app">
 <aside class="sidebar">
-  <div class="brand"><div class="brand-title">Study.</div><div class="brand-sub">Minha plataforma de estudos</div></div>
+  <div class="mobile-menu-head"><div class="brand"><div class="brand-title">Study.</div><div class="brand-sub">Minha plataforma de estudos</div></div><button type="button" class="mobile-menu-close" id="mobileMenuClose" aria-label="Fechar menu">×</button></div>
   <div class="nav-group">
     <div class="nav-title">Principal</div>
     <div class="nav-item active" data-view="dashboard"><span class="nav-icon">⌂</span>Dashboard</div>
@@ -2134,7 +2134,7 @@ function toggleTheme(){
   applyTheme(theme);
 }
 
-document.getElementById('sidebarToggle')?.addEventListener('click',toggleSidebar);\ndocument.getElementById('sidebarOverlay')?.addEventListener('click',()=>applySidebarState(true));
+document.getElementById('sidebarToggle')?.addEventListener('click',toggleSidebar);\ndocument.getElementById('mobileMenuClose')?.addEventListener('click',()=>applySidebarState(true));\ndocument.getElementById('sidebarOverlay')?.addEventListener('click',()=>applySidebarState(true));
 // Botões principais da Agenda e Leituras
 document.getElementById('newAgendaBtn')?.addEventListener('click',function(e){e.preventDefault();openAgendaModal();});
 document.getElementById('newReadingBtn')?.addEventListener('click',function(e){e.preventDefault();openReadingModal();});
