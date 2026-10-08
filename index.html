@@ -55,7 +55,7 @@ body.dark .theme-control{display:flex}
 .bar{height:7px;background:#ecece7;border-radius:20px;overflow:hidden;margin:13px 0 8px}.fill{height:100%;background:var(--accent);border-radius:20px}.subject-meta{font-size:11px;color:var(--muted)}
 .review{padding:13px 0;border-bottom:1px solid var(--line)}.review:last-child{border-bottom:0}.review-title{font-size:13px;font-weight:650}.review-sub{font-size:11px;color:var(--muted);margin-top:4px}.badge{float:right;font-size:10px;color:var(--accent);background:var(--accent-light);padding:4px 7px;border-radius:6px}
 .page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin-bottom:18px}.desc{margin-top:5px;font-size:13px;color:var(--muted)}.toolbar{display:flex;gap:9px;align-items:center}.search{width:240px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--text);padding:10px 12px;outline:0}.search:focus{border-color:#afc6bd}
-.subject-list{display:grid;gap:14px}.subject-detail{padding:19px}.subject-detail-head{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}.subject-detail-title{font-size:17px;font-weight:750}.subject-detail-sub{margin-top:5px;font-size:11px;color:var(--muted)}.subject-actions{display:flex;gap:7px}
+.subject-list{display:grid;gap:14px}.subject-detail{padding:19px}.subject-detail.dragging{opacity:.5}.subject-detail.drag-over{outline:2px dashed var(--accent);outline-offset:2px}.subject-drag{font-size:14px;color:var(--muted);cursor:grab;padding:4px 6px;user-select:none}.subject-drag:active{cursor:grabbing}.subject-detail-head{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}.subject-detail-title{font-size:17px;font-weight:750}.subject-detail-sub{margin-top:5px;font-size:11px;color:var(--muted)}.subject-actions{display:flex;gap:7px}
 .small-btn{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:8px;padding:7px 10px;font-size:11px}.small-btn:hover{background:var(--surface2)}
 .topics{border-top:1px solid var(--line);margin-top:16px}.topic{display:grid;grid-template-columns:22px 22px 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);cursor:grab;transition:background .15s,opacity .15s,transform .15s}.topic:last-child{border-bottom:0}.topic:active{cursor:grabbing}.topic.dragging{opacity:.45;background:var(--surface2)}.topic.drag-over{background:var(--surface2);box-shadow:inset 0 2px 0 var(--accent)}.topic input{accent-color:var(--accent);width:15px;height:15px}.topic-drag{color:var(--muted);font-size:15px;letter-spacing:-2px;user-select:none;text-align:center}.topic-name{font-size:13px}.topic.done .topic-name{text-decoration:line-through;color:#979e9b}
 .topic-actions{display:flex;gap:5px}.topic-add{display:flex;gap:8px;margin-top:12px}.topic-add input{flex:1;border:1px solid var(--line);border-radius:8px;padding:9px 10px;outline:0}.topic-add input:focus{border-color:#afc6bd}
@@ -699,9 +699,9 @@ function renderSubjectsPage(){
   if(!list.length){el.innerHTML=`<div class="card empty">Nenhuma matéria encontrada.</div>`;return}
   el.innerHTML=list.map(s=>{
     const st=subjectStats(s);
-    return `<div class="card subject-detail">
+    return `<div class="card subject-detail" draggable="true" data-subject-id="${s.id}" ondragstart="startSubjectDrag(event)" ondragover="overSubjectDrag(event)" ondrop="dropSubjectDrag(event)" ondragend="endSubjectDrag(event)">
       <div class="subject-detail-head">
-        <div><div class="subject-detail-title">${escapeHtml(s.name)}</div><div class="subject-detail-sub">${st.done} de ${st.total} tópicos concluídos · ${st.pct}%</div></div>
+        <div style="display:flex;align-items:flex-start;gap:9px"><div class="subject-drag" title="Arraste para reorganizar">⋮⋮</div><div><div class="subject-detail-title">${escapeHtml(s.name)}</div><div class="subject-detail-sub">${st.done} de ${st.total} tópicos concluídos · ${st.pct}%</div></div></div>
         <div class="subject-actions"><button class="small-btn" onclick="renameSubject('${s.id}')">Renomear</button><button class="small-btn" onclick="deleteSubject('${s.id}')">Excluir</button></div>
       </div>
       <div class="bar"><div class="fill" style="width:${st.pct}%"></div></div>
@@ -786,7 +786,39 @@ function deleteSubject(id){
   if(!confirm(`Excluir a matéria "${s.name}"?`))return;
   subjects=subjects.filter(x=>x.id!==id);saveSubjects();toast('Matéria excluída.');
 }
-let draggedTopic=null;
+let draggedSubject=null;
+function startSubjectDrag(event){
+  const el=event.currentTarget;
+  draggedSubject={id:el.dataset.subjectId};
+  el.classList.add("dragging");
+  event.dataTransfer.effectAllowed="move";
+  event.dataTransfer.setData("text/plain",el.dataset.subjectId);
+}
+function overSubjectDrag(event){
+  event.preventDefault();
+  event.dataTransfer.dropEffect="move";
+  const el=event.currentTarget;
+  if(draggedSubject && el.dataset.subjectId!==draggedSubject.id){
+    document.querySelectorAll(".subject-detail.drag-over").forEach(x=>x.classList.remove("drag-over"));
+    el.classList.add("drag-over");
+  }
+}
+function dropSubjectDrag(event){
+  event.preventDefault();
+  const target=event.currentTarget;
+  if(!draggedSubject || target.dataset.subjectId===draggedSubject.id)return;
+  const from=subjects.findIndex(s=>s.id===draggedSubject.id);
+  const to=subjects.findIndex(s=>s.id===target.dataset.subjectId);
+  if(from<0||to<0)return;
+  const moved=subjects.splice(from,1)[0];
+  subjects.splice(to,0,moved);
+  saveSubjects();
+  toast("Ordem das matérias atualizada.");
+}
+function endSubjectDrag(){
+  document.querySelectorAll(".subject-detail.dragging,.subject-detail.drag-over").forEach(x=>x.classList.remove("dragging","drag-over"));
+  draggedSubject=null;
+}
 
 function startTopicDrag(event){
   const el=event.currentTarget;
