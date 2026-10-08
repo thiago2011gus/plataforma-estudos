@@ -63,6 +63,7 @@ button:disabled{cursor:not-allowed;opacity:.55}
 .theme-control{display:none;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:4px 7px;height:40px}
 body.dark .theme-control{display:flex}
 .theme-control-label{font-size:10px;color:var(--muted);white-space:nowrap;font-weight:650}
+.theme-control.fade-selected{opacity:0;transform:scale(.96);pointer-events:none;transition:opacity .16s ease,transform .16s ease}
 .theme-presets{display:flex;gap:2px;background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:2px}
 .theme-preset{border:0;background:transparent;color:var(--muted);padding:6px 8px;border-radius:6px;font-size:10px;font-weight:650;line-height:1;transition:.18s}
 .theme-preset:hover{color:var(--text);background:var(--surface)}
@@ -2157,6 +2158,11 @@ function applyDarkness(value){
     btn.classList.toggle('active',Number(btn.dataset.darkness)===v);
   });
   if(document.body.classList.contains('dark')) setThemeColors(v);
+  setTimeout(()=>{
+    const control=document.querySelector('.theme-control');
+    if(control) control.classList.add('fade-selected');
+    setTimeout(()=>control?.classList.remove('fade-selected'),220);
+  },80);
 }
 
 function toggleTheme(){
@@ -2174,7 +2180,13 @@ document.getElementById('newReadingBtn')?.addEventListener('click',function(e){e
 applySidebarState(localStorage.getItem(SIDEBAR_KEY)==='1');
 applyTheme(localStorage.getItem(THEME_KEY)||'light');
 document.querySelectorAll('.theme-preset').forEach(btn=>{
-  btn.addEventListener('click',()=>applyDarkness(btn.dataset.darkness));
+  btn.addEventListener('click',()=>{
+    applyDarkness(btn.dataset.darkness);
+    setTimeout(()=>{
+      const control=document.querySelector('.theme-control');
+      if(control) control.style.display='none';
+    },220);
+  });
 });
 document.getElementById('themeToggle').addEventListener('click',toggleTheme);
 document.getElementById('dateChip').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
