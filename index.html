@@ -967,8 +967,8 @@ let currentSessionSeconds=0;
 let sessionStartedAt=null;
 function getStudyLog(){try{return JSON.parse(localStorage.getItem(STUDY_LOG_KEY)||'[]')}catch(e){return []}}
 function saveStudyLog(log){localStorage.setItem(STUDY_LOG_KEY,JSON.stringify(log))}
-function selectedTimerSubjectId(){return document.getElementById('timerSubject2')?.value||document.getElementById('timerSubject')?.value||''}
-function selectedTimerTopicId(){return document.getElementById('timerTopic2')?.value||document.getElementById('timerTopic')?.value||''}
+function selectedTimerSubjectId(){const full=document.getElementById('view-timer')?.classList.contains('active');return (full?document.getElementById('timerSubject2')?.value:document.getElementById('timerSubject')?.value)||''}
+function selectedTimerTopicId(){const full=document.getElementById('view-timer')?.classList.contains('active');return (full?document.getElementById('timerTopic2')?.value:document.getElementById('timerTopic')?.value)||''}
 function recordStudySession(){
   if(currentSessionSeconds<=0)return;
   const subjectId=selectedTimerSubjectId(),topicId=selectedTimerTopicId();
