@@ -49,7 +49,7 @@ body.dark .theme-control{display:flex}
 .session{display:grid;grid-template-columns:70px 10px 1fr auto;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}.session:last-child{border-bottom:0}
 .time{font-size:11px;line-height:1.35;color:var(--muted)}.dot{width:9px;height:9px;border-radius:50%;background:var(--accent)}
 .sname{font-size:13px;font-weight:650}.stype{font-size:11px;color:var(--muted);margin-top:4px}.status{font-size:10px;padding:6px 8px;border-radius:7px;background:var(--surface2);color:var(--muted)}.status.done{background:var(--accent-light);color:var(--accent)}
-.timer{padding:22px;text-align:center}.timer-label{font-size:12px;color:var(--muted);margin-bottom:8px}.timer-display{font-size:55px;font-weight:760;letter-spacing:-2px;font-variant-numeric:tabular-nums;margin:18px 0 20px}.timer-actions{display:flex;justify-content:center;gap:9px}.select{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:9px 10px;font-size:12px;color:var(--text)}
+.timer{padding:22px;text-align:center}.timer-mode-switch{display:inline-flex;background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px;margin-bottom:18px}.timer-mode-switch .seg{cursor:pointer}.timer-label{font-size:12px;color:var(--muted);margin-bottom:8px}.timer-display{font-size:55px;font-weight:760;letter-spacing:-2px;font-variant-numeric:tabular-nums;margin:12px 0 14px}.timer-actions{display:flex;justify-content:center;gap:9px}.select{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:9px 10px;font-size:12px;color:var(--text)}.pomodoro-phase{font-size:11px;color:var(--accent);font-weight:750;margin-top:18px;text-transform:uppercase;letter-spacing:.7px}.pomodoro-progress{height:5px;max-width:420px;margin:0 auto 8px;background:var(--surface2);border-radius:10px;overflow:hidden}.pomodoro-progress>div{height:100%;width:0;background:var(--accent);transition:width .25s}.pomodoro-cycle{min-height:16px;font-size:11px;color:var(--muted);margin-bottom:5px}.pomodoro-settings{max-width:520px;margin:24px auto 0;padding-top:18px;border-top:1px solid var(--line);text-align:left}.timer-settings-title{font-size:12px;font-weight:700;margin-bottom:11px}.timer-settings-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}.timer-settings-grid label{font-size:10px;color:var(--muted)}.timer-settings-grid input{display:block;width:100%;margin-top:5px;box-sizing:border-box;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--text);padding:8px}.pomodoro-settings .small-btn{cursor:pointer}.select{outline:0}
 .subjects-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.subject-card{padding:17px;border:1px solid var(--line);border-radius:13px}
 .subject-top{display:flex;justify-content:space-between;gap:12px}.subject-name{font-size:14px;font-weight:700}.percent{font-size:12px;color:var(--accent);font-weight:720}
 .bar{height:7px;background:#ecece7;border-radius:20px;overflow:hidden;margin:13px 0 8px}.fill{height:100%;background:var(--accent);border-radius:20px}.subject-meta{font-size:11px;color:var(--muted)}
@@ -176,7 +176,39 @@ body.dark .theme-control{display:flex}
   <div class="schedule-summary" id="scheduleSummary"></div>
   <div class="schedule-grid" id="scheduleGrid"></div>
 </section>
-  <section class="view" id="view-timer"><div class="card timer"><div class="section-title">Cronômetro</div><div class="timer-label" style="margin-top:9px">Matéria atual</div><select class="select" id="timerSubject2"></select><div class="timer-display" id="timerDisplay2">00:00:00</div><div class="timer-actions"><button class="btn btn-primary" id="timerToggle2" onclick="toggleTimer()">Iniciar</button><button class="btn btn-secondary" onclick="resetTimer()">Reiniciar</button></div></div></section>
+  <section class="view" id="view-timer">
+  <div class="card timer">
+    <div class="timer-mode-switch">
+      <button class="seg active" id="timerModeStopwatch" onclick="setTimerMode('stopwatch')">Cronômetro</button>
+      <button class="seg" id="timerModePomodoro" onclick="setTimerMode('pomodoro')">Pomodoro</button>
+    </div>
+
+    <div class="section-title" id="timerTitle">Cronômetro</div>
+    <div class="timer-label" style="margin-top:9px">Matéria atual</div>
+    <select class="select" id="timerSubject2"></select>
+
+    <div class="pomodoro-phase" id="pomodoroPhase">Foco</div>
+    <div class="timer-display" id="timerDisplay2">00:00:00</div>
+    <div class="pomodoro-progress"><div id="pomodoroProgress"></div></div>
+    <div class="pomodoro-cycle" id="pomodoroCycle"></div>
+
+    <div class="timer-actions">
+      <button class="btn btn-primary" id="timerToggle2" onclick="toggleTimer()">Iniciar</button>
+      <button class="btn btn-secondary" onclick="resetTimer()">Reiniciar</button>
+    </div>
+
+    <div class="pomodoro-settings" id="pomodoroSettings">
+      <div class="timer-settings-title">Personalizar Pomodoro</div>
+      <div class="timer-settings-grid">
+        <label>Foco <input id="pomodoroFocus" type="number" min="1" max="180"></label>
+        <label>Pausa curta <input id="pomodoroShort" type="number" min="1" max="60"></label>
+        <label>Pausa longa <input id="pomodoroLong" type="number" min="1" max="120"></label>
+        <label>Ciclos <input id="pomodoroCycles" type="number" min="1" max="12"></label>
+      </div>
+      <button class="small-btn" onclick="savePomodoroSettings()">Salvar configuração</button>
+    </div>
+  </div>
+</section>
   <section class="view" id="view-reviews"><div class="card section-card"><div class="section-title">Revisões</div><div class="empty">A estrutura está preparada. Vamos transformar esta tela em revisão espaçada na próxima etapa.</div></div></section>
   <section class="view" id="view-questions"><div class="card section-card"><div class="section-title">Questões</div><div class="empty">Na próxima etapa: registro de questões, acertos, erros e desempenho por matéria.</div></div></section>
   <section class="view" id="view-notes"><div class="card section-card"><div class="section-title">Anotações</div><div class="empty">Na próxima etapa: notas vinculadas a matérias e tópicos.</div></div></section>
@@ -806,28 +838,151 @@ function deleteTopic(sid,index){
   s.topics.splice(index,1);saveSubjects();toast('Tópico removido.');
 }
 
+const POMODORO_KEY='study_pomodoro_v1';
+const TIMER_MODE_KEY='study_timer_mode_v1';
+const pomodoroDefaults={focus:25,short:5,long:15,cycles:4};
+let pomodoroSettings=loadPomodoroSettings();
+let timerMode=localStorage.getItem(TIMER_MODE_KEY)||'stopwatch';
+let pomodoroPhase='focus';
+let pomodoroCycle=1;
+let pomodoroRemaining=pomodoroSettings.focus*60;
+let pomodoroTotal=pomodoroSettings.focus*60;
+
 let timerSeconds=Number(localStorage.getItem(TIMER_KEY)||0);
 let timerRunning=false;
 let timerInterval=null;
+
+function loadPomodoroSettings(){
+  try{return {...pomodoroDefaults,...JSON.parse(localStorage.getItem(POMODORO_KEY)||'{}')}}catch(e){return {...pomodoroDefaults}}
+}
+function savePomodoroSettings(){
+  const vals={
+    focus:Math.min(180,Math.max(1,Number(document.getElementById('pomodoroFocus')?.value)||25)),
+    short:Math.min(60,Math.max(1,Number(document.getElementById('pomodoroShort')?.value)||5)),
+    long:Math.min(120,Math.max(1,Number(document.getElementById('pomodoroLong')?.value)||15)),
+    cycles:Math.min(12,Math.max(1,Number(document.getElementById('pomodoroCycles')?.value)||4))
+  };
+  pomodoroSettings=vals;
+  localStorage.setItem(POMODORO_KEY,JSON.stringify(vals));
+  if(!timerRunning && timerMode==='pomodoro'){
+    pomodoroPhase='focus';pomodoroCycle=1;
+    pomodoroRemaining=vals.focus*60;pomodoroTotal=vals.focus*60;
+  }
+  renderTimer();
+  toast('Configuração do Pomodoro salva.');
+}
+function syncPomodoroInputs(){
+  const map={pomodoroFocus:pomodoroSettings.focus,pomodoroShort:pomodoroSettings.short,pomodoroLong:pomodoroSettings.long,pomodoroCycles:pomodoroSettings.cycles};
+  Object.entries(map).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.value=v});
+}
+function setTimerMode(mode){
+  if(timerRunning){toast('Pause o cronômetro antes de trocar o modo.');return}
+  timerMode=mode;
+  localStorage.setItem(TIMER_MODE_KEY,mode);
+  if(mode==='pomodoro'){
+    pomodoroPhase='focus';pomodoroCycle=1;
+    pomodoroRemaining=pomodoroSettings.focus*60;pomodoroTotal=pomodoroSettings.focus*60;
+  }
+  renderTimer();
+}
 function fmt(sec){const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;return [h,m,s].map(x=>String(x).padStart(2,'0')).join(':')}
+function fmtPomodoro(sec){const m=Math.floor(sec/60),s=sec%60;return [m,s].map(x=>String(x).padStart(2,'0')).join(':')}
 function renderTimer(){
-  const value=fmt(timerSeconds);
+  const display=timerMode==='pomodoro'?fmtPomodoro(pomodoroRemaining):fmt(timerSeconds);
   const ids=['timerDisplay','timerDisplay2'];
-  ids.forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=value});
+  ids.forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=display});
   const totalMinutes=Math.floor(timerSeconds/60),h=Math.floor(totalMinutes/60),m=totalMinutes%60;
-  document.getElementById('dashStudy').textContent=`${h}h ${String(m).padStart(2,'0')}`;
+  const dash=document.getElementById('dashStudy');if(dash)dash.textContent=`${h}h ${String(m).padStart(2,'0')}`;
   ['timerToggle','timerToggle2'].forEach(id=>{const b=document.getElementById(id);if(b)b.textContent=timerRunning?'Pausar':'Iniciar'});
+
+  const title=document.getElementById('timerTitle');
+  const phase=document.getElementById('pomodoroPhase');
+  const progress=document.getElementById('pomodoroProgress');
+  const cycle=document.getElementById('pomodoroCycle');
+  const settings=document.getElementById('pomodoroSettings');
+  const stop=document.getElementById('timerModeStopwatch');
+  const pomo=document.getElementById('timerModePomodoro');
+  if(title)title.textContent=timerMode==='pomodoro'?'Pomodoro':'Cronômetro';
+  if(settings)settings.style.display=timerMode==='pomodoro'?'block':'none';
+  if(stop)stop.classList.toggle('active',timerMode==='stopwatch');
+  if(pomo)pomo.classList.toggle('active',timerMode==='pomodoro');
+  if(phase)phase.style.display=timerMode==='pomodoro'?'block':'none';
+  if(cycle)cycle.style.display=timerMode==='pomodoro'?'block':'none';
+  if(progress){
+    progress.parentElement.style.display=timerMode==='pomodoro'?'block':'none';
+    progress.style.width=timerMode==='pomodoro'?Math.max(0,Math.min(100,(1-pomodoroRemaining/pomodoroTotal)*100))+'%':'0%';
+  }
+  if(timerMode==='pomodoro'){
+    if(phase)phase.textContent=pomodoroPhase==='focus'?'Foco':pomodoroPhase==='short'?'Pausa curta':'Pausa longa';
+    if(cycle)cycle.textContent=`Ciclo ${pomodoroCycle} de ${pomodoroSettings.cycles}`;
+  }
+  syncPomodoroInputs();
+}
+function startTimerInterval(){
+  timerInterval=setInterval(()=>{
+    if(timerMode==='stopwatch'){
+      timerSeconds++;
+      localStorage.setItem(TIMER_KEY,timerSeconds);
+    }else{
+      pomodoroRemaining--;
+      if(pomodoroPhase==='focus'){
+        timerSeconds++;
+        localStorage.setItem(TIMER_KEY,timerSeconds);
+      }
+      if(pomodoroRemaining<=0){
+        advancePomodoro();
+        return;
+      }
+    }
+    renderTimer();
+  },1000);
 }
 function toggleTimer(){
   if(timerRunning){timerRunning=false;clearInterval(timerInterval);renderTimer();toast('Sessão pausada.');return}
   if(!subjects.length){alert('Cadastre uma matéria antes de iniciar.');showView('subjects');return}
+  if(timerMode==='pomodoro' && pomodoroRemaining<=0){
+    pomodoroPhase='focus';pomodoroCycle=1;pomodoroRemaining=pomodoroSettings.focus*60;pomodoroTotal=pomodoroRemaining;
+  }
   timerRunning=true;
-  timerInterval=setInterval(()=>{timerSeconds++;localStorage.setItem(TIMER_KEY,timerSeconds);renderTimer()},1000);
+  startTimerInterval();
+  renderTimer();
+}
+function advancePomodoro(){
+  if(pomodoroPhase==='focus'){
+    if(pomodoroCycle>=pomodoroSettings.cycles){
+      pomodoroPhase='long';
+      pomodoroRemaining=pomodoroSettings.long*60;
+      pomodoroTotal=pomodoroRemaining;
+    }else{
+      pomodoroPhase='short';
+      pomodoroRemaining=pomodoroSettings.short*60;
+      pomodoroTotal=pomodoroRemaining;
+    }
+    toast('Foco concluído. Hora da pausa.');
+  }else if(pomodoroPhase==='short'){
+    pomodoroCycle++;
+    pomodoroPhase='focus';
+    pomodoroRemaining=pomodoroSettings.focus*60;
+    pomodoroTotal=pomodoroRemaining;
+    toast('Pausa concluída. Volte ao foco.');
+  }else{
+    pomodoroPhase='focus';
+    pomodoroCycle=1;
+    pomodoroRemaining=pomodoroSettings.focus*60;
+    pomodoroTotal=pomodoroRemaining;
+    toast('Ciclo completo. Novo bloco de foco.');
+  }
   renderTimer();
 }
 function resetTimer(){
   if(timerRunning){timerRunning=false;clearInterval(timerInterval)}
-  timerSeconds=0;localStorage.removeItem(TIMER_KEY);renderTimer();toast('Cronômetro reiniciado.');
+  if(timerMode==='pomodoro'){
+    pomodoroPhase='focus';pomodoroCycle=1;
+    pomodoroRemaining=pomodoroSettings.focus*60;pomodoroTotal=pomodoroRemaining;
+  }else{
+    timerSeconds=0;localStorage.removeItem(TIMER_KEY);
+  }
+  renderTimer();toast('Cronômetro reiniciado.');
 }
 
 function toast(msg){
