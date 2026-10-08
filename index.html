@@ -57,7 +57,7 @@ body.dark .theme-control{display:flex}
 .page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin-bottom:18px}.desc{margin-top:5px;font-size:13px;color:var(--muted)}.toolbar{display:flex;gap:9px;align-items:center}.search{width:240px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--text);padding:10px 12px;outline:0}.search:focus{border-color:#afc6bd}
 .subject-list{display:grid;gap:14px}.subject-detail{padding:19px}.subject-detail-head{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}.subject-detail-title{font-size:17px;font-weight:750}.subject-detail-sub{margin-top:5px;font-size:11px;color:var(--muted)}.subject-actions{display:flex;gap:7px}
 .small-btn{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:8px;padding:7px 10px;font-size:11px}.small-btn:hover{background:var(--surface2)}
-.topics{border-top:1px solid var(--line);margin-top:16px}.topic{display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.topic:last-child{border-bottom:0}.topic input{accent-color:var(--accent);width:15px;height:15px}.topic-name{font-size:13px}.topic.done .topic-name{text-decoration:line-through;color:#979e9b}
+.topics{border-top:1px solid var(--line);margin-top:16px}.topic{display:grid;grid-template-columns:22px 22px 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);cursor:grab;transition:background .15s,opacity .15s,transform .15s}.topic:last-child{border-bottom:0}.topic:active{cursor:grabbing}.topic.dragging{opacity:.45;background:var(--surface2)}.topic.drag-over{background:var(--surface2);box-shadow:inset 0 2px 0 var(--accent)}.topic input{accent-color:var(--accent);width:15px;height:15px}.topic-drag{color:var(--muted);font-size:15px;letter-spacing:-2px;user-select:none;text-align:center}.topic-name{font-size:13px}.topic.done .topic-name{text-decoration:line-through;color:#979e9b}
 .topic-actions{display:flex;gap:5px}.topic-add{display:flex;gap:8px;margin-top:12px}.topic-add input{flex:1;border:1px solid var(--line);border-radius:8px;padding:9px 10px;outline:0}.topic-add input:focus{border-color:#afc6bd}
 .empty{text-align:center;padding:30px;color:var(--muted);font-size:13px}
 .modal-backdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(25,31,29,.3);z-index:30}.modal-backdrop.open{display:flex}
@@ -671,7 +671,8 @@ function renderSubjectsPage(){
       </div>
       <div class="bar"><div class="fill" style="width:${st.pct}%"></div></div>
       <div class="topics">
-        ${s.topics.length?s.topics.map((t,i)=>`<div class="topic ${t.done?'done':''}">
+        ${s.topics.length?s.topics.map((t,i)=>`<div class="topic ${t.done?'done':''}" draggable="true" data-topic-index="${i}" data-subject-id="${s.id}" ondragstart="startTopicDrag(event)" ondragover="overTopicDrag(event)" ondrop="dropTopicDrag(event)" ondragend="endTopicDrag(event)">
+          <div class="topic-drag" title="Arraste para reorganizar">⋮⋮</div>
           <input type="checkbox" ${t.done?'checked':''} onchange="toggleTopic('${s.id}',${i})">
           <div class="topic-name">${escapeHtml(t.name)}</div>
           <div class="topic-actions"><button class="small-btn" onclick="renameTopic('${s.id}',${i})">Editar</button><button class="small-btn" onclick="deleteTopic('${s.id}',${i})">×</button></div>
@@ -750,6 +751,43 @@ function deleteSubject(id){
   if(!confirm(`Excluir a matéria "${s.name}"?`))return;
   subjects=subjects.filter(x=>x.id!==id);saveSubjects();toast('Matéria excluída.');
 }
+let draggedTopic=null;
+
+function startTopicDrag(event){
+  const el=event.currentTarget;
+  draggedTopic={sid:el.dataset.subjectId,index:Number(el.dataset.topicIndex)};
+  el.classList.add('dragging');
+  event.dataTransfer.effectAllowed='move';
+  event.dataTransfer.setData('text/plain',el.dataset.topicIndex);
+}
+function overTopicDrag(event){
+  event.preventDefault();
+  event.dataTransfer.dropEffect='move';
+  const el=event.currentTarget;
+  if(draggedTopic && el.dataset.subjectId===draggedTopic.sid && Number(el.dataset.topicIndex)!==draggedTopic.index){
+    document.querySelectorAll('.topic.drag-over').forEach(x=>x.classList.remove('drag-over'));
+    el.classList.add('drag-over');
+  }
+}
+function dropTopicDrag(event){
+  event.preventDefault();
+  const target=event.currentTarget;
+  const sid=target.dataset.subjectId;
+  const toIndex=Number(target.dataset.topicIndex);
+  if(!draggedTopic || draggedTopic.sid!==sid || draggedTopic.index===toIndex){endTopicDrag(event);return}
+  const subject=subjects.find(x=>x.id===sid);
+  if(!subject || !subject.topics[draggedTopic.index]){endTopicDrag(event);return}
+  const [moved]=subject.topics.splice(draggedTopic.index,1);
+  subject.topics.splice(toIndex,0,moved);
+  saveSubjects();
+  toast('Ordem dos tópicos atualizada.');
+  draggedTopic=null;
+}
+function endTopicDrag(){
+  document.querySelectorAll('.topic.dragging,.topic.drag-over').forEach(el=>el.classList.remove('dragging','drag-over'));
+  draggedTopic=null;
+}
+
 function toggleTopic(sid,index){
   const s=subjects.find(x=>x.id===sid); if(!s)return;
   s.topics[index].done=!s.topics[index].done;saveSubjects();
