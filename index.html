@@ -247,7 +247,7 @@ body.dark .theme-control{display:flex}
   <section class="view" id="view-agenda">
     <div class="page-head">
       <div><div class="section-title" style="font-size:23px">Agenda</div><div class="desc">Organize seus compromissos de estudo e sua rotina, sem prender a trilha a datas.</div></div>
-      <button class="btn btn-primary" onclick="openAgendaModal()">+ Novo compromisso</button>
+      <button type="button" class="btn btn-primary" id="newAgendaBtn">+ Novo compromisso</button>
     </div>
     <div class="agenda-toolbar">
       <button class="btn btn-secondary" onclick="agendaPrevMonth()">‹</button>
@@ -261,7 +261,7 @@ body.dark .theme-control{display:flex}
   <section class="view" id="view-reading">
     <div class="page-head">
       <div><div class="section-title" style="font-size:23px">Leituras</div><div class="desc">Sua biblioteca pessoal e um diário do que você está lendo.</div></div>
-      <button class="btn btn-primary" onclick="openReadingModal()">+ Nova leitura</button>
+      <button type="button" class="btn btn-primary" id="newReadingBtn">+ Nova leitura</button>
     </div>
     <div class="reading-metrics" id="readingMetrics"></div>
     <div class="reading-filters">
@@ -1996,6 +1996,11 @@ function toggleTheme(){
   localStorage.setItem(THEME_KEY,theme);
   applyTheme(theme);
 }
+
+// Botões principais da Agenda e Leituras
+document.getElementById('newAgendaBtn')?.addEventListener('click',function(e){e.preventDefault();openAgendaModal();});
+document.getElementById('newReadingBtn')?.addEventListener('click',function(e){e.preventDefault();openReadingModal();});
+
 applyTheme(localStorage.getItem(THEME_KEY)||'light');
 const themeSlider=document.getElementById('themeSlider');
 if(themeSlider){
