@@ -231,10 +231,9 @@ window.STUDY_SCHEDULE = {
           questions: "LEG PROC\nCC — Arts. 104 a 165\nLei nº 8.112/90 — Arts. 183 a 252\nCLT — Art. 49 a art. 75-E"
         }
       ]
-    }
-  },
-  {
-  week: 5,
+    },
+    {
+      week: 5,
   days: [
     {
       day: "Segunda",
