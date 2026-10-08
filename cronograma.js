@@ -232,8 +232,7 @@ window.STUDY_SCHEDULE = {
         }
       ]
     }
-  ]
- },
+  },
   {
   week: 5,
   days: [
@@ -2703,5 +2702,7 @@ window.STUDY_SCHEDULE = {
       content: "",
       questions: ""
     }
+  ]
+  }
   ]
 };
