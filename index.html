@@ -60,11 +60,14 @@ button:disabled{cursor:not-allowed;opacity:.55}
 .date-chip{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 14px;color:var(--muted);font-size:12px}
 .theme-toggle{width:40px;height:40px;border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-size:17px;transition:.2s}
 .theme-toggle:hover{background:var(--surface2);transform:translateY(-1px)}
-.theme-control{display:none;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:0 10px;height:40px}
+.theme-control{display:none;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:4px 7px;height:40px}
 body.dark .theme-control{display:flex}
-.theme-control-label{font-size:11px;color:var(--muted);white-space:nowrap}
-.theme-slider{width:105px;accent-color:var(--accent);cursor:pointer}
-.theme-value{font-size:10px;color:var(--muted);width:32px;text-align:right;font-variant-numeric:tabular-nums}
+.theme-control-label{font-size:10px;color:var(--muted);white-space:nowrap;font-weight:650}
+.theme-presets{display:flex;gap:2px;background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:2px}
+.theme-preset{border:0;background:transparent;color:var(--muted);padding:6px 8px;border-radius:6px;font-size:10px;font-weight:650;line-height:1;transition:.18s}
+.theme-preset:hover{color:var(--text);background:var(--surface)}
+.theme-preset.active{background:var(--accent-light);color:var(--accent);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+@media(max-width:720px){.theme-control{max-width:100%;overflow:auto}.theme-control-label{display:none}.theme-presets{flex:none}.theme-preset{padding:6px 7px}}
 .view{display:none}.view.active{display:block}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow)}
 .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}.metric{padding:19px 20px}
@@ -2149,11 +2152,10 @@ function applyTheme(theme){
 }
 function applyDarkness(value){
   const v=Math.max(0,Math.min(100,Number(value)||0));
-  const slider=document.getElementById('themeSlider');
-  const valueEl=document.getElementById('themeValue');
-  if(slider) slider.value=v;
-  if(valueEl) valueEl.textContent=v+'%';
   localStorage.setItem('study_darkness',String(v));
+  document.querySelectorAll('.theme-preset').forEach(btn=>{
+    btn.classList.toggle('active',Number(btn.dataset.darkness)===v);
+  });
   if(document.body.classList.contains('dark')) setThemeColors(v);
 }
 
@@ -2171,10 +2173,9 @@ document.getElementById('newReadingBtn')?.addEventListener('click',function(e){e
 
 applySidebarState(localStorage.getItem(SIDEBAR_KEY)==='1');
 applyTheme(localStorage.getItem(THEME_KEY)||'light');
-const themeSlider=document.getElementById('themeSlider');
-if(themeSlider){
-  themeSlider.addEventListener('input',e=>applyDarkness(e.target.value));
-}
+document.querySelectorAll('.theme-preset').forEach(btn=>{
+  btn.addEventListener('click',()=>applyDarkness(btn.dataset.darkness));
+});
 document.getElementById('themeToggle').addEventListener('click',toggleTheme);
 document.getElementById('dateChip').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
 renderAll();
