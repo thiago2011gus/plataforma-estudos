@@ -1052,6 +1052,7 @@ document.querySelectorAll('#themeModeOptions .seg').forEach(b=>b.addEventListene
 applyAppearance();
 
 const SCHEDULE_PROGRESS_KEY='study_schedule_progress_v1';
+const SCHEDULE_UNDO_KEY='study_schedule_undo_v1';
 
 function getTrailSteps(){
   const weeks=window.STUDY_SCHEDULE?.weeks||[];
@@ -1077,10 +1078,25 @@ function setTrailIndex(value){
 }
 function jumpToTrailStep(value){setTrailIndex(value)}
 function previousTrailStep(){setTrailIndex(getTrailIndex()-1)}
+function canUndoTrail(){
+  const current=getTrailIndex();
+  const previous=Number(localStorage.getItem(SCHEDULE_UNDO_KEY));
+  return Number.isInteger(previous)&&previous===current-1;
+}
+function undoCompleteTrailStep(){
+  if(!canUndoTrail())return;
+  const previous=Number(localStorage.getItem(SCHEDULE_UNDO_KEY));
+  localStorage.removeItem(SCHEDULE_UNDO_KEY);
+  setTrailIndex(previous);
+  toast('Conclusão desfeita. Você voltou para a etapa anterior.');
+}
 function completeTrailStep(){
   const steps=getTrailSteps();
-  if(getTrailIndex()>=steps.length-1){toast('Você chegou ao fim da trilha. Parabéns!');return}
-  setTrailIndex(getTrailIndex()+1);toast('Etapa concluída. Próxima etapa liberada.');
+  const current=getTrailIndex();
+  if(current>=steps.length-1){toast('Você chegou ao fim da trilha. Parabéns!');return}
+  localStorage.setItem(SCHEDULE_UNDO_KEY,String(current));
+  setTrailIndex(current+1);
+  toast('Etapa concluída. Próxima etapa liberada.');
 }
 function populateTrailJumpSelect(){
   const el=document.getElementById('trailJumpSelect');if(!el)return;
@@ -1101,7 +1117,8 @@ function renderPlan(){
   summary.innerHTML='<div class="trail-stat"><div class="trail-stat-label">Etapa atual</div><div class="trail-stat-value">'+(currentIndex+1)+' / '+steps.length+'</div></div><div class="trail-stat"><div class="trail-stat-label">Semana</div><div class="trail-stat-value">'+current.week+'</div></div><div class="trail-stat"><div class="trail-stat-label">Progresso da trilha</div><div class="trail-stat-value">'+pct+'%</div><div class="trail-progress"><div style="width:'+pct+'%"></div></div></div>';
   const content=current.content&&current.content!=='-'?scheduleDisplayText(current.content):'Sem conteúdo principal informado.';
   const q=current.questions&&current.questions!=='-'?'<div class="schedule-q"><strong>Questões / legislação:</strong><br>'+scheduleDisplayText(current.questions)+'</div>':'';
-  currentEl.innerHTML='<div class="trail-current-card"><div class="trail-current-kicker">Etapa '+(currentIndex+1)+' · Semana '+current.week+'</div><div class="trail-current-title">'+escapeHtml(current.day)+'</div><div class="schedule-kicker" style="margin-top:10px">'+escapeHtml(scheduleSubjectsLabel(current))+'</div><div class="trail-current-content">'+content+'</div>'+q+'<div class="trail-current-actions"><button class="btn btn-secondary" onclick="previousTrailStep()" '+(currentIndex===0?'disabled':'')+'>← Anterior</button><div style="display:flex;gap:8px"><button class="small-btn" onclick="startFeynmanFromSchedule('+current.week+',\''+current.day+'\')">✦ Feynman</button><button class="small-btn" onclick="researchFromSchedule('+current.week+',\''+current.day+'\')">⌕ Oráculo</button><button class="btn btn-primary" onclick="completeTrailStep()">Concluir e avançar →</button></div></div></div>';
+  const undoBtn=canUndoTrail()?'<button class="btn btn-secondary" onclick="undoCompleteTrailStep()">↩ Desfazer conclusão</button>':'';
+  currentEl.innerHTML='<div class="trail-current-card"><div class="trail-current-kicker">Etapa '+(currentIndex+1)+' · Semana '+current.week+'</div><div class="trail-current-title">'+escapeHtml(current.day)+'</div><div class="schedule-kicker" style="margin-top:10px">'+escapeHtml(scheduleSubjectsLabel(current))+'</div><div class="trail-current-content">'+content+'</div>'+q+'<div class="trail-current-actions"><button class="btn btn-secondary" onclick="previousTrailStep()" '+(currentIndex===0?'disabled':'')+'>← Anterior</button><div style="display:flex;gap:8px"><button class="small-btn" onclick="startFeynmanFromSchedule('+current.week+',\''+current.day+'\')">✦ Feynman</button><button class="small-btn" onclick="researchFromSchedule('+current.week+',\''+current.day+'\')">⌕ Oráculo</button><button class="btn btn-primary" onclick="completeTrailStep()">Concluir e avançar →</button>'+undoBtn+'</div></div></div>';
   const next=steps.slice(currentIndex+1,currentIndex+4);
   grid.innerHTML=next.length?next.map((d,j)=>'<div class="card schedule-day"><div class="schedule-day-head"><div class="schedule-day-name">Etapa '+(currentIndex+j+2)+' · Semana '+d.week+'</div><div class="trail-done">Próxima</div></div><div class="schedule-kicker">'+escapeHtml(scheduleSubjectsLabel(d))+'</div><div class="schedule-content">'+scheduleDisplayText(d.content||'Sem conteúdo principal')+'</div>'+(d.questions&&d.questions!=='-'?'<div class="schedule-q"><strong>Questões / legislação:</strong><br>'+scheduleDisplayText(d.questions)+'</div>':'')+'</div>').join(''):'<div class="empty">Você chegou ao fim da trilha.</div>';
 }function getScheduleDay(weekNumber,dayName){
