@@ -233,7 +233,8 @@ window.STUDY_SCHEDULE = {
       ]
     }
   ]
-};{
+ },
+  {
   week: 5,
   days: [
     {
