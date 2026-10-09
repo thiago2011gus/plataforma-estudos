@@ -2951,8 +2951,14 @@ document.getElementById('dateChip').textContent=new Date().toLocaleDateString('p
 loadStudyDriveSettings();
 renderAll();
 loadStudyDriveMaterialsSettings();
+const PERSONAL_HUB_MIGRATION_KEY='study_personal_hub_migrated_v1';
 let savedView=localStorage.getItem(STUDY_CURRENT_VIEW_KEY);
-if(!savedView||savedView==='dashboard'){savedView='myday';localStorage.setItem(STUDY_CURRENT_VIEW_KEY,savedView)}
+if(localStorage.getItem(PERSONAL_HUB_MIGRATION_KEY)!=='1'){
+  if(!savedView||savedView==='dashboard')savedView='myday';
+  if(savedView)localStorage.setItem(STUDY_CURRENT_VIEW_KEY,savedView);
+  localStorage.setItem(PERSONAL_HUB_MIGRATION_KEY,'1');
+}
+if(!savedView)savedView='myday';
 showView(savedView,false);
 </script>
 </body>
