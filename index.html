@@ -2548,12 +2548,19 @@ function setThemeColors(darkness){
     root.style.setProperty('--accent',appearance?.accent||p.accent);
     root.style.setProperty('--accent-light',p.accentLight);
   }else{
-    root.style.setProperty('--bg','#f6f5f1');
-    root.style.setProperty('--surface','#ffffff');
-    root.style.setProperty('--surface2','#f9f9f6');
-    root.style.setProperty('--line','#e7e7e1');
-    root.style.setProperty('--accent',appearance?.accent||'#2f6254');
-    root.style.setProperty('--accent-light','#e8f1ed');
+    // Remover as variáveis inline deixadas no body pelo modo escuro.
+    // Elas têm prioridade sobre as variáveis do :root e impediam a troca
+    // imediata para o modo claro sem recarregar a página.
+    ['--bg','--surface','--surface2','--line','--accent','--accent-light'].forEach(name=>{
+      document.body.style.removeProperty(name);
+    });
+    const lightRoot=document.documentElement;
+    lightRoot.style.setProperty('--bg','#f6f5f1');
+    lightRoot.style.setProperty('--surface','#ffffff');
+    lightRoot.style.setProperty('--surface2','#f9f9f6');
+    lightRoot.style.setProperty('--line','#e7e7e1');
+    lightRoot.style.setProperty('--accent',appearance?.accent||'#2f6254');
+    lightRoot.style.setProperty('--accent-light','#e8f1ed');
   }
 }
 function applyTheme(theme){
