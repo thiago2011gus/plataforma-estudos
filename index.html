@@ -1005,6 +1005,15 @@ function clearPerformanceForm(){
   ['performanceTotal','performanceCorrect','performanceNotes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
   updatePerformancePercent();
 }
+function openTopicPerformanceFromPlan(){
+  const steps=getTrailSteps(),current=steps[getTrailIndex()];
+  const context=[current?.day,current?.content,current?.questions,scheduleSubjectsLabel(current||{})].filter(Boolean).join(' ').toLowerCase();
+  let match=null;
+  subjects.some(s=>s.topics.some((t,i)=>{const name=t.name.toLowerCase().trim();if(name.length>3&&context.includes(name)){match={subjectId:s.id,index:i};return true}return false}));
+  if(match){openTopicPerformance(match.subjectId,match.index);return}
+  const nav=document.querySelector('.nav-item[data-view="questions"]');if(nav)nav.click();
+  const msg=document.getElementById('performanceMessage');if(msg)msg.textContent='Selecione a matéria e o assunto correspondente à etapa atual do plano.';
+}
 function openTopicPerformance(subjectId,topicIndex){
   const view=document.querySelector('.nav-item[data-view="questions"]');if(view)view.click();
   const subject=document.getElementById('performanceSubject');if(subject){subject.value=subjectId;renderPerformanceTopics();const topic=document.getElementById('performanceTopic');if(topic)topic.value=String(topicIndex);loadPerformanceForm();}
@@ -1716,7 +1725,7 @@ function renderPlan(){
   const content=current.content&&current.content!=='-'?scheduleDisplayText(current.content):'Sem conteúdo principal informado.';
   const q=current.questions&&current.questions!=='-'?'<div class="schedule-q"><strong>Questões / legislação:</strong><br>'+scheduleDisplayText(current.questions)+'</div>':'';
   const undoBtn=canUndoTrail()?'<button class="btn btn-secondary" onclick="undoCompleteTrailStep()">↩ Desfazer conclusão</button>':'';
-  currentEl.innerHTML='<div class="trail-current-card"><div class="trail-current-kicker">Etapa '+(currentIndex+1)+' · Semana '+current.week+'</div><div class="trail-current-title">'+escapeHtml(current.day)+'</div><div class="schedule-kicker" style="margin-top:10px">'+escapeHtml(scheduleSubjectsLabel(current))+'</div><div class="trail-current-content">'+content+'</div>'+q+'<div class="trail-current-actions"><button class="btn btn-secondary" onclick="previousTrailStep()" '+(currentIndex===0?'disabled':'')+'>← Anterior</button><div style="display:flex;gap:8px"><button class="small-btn" onclick="startFeynmanFromSchedule('+current.week+',\''+current.day+'\')">✦ Feynman</button><button class="small-btn" onclick="researchFromSchedule('+current.week+',\''+current.day+'\')">⌕ Oráculo</button><button class="btn btn-primary" onclick="completeTrailStep()">Concluir e avançar →</button>'+undoBtn+'</div></div></div>';
+  currentEl.innerHTML='<div class="trail-current-card"><div class="trail-current-kicker">Etapa '+(currentIndex+1)+' · Semana '+current.week+'</div><div class="trail-current-title">'+escapeHtml(current.day)+'</div><div class="schedule-kicker" style="margin-top:10px">'+escapeHtml(scheduleSubjectsLabel(current))+'</div><div class="trail-current-content">'+content+'</div>'+q+'<div class="trail-current-actions"><button class="btn btn-secondary" onclick="previousTrailStep()" '+(currentIndex===0?'disabled':'')+'>← Anterior</button><div style="display:flex;gap:8px"><button class="small-btn" onclick="startFeynmanFromSchedule('+current.week+',\''+current.day+'\')">✦ Feynman</button><button class="small-btn" onclick="openTopicPerformanceFromPlan()">Desempenho</button><button class="small-btn" onclick="researchFromSchedule('+current.week+',\''+current.day+'\')">⌕ Oráculo</button><button class="btn btn-primary" onclick="completeTrailStep()">Concluir e avançar →</button>'+undoBtn+'</div></div></div>';
   const next=steps.slice(currentIndex+1,currentIndex+4);
   grid.innerHTML=next.length?next.map((d,j)=>'<div class="card schedule-day"><div class="schedule-day-head"><div class="schedule-day-name">Etapa '+(currentIndex+j+2)+' · Semana '+d.week+'</div><div class="trail-done">Próxima</div></div><div class="schedule-kicker">'+escapeHtml(scheduleSubjectsLabel(d))+'</div><div class="schedule-content">'+scheduleDisplayText(d.content||'Sem conteúdo principal')+'</div>'+(d.questions&&d.questions!=='-'?'<div class="schedule-q"><strong>Questões / legislação:</strong><br>'+scheduleDisplayText(d.questions)+'</div>':'')+'</div>').join(''):'<div class="empty">Você chegou ao fim da trilha.</div>';
 }function getScheduleDay(weekNumber,dayName){
