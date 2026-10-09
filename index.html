@@ -548,8 +548,12 @@ body.dark .agenda-item.task-priority-high .task-priority-badge{background:#41351
     <div class="card organizer-card" style="margin-bottom:16px"><div class="organizer-card-title" id="taskFormTitle">Nova tarefa</div>
       <div class="organizer-form">
         <div class="field wide"><label for="personalTaskTitle">Tarefa</label><input id="personalTaskTitle" placeholder="O que precisa ser feito?"></div>
-        <div class="field"><label for="personalTaskDue">Prazo</label><input id="personalTaskDue" type="date"></div>
+        <div class="field"><label for="personalTaskDue">Data de início / prazo</label><input id="personalTaskDue" type="date"></div>
+        <div class="field"><label for="personalTaskTime">Horário</label><input id="personalTaskTime" type="time"></div>
         <div class="field"><label for="personalTaskPriority">Prioridade</label><select id="personalTaskPriority" class="select"><option value="medium">Normal</option><option value="high">Alta</option><option value="low">Baixa</option></select></div>
+        <div class="field"><label for="personalTaskRepeat">Repetição</label><select id="personalTaskRepeat" class="select" onchange="toggleTaskRepeatDays()"><option value="none">Não se repete</option><option value="daily">Todos os dias</option><option value="weekly">Dias específicos</option></select></div>
+        <div class="field wide" id="personalTaskRepeatDaysWrap" style="display:none"><label>Repetir nos dias</label><div class="toolbar" style="gap:10px;flex-wrap:wrap"><label><input type="checkbox" name="personalTaskRepeatDay" value="1"> Seg</label><label><input type="checkbox" name="personalTaskRepeatDay" value="2"> Ter</label><label><input type="checkbox" name="personalTaskRepeatDay" value="3"> Qua</label><label><input type="checkbox" name="personalTaskRepeatDay" value="4"> Qui</label><label><input type="checkbox" name="personalTaskRepeatDay" value="5"> Sex</label><label><input type="checkbox" name="personalTaskRepeatDay" value="6"> Sáb</label><label><input type="checkbox" name="personalTaskRepeatDay" value="0"> Dom</label></div></div>
+        <div class="field wide"><label><input id="personalTaskNotify" type="checkbox"> Avisar no horário (com Study aberto e notificações permitidas)</label></div>
         <div class="field wide"><label for="personalTaskNotes">Observações (opcional)</label><textarea id="personalTaskNotes" placeholder="Detalhes ou próximo passo..."></textarea></div>
       </div>
       <div class="toolbar" style="margin-top:12px"><button id="personalTaskSaveBtn" class="btn btn-primary" onclick="savePersonalTask()">Salvar tarefa</button><button id="personalTaskCancelBtn" class="btn btn-secondary" onclick="cancelTaskEdit()" style="display:none">Cancelar edição</button></div>
@@ -1249,25 +1253,28 @@ function organizerToday(){return localDateKey(new Date())}
 function organizerId(){return 'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
 function taskPriorityLabel(p){return({high:'Prioridade alta',medium:'Prioridade normal',low:'Prioridade baixa'})[p]||'Prioridade normal'}
 function taskDateLabel(date){if(!date)return'Sem prazo';if(date===organizerToday())return'Hoje';return new Date(date+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})}
+function toggleTaskRepeatDays(){const mode=document.getElementById('personalTaskRepeat')?.value||'none',wrap=document.getElementById('personalTaskRepeatDaysWrap');if(wrap)wrap.style.display=mode==='weekly'?'':'none'}
 function savePersonalTask(){
-  const title=(document.getElementById('personalTaskTitle')?.value||'').trim();
-  if(!title){alert('Escreva o que precisa ser feito.');document.getElementById('personalTaskTitle')?.focus();return}
-  const isEditing=!!editingPersonalTaskId,tasks=getPersonalTasks(),dueDate=document.getElementById('personalTaskDue')?.value||organizerToday(),priority=document.getElementById('personalTaskPriority')?.value||'medium',notes=(document.getElementById('personalTaskNotes')?.value||'').trim();
-  if(isEditing){const task=tasks.find(t=>String(t.id)===String(editingPersonalTaskId));if(task)Object.assign(task,{title,dueDate,priority,notes,updatedAt:new Date().toISOString()})}
-  else tasks.push({id:organizerId(),title,dueDate,priority,notes,createdAt:new Date().toISOString(),done:false});
-  savePersonalTasks(tasks);cancelTaskEdit();renderPersonalTasks();renderMyDay();renderHome();renderAgenda();toast(isEditing?'Tarefa atualizada.':'Tarefa salva.');
+ const title=(document.getElementById('personalTaskTitle')?.value||'').trim();if(!title){alert('Escreva o que precisa ser feito.');document.getElementById('personalTaskTitle')?.focus();return}
+ const isEditing=!!editingPersonalTaskId,tasks=getPersonalTasks(),dueDate=document.getElementById('personalTaskDue')?.value||organizerToday(),time=document.getElementById('personalTaskTime')?.value||'',priority=document.getElementById('personalTaskPriority')?.value||'medium',notes=(document.getElementById('personalTaskNotes')?.value||'').trim(),repeat=document.getElementById('personalTaskRepeat')?.value||'none',repeatDays=[...document.querySelectorAll('input[name="personalTaskRepeatDay"]:checked')].map(x=>Number(x.value)),notify=!!document.getElementById('personalTaskNotify')?.checked;
+ if(repeat==='weekly'&&!repeatDays.length){alert('Selecione ao menos um dia da semana para a tarefa recorrente.');return}
+ const data={title,dueDate,time,priority,notes,repeat,repeatDays,notify,updatedAt:new Date().toISOString()};
+ if(isEditing){const task=tasks.find(t=>String(t.id)===String(editingPersonalTaskId));if(task)Object.assign(task,data)}
+ else tasks.push({id:organizerId(),...data,createdAt:new Date().toISOString(),done:false,doneDates:[],notifiedDates:[]});
+ if(notify&&'Notification'in window&&Notification.permission==='default')Notification.requestPermission();
+ savePersonalTasks(tasks);cancelTaskEdit();renderPersonalTasks();renderMyDay();renderHome();renderAgenda();toast(isEditing?'Tarefa atualizada.':'Tarefa salva.');
 }
 function editPersonalTask(id){
-  const t=getPersonalTasks().find(x=>String(x.id)===String(id));if(!t)return;editingPersonalTaskId=String(id);
-  document.getElementById('personalTaskTitle').value=t.title||'';document.getElementById('personalTaskDue').value=t.dueDate||'';document.getElementById('personalTaskPriority').value=t.priority||'medium';document.getElementById('personalTaskNotes').value=t.notes||'';
-  document.getElementById('taskFormTitle').textContent='Editar tarefa';document.getElementById('personalTaskSaveBtn').textContent='Salvar alterações';document.getElementById('personalTaskCancelBtn').style.display='';document.getElementById('personalTaskTitle').focus();window.scrollTo({top:0,behavior:'smooth'});
+ const t=getPersonalTasks().find(x=>String(x.id)===String(id));if(!t)return;editingPersonalTaskId=String(id);
+ document.getElementById('personalTaskTitle').value=t.title||'';document.getElementById('personalTaskDue').value=t.dueDate||'';document.getElementById('personalTaskTime').value=t.time||'';document.getElementById('personalTaskPriority').value=t.priority||'medium';document.getElementById('personalTaskRepeat').value=t.repeat||'none';document.getElementById('personalTaskNotify').checked=!!t.notify;document.getElementById('personalTaskNotes').value=t.notes||'';
+ document.querySelectorAll('input[name="personalTaskRepeatDay"]').forEach(x=>x.checked=(t.repeatDays||[]).includes(Number(x.value)));toggleTaskRepeatDays();
+ document.getElementById('taskFormTitle').textContent='Editar tarefa';document.getElementById('personalTaskSaveBtn').textContent='Salvar alterações';document.getElementById('personalTaskCancelBtn').style.display='';document.getElementById('personalTaskTitle').focus();window.scrollTo({top:0,behavior:'smooth'});
 }
 function cancelTaskEdit(){
-  editingPersonalTaskId=null;['personalTaskTitle','personalTaskNotes'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});const due=document.getElementById('personalTaskDue');if(due)due.value=organizerToday();
-  const p=document.getElementById('personalTaskPriority');if(p)p.value='medium';const t=document.getElementById('taskFormTitle');if(t)t.textContent='Nova tarefa';
-  const s=document.getElementById('personalTaskSaveBtn');if(s)s.textContent='Salvar tarefa';const b=document.getElementById('personalTaskCancelBtn');if(b)b.style.display='none';
+ editingPersonalTaskId=null;['personalTaskTitle','personalTaskNotes','personalTaskTime'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});const due=document.getElementById('personalTaskDue');if(due)due.value=organizerToday();
+ const p=document.getElementById('personalTaskPriority');if(p)p.value='medium';const repeat=document.getElementById('personalTaskRepeat');if(repeat)repeat.value='none';const notify=document.getElementById('personalTaskNotify');if(notify)notify.checked=false;document.querySelectorAll('input[name="personalTaskRepeatDay"]').forEach(x=>x.checked=false);toggleTaskRepeatDays();const t=document.getElementById('taskFormTitle');if(t)t.textContent='Nova tarefa';
+ const s=document.getElementById('personalTaskSaveBtn');if(s)s.textContent='Salvar tarefa';const b=document.getElementById('personalTaskCancelBtn');if(b)b.style.display='none';
 }
-function togglePersonalTask(id){const a=getPersonalTasks(),t=a.find(x=>String(x.id)===String(id));if(!t)return;t.done=!t.done;t.completedAt=t.done?new Date().toISOString():null;savePersonalTasks(a);renderPersonalTasks();renderMyDay();renderHome();renderAgenda()}
 function deletePersonalTask(id){if(!confirm('Excluir esta tarefa?'))return;savePersonalTasks(getPersonalTasks().filter(t=>String(t.id)!==String(id)));renderPersonalTasks();renderMyDay();renderHome();renderAgenda();toast('Tarefa removida.')}
 function renderPersonalTasks(){
  const dueInput=document.getElementById('personalTaskDue');if(dueInput&&!dueInput.value)dueInput.value=organizerToday();
@@ -3095,6 +3102,10 @@ if(localStorage.getItem(PERSONAL_HUB_MIGRATION_KEY)!=='1'){
 }
 if(!savedView)savedView='myday';
 showView(savedView,false);
+</script>
+<script>
+function checkTaskAlarms(){if(!('Notification'in window)||Notification.permission!=='granted')return;const now=new Date(),today=organizerToday(),minute=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0'),tasks=getPersonalTasks();let changed=false;tasks.forEach(t=>{if(!t.notify||!t.time||t.time!==minute||!taskOccursOn(t,today)||taskDoneOn(t,today))return;t.notifiedDates=Array.isArray(t.notifiedDates)?t.notifiedDates:[];if(t.notifiedDates.includes(today))return;new Notification('Study · Lembrete',{body:t.title,tag:'study-task-'+t.id+'-'+today});t.notifiedDates.push(today);changed=true});if(changed)savePersonalTasks(tasks)}
+if(!window.__studyTaskAlarmInterval)window.__studyTaskAlarmInterval=setInterval(checkTaskAlarms,15000);
 </script>
 </body>
 </html>
