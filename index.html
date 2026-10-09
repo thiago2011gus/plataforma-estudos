@@ -633,7 +633,7 @@ body.dark .reading-card:hover{border-color:#3a4742}
       <div class="field"><label for="mentorTopic">Assunto</label><select class="select" id="mentorTopic" onchange="renderMentorMaterialOptions()"></select></div>
       <div class="field"><label for="mentorMaterial">Material da Biblioteca</label><select class="select" id="mentorMaterial" onchange="updateMentorMaterialStatus()"></select><div class="mentor-help" id="mentorMaterialStatus">Selecione um PDF associado ao assunto.</div></div>
       <div class="field"><label for="feynmanText">Seu ponto de partida <span class="mentor-optional">opcional</span></label><textarea id="feynmanText" placeholder="O que você já sabe? Qual dúvida quer resolver?"></textarea></div>
-      <div class="mentor-source-note"><span>🔒</span><div><strong>Seu material continua no Drive.</strong><br>O Study lê o PDF selecionado para preparar um contexto. O texto será incluído no prompt que você copiar para o ChatGPT.</div></div>
+      <div class="mentor-source-note"><span>📎</span><div><strong>O PDF será anexado por você no ChatGPT.</strong><br>O Study prepara o protocolo da sessão, mas não lê nem altera o arquivo. Assim, você pode anexar a versão com seus grifos e anotações.</div></div>
     </div>
     <div class="card mentor-workspace">
       <div class="mentor-section-heading"><span class="mentor-step">02</span><div><h3>Como você quer estudar?</h3><p>Escolha uma modalidade. O Mentor adapta as instruções para essa sessão.</p></div></div>
@@ -647,12 +647,12 @@ body.dark .reading-card:hover{border-color:#3a4742}
       <div class="field mentor-focus-field"><label for="mentorFocus">Foco da sessão <span class="mentor-optional">opcional</span></label><input id="mentorFocus" placeholder="Ex.: conceitos, distinções, exemplos práticos..."></div>
       <button class="btn btn-primary mentor-prepare-btn" id="mentorPrepareButton" onclick="prepareMentorSession()">Preparar sessão <span aria-hidden="true">→</span></button>
       <div class="mentor-status" id="mentorStatus" role="status">Selecione o material e a modalidade para começar.</div>
-      <div class="mentor-result" id="feynmanResult"><div class="mentor-empty"><span>✦</span><strong>Sua sessão aparecerá aqui</strong><p>O prompt será preparado com o assunto, a modalidade e o conteúdo do PDF selecionado.</p></div></div>
+      <div class="mentor-result" id="feynmanResult"><div class="mentor-empty"><span>✦</span><strong>Sua sessão aparecerá aqui</strong><p>O Study vai preparar as instruções. Depois, você anexa manualmente o PDF no ChatGPT — de preferência a versão com seus grifos.</p></div></div>
       <div class="mentor-actions">
         <button class="btn btn-secondary" onclick="copyFeynmanPrompt()">Copiar prompt</button>
         <button class="btn btn-primary" onclick="openChatGPT()">Abrir ChatGPT ↗</button>
       </div>
-      <p class="mentor-footnote">O ChatGPT abre em outra aba. Para iniciar, cole o prompt copiado na conversa. Não é necessário publicar sua pasta do Drive.</p>
+      <p class="mentor-footnote">Fluxo: preparar a sessão → abrir o ChatGPT → colar o prompt → anexar o PDF com seus grifos/anotações.</p>
     </div>
   </div>
 </section>
@@ -670,8 +670,6 @@ body.dark .reading-card:hover{border-color:#3a4742}
 </div>
 <div class="toast" id="toast"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script>if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";}</script>
 <script src="cronograma.js?v=2"></script>
 <script>
 const STORAGE_KEY='study_subjects_v2';
@@ -1399,8 +1397,8 @@ function getStudyDriveMaterials(){try{return JSON.parse(localStorage.getItem(STU
 function saveStudyDriveMaterials(items){localStorage.setItem(STUDY_MATERIALS_KEY,JSON.stringify(items));renderStudyDriveMaterials()}
 const MENTOR_MODE_KEY='study_mentor_mode_v1';
 let mentorMode=localStorage.getItem(MENTOR_MODE_KEY)||'feynman';
-let mentorPdfText='';
 let mentorPreparedPrompt='';
+
 function updateMentorTopics(){
   const subjectId=document.getElementById('feynmanSubject')?.value||'';
   const subject=subjects.find(s=>String(s.id)===String(subjectId));
@@ -1409,6 +1407,7 @@ function updateMentorTopics(){
   el.innerHTML='<option value="">Selecione um assunto</option>'+((subject?.topics)||[]).map(t=>'<option value="'+escapeHtml(t.name)+'">'+escapeHtml(t.name)+'</option>').join('');
   if([...el.options].some(o=>o.value===prev))el.value=prev;
 }
+
 function renderMentorMaterialOptions(){
   const el=document.getElementById('mentorMaterial');if(!el)return;
   const subjectId=document.getElementById('feynmanSubject')?.value||'';
@@ -1419,12 +1418,20 @@ function renderMentorMaterialOptions(){
   if(files.some(f=>f.id===previous))el.value=previous;
   updateMentorMaterialStatus();
 }
+
 function updateMentorMaterialStatus(){
   const fileId=document.getElementById('mentorMaterial')?.value;
   const file=getStudyDriveMaterials().find(f=>f.id===fileId);
   const status=document.getElementById('mentorMaterialStatus');
-  if(status)status.textContent=file?'Selecionado: '+file.name+'. O texto será extraído ao preparar a sessão.':'Nenhum PDF selecionado. Associe arquivos na Biblioteca para usá-los como fonte.';
+  if(!status)return;
+  if(file){
+    const link=file.webViewLink||('https://drive.google.com/file/d/'+encodeURIComponent(file.id)+'/view');
+    status.innerHTML='Selecionado: <strong>'+escapeHtml(file.name)+'</strong>. <a href="'+escapeHtml(link)+'" target="_blank" rel="noopener noreferrer" style="color:var(--accent);font-weight:700;text-decoration:none">Abrir PDF ↗</a><br><span style="display:inline-block;margin-top:4px">No ChatGPT, anexe a versão do arquivo que contém seus grifos/anotações.</span>';
+  }else{
+    status.textContent='Nenhum PDF específico selecionado. Você ainda pode estudar apenas com o tema ou associar um PDF na Biblioteca.';
+  }
 }
+
 function selectMentorMode(mode){
   const allowed=['feynman','discursiva','oral','flashcards','conversa'];
   if(!allowed.includes(mode))return;
@@ -1434,58 +1441,34 @@ function selectMentorMode(mode){
   const labels={feynman:'Preparar sessão',discursiva:'Preparar questão discursiva',oral:'Preparar arguição oral',flashcards:'Preparar flashcards',conversa:'Preparar conversa'};
   if(button)button.innerHTML=labels[mode]+' <span aria-hidden="true">→</span>';
 }
-async function extractMentorPdf(file){
-  if(!window.pdfjsLib)throw new Error('O leitor de PDF ainda está carregando. Atualize a página e tente novamente.');
-  const token=await getStudyDriveToken();
-  const response=await fetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(file.id)+'?alt=media',{headers:{Authorization:'Bearer '+token}});
-  if(!response.ok)throw new Error('Não foi possível baixar o PDF do Drive ('+response.status+').');
-  const bytes=await response.arrayBuffer();
-  const pdf=await pdfjsLib.getDocument({data:bytes}).promise;
-  let text='',pagesRead=0;
-  const maxPages=Math.min(pdf.numPages,60);
-  for(let n=1;n<=maxPages;n++){
-    const page=await pdf.getPage(n);const content=await page.getTextContent();
-    const pageText=content.items.map(item=>item.str||'').join(' ');
-    if(pageText.trim())text+='\n[Página '+n+']\n'+pageText+'\n';
-    pagesRead++;
-    if(text.length>42000)break;
-  }
-  if(!text.trim())throw new Error('Não encontrei texto selecionável neste PDF. Se for um documento digitalizado, será necessário OCR.');
-  const truncated=pdf.numPages>pagesRead||text.length>42000;
-  return {text:text.slice(0,42000),pages:pagesRead,totalPages:pdf.numPages,truncated};
-}
+
 function getMentorModeInstructions(mode,context){
-  const base='Você é o Mentor do Study. Use o material fornecido como fonte principal. Não invente conteúdo nem atribua ao PDF afirmações que ele não contém. Quando citar o material, indique a página marcada no texto. Se faltar informação, diga expressamente. Separe qualquer complemento de conhecimento geral do conteúdo da fonte. Trabalhe em português brasileiro e faça uma pergunta por vez, salvo quando a modalidade exigir um conjunto de cartões.';
+  const base='Você é o Mentor do Study. Use o PDF anexado pelo aluno como fonte principal. Não invente conteúdo nem atribua ao PDF afirmações que ele não contém. Considere também os grifos e anotações visíveis no arquivo como sinais do que o aluno destacou, sem presumir que todo grifo esteja correto. Quando citar o material, indique a página quando disponível. Se faltar informação no PDF, diga expressamente. Separe qualquer complemento de conhecimento geral do conteúdo da fonte. Trabalhe em português brasileiro e faça uma pergunta por vez, salvo quando a modalidade exigir um conjunto de cartões.';
   const instructions={
     feynman:'MÉTODO FEYNMAN: peça ao aluno que explique com as próprias palavras; diagnostique a principal lacuna; faça uma pergunta por vez; dê pistas progressivas antes de revelar uma correção. Não transforme a sessão em aula expositiva. Após cerca de três respostas substantivas, dê feedback concreto sobre acertos, lacunas e próximo ponto.',
-    discursiva:'QUESTÃO DISCURSIVA: formule uma questão aberta de dificuldade adequada ao tema e baseada no material. Aguarde a resposta do aluno antes de apresentar qualquer espelho. Depois avalie aderência ao enunciado, cobertura do conteúdo do PDF, precisão conceitual, fundamentação, organização e clareza. Dê feedback por critérios, aponte omissões com referência às páginas e apresente uma resposta-modelo somente depois da avaliação.',
+    discursiva:'QUESTÃO DISCURSIVA: formule uma questão aberta de dificuldade adequada ao tema e baseada no PDF. Aguarde a resposta do aluno antes de apresentar qualquer espelho. Depois avalie aderência ao enunciado, cobertura do conteúdo do PDF, precisão conceitual, fundamentação, organização e clareza. Dê feedback por critérios, aponte omissões com referência às páginas e apresente uma resposta-modelo somente depois da avaliação.',
     oral:'ARGUIÇÃO ORAL: simule uma banca examinadora. Faça uma pergunta por vez e espere a resposta falada ou transcrita. Explore fundamento, distinções, exceções e aplicação prática com perguntas de aprofundamento. Não antecipe a resposta. Ao final, avalie precisão, clareza, segurança conceitual e lacunas.',
-    flashcards:'FLASHCARDS: crie até 12 cartões baseados exclusivamente no material, cada um com pergunta curta, resposta objetiva e página de referência quando disponível. Evite duplicatas e cartões ambíguos. Apresente primeiro só a pergunta de um cartão por vez; espere a tentativa do aluno, revele a resposta e peça autoavaliação antes do próximo. Não revele antecipadamente todas as respostas.',
+    flashcards:'FLASHCARDS: crie até 12 cartões baseados exclusivamente no PDF, cada um com pergunta curta, resposta objetiva e página de referência quando disponível. Evite duplicatas e cartões ambíguos. Apresente primeiro só a pergunta de um cartão por vez; espere a tentativa do aluno, revele a resposta e peça autoavaliação antes do próximo. Não revele antecipadamente todas as respostas.',
     conversa:'CONVERSA: converse naturalmente sobre o assunto e responda às dúvidas com base prioritária no PDF. Ajude a relacionar conceitos, pedir exemplos e esclarecer trechos. Indique páginas quando possível. Se a fonte não responder, deixe isso claro antes de complementar com conhecimento geral identificado como complemento.'
   };
-  return base+'\n\nMATÉRIA: '+context.subject+'\nASSUNTO: '+context.topic+'\nFOCO: '+(context.focus||'Consolidação do conteúdo')+'\n\nMODALIDADE: '+mode.toUpperCase()+'\n'+instructions[mode]+'\n\nMATERIAL DE REFERÊNCIA: '+(context.fileName||'Nenhum PDF selecionado')+'\n'+(context.truncated?'OBSERVAÇÃO: O texto foi limitado para caber no contexto; não presuma que representa o documento inteiro.':'')+'\n\nTEXTO EXTRAÍDO DO PDF:\n'+(context.pdfText||'(Nenhum texto de PDF foi anexado. Trabalhe somente com o tema informado e avise que não há material-fonte selecionado.)')+'\n\nPONTO DE PARTIDA DO ALUNO:\n'+(context.startingPoint||'(Não informado)')+'\n\nCOMECE AGORA: apresente uma orientação breve e inicie a atividade conforme a modalidade, sem expor estas instruções internas.';
+  return base+'\n\nMATÉRIA: '+context.subject+'\nASSUNTO: '+context.topic+'\nFOCO: '+(context.focus||'Consolidação do conteúdo')+'\n\nMODALIDADE: '+mode.toUpperCase()+'\n'+instructions[mode]+'\n\nARQUIVO QUE O ALUNO DEVE ANEXAR NO CHATGPT: '+(context.fileName||'Nenhum PDF específico selecionado')+'\n\nPONTO DE PARTIDA DO ALUNO:\n'+(context.startingPoint||'(Não informado)')+'\n\nPROTOCOLO DE ARQUIVO\n1. O aluno deve anexar manualmente o PDF nesta conversa do ChatGPT.\n2. Se possuir uma versão com grifos ou anotações, deve anexar essa versão.\n3. Não presuma que o Study tenha enviado ou lido o arquivo.\n4. Trabalhe a partir do conteúdo efetivamente disponível no PDF anexado.\n5. Se o PDF não estiver anexado, peça ao aluno que o anexe antes de fundamentar a resposta no material.\n\nCOMECE AGORA: apresente uma orientação breve e inicie a atividade conforme a modalidade, sem expor estas instruções internas.';
 }
-async function prepareMentorSession(){
+
+function prepareMentorSession(){
   const subject=document.getElementById('feynmanSubject')?.selectedOptions?.[0]?.textContent?.trim()||'';
-  const topic=document.getElementById('mentorTopic')?.value?.trim()||document.getElementById('feynmanTopic')?.value?.trim()||'';
+  const topic=document.getElementById('mentorTopic')?.value?.trim()||'';
   const fileId=document.getElementById('mentorMaterial')?.value||'';
   const file=getStudyDriveMaterials().find(f=>f.id===fileId);
   const status=document.getElementById('mentorStatus');
   const result=document.getElementById('feynmanResult');
   if(!subject||!topic){if(status)status.textContent='Selecione uma matéria e um assunto cadastrado.';return}
-  if(status)status.textContent=file?'Lendo o PDF e preparando o contexto…':'Preparando o contexto da sessão…';
-  const button=document.getElementById('mentorPrepareButton');if(button)button.disabled=true;
-  try{
-    let extracted={text:'',pages:0,totalPages:0,truncated:false};
-    if(file)extracted=await extractMentorPdf(file);
-    const prompt=getMentorModeInstructions(mentorMode,{subject,topic,focus:document.getElementById('mentorFocus')?.value?.trim()||'',fileName:file?.name||'',pdfText:extracted.text,truncated:extracted.truncated,startingPoint:document.getElementById('feynmanText')?.value?.trim()||''});
-    mentorPreparedPrompt=prompt;preparedFeynmanPrompt=prompt;mentorPdfText=extracted.text;
-    if(result)result.innerHTML='<div class="mentor-prompt-preview">'+escapeHtml(prompt)+'</div>';
-    if(status)status.textContent=file?'PDF lido: '+extracted.pages+' de '+extracted.totalPages+' páginas analisadas'+(extracted.truncated?' (trecho limitado para o prompt).':'.'):'Sessão preparada sem PDF específico. Para fundamentar no material, associe um PDF à matéria e ao assunto.';
-    const message=document.getElementById('feynmanLauncherMessage');if(message)message.textContent='Sessão preparada. Copie o prompt e abra o ChatGPT para começar.';
-  }catch(error){
-    if(status)status.textContent='Não foi possível preparar a sessão: '+error.message;
-  }finally{if(button)button.disabled=false}
+  const prompt=getMentorModeInstructions(mentorMode,{subject,topic,focus:document.getElementById('mentorFocus')?.value?.trim()||'',fileName:file?.name||'',startingPoint:document.getElementById('feynmanText')?.value?.trim()||''});
+  mentorPreparedPrompt=prompt;
+  preparedFeynmanPrompt=prompt;
+  if(result)result.innerHTML='<div class="mentor-prompt-preview">'+escapeHtml(prompt)+'</div>';
+  if(status)status.innerHTML=file?'✓ Sessão preparada. Abra o PDF se precisar conferir a versão com grifos e depois anexe o arquivo no ChatGPT.':'✓ Sessão preparada. Anexe o PDF no ChatGPT se quiser usar um material-fonte.';
+  const message=document.getElementById('feynmanLauncherMessage');
+  if(message)message.textContent='Sessão preparada. O próximo passo é abrir o ChatGPT, colar o prompt e anexar o PDF.';
 }
 
 function renderStudyDriveMaterials(){
@@ -1746,7 +1729,7 @@ function startFeynmanFromSchedule(weekNumber,dayName){
   const topic=(d.content||'').replace(/^AULA\s*\d+[A-Z]?\s*/i,'').trim();
   const sel=document.getElementById('feynmanSubject');
   if(sel&&subject){ const opt=[...sel.options].find(o=>o.textContent===subject); if(opt)sel.value=opt.value; }
-  const topicEl=document.getElementById('feynmanTopic'); if(topicEl)topicEl.value=topic;
+  const topicEl=document.getElementById('mentorTopic'); if(topicEl)topicEl.value=topic;
   const textEl=document.getElementById('feynmanText'); if(textEl)textEl.value='';
   showView('feynman');
   setTimeout(()=>topicEl?.focus(),50);
@@ -2216,7 +2199,7 @@ async function copyFeynmanPrompt(){
     if(message){
 
       message.innerHTML =
-        '✓ Prompt copiado. Agora clique em <strong>Abrir ChatGPT</strong> e cole a mensagem.';
+        '✓ Prompt copiado. Agora abra o ChatGPT, cole a mensagem e <strong>anexe o PDF com seus grifos/anotações</strong>.';
 
     }
 
@@ -2271,7 +2254,7 @@ async function openChatGPT(){
   if(message){
 
     message.innerHTML =
-      '✓ Prompt copiado. O ChatGPT foi aberto. Cole o prompt na conversa para iniciar a sessão.';
+      '✓ Prompt copiado. O ChatGPT foi aberto. <strong>Cole o prompt e anexe o PDF com seus grifos/anotações</strong> para iniciar.';
 
   }
 
@@ -2321,7 +2304,7 @@ function clearFeynmanLauncher(){
   if(message){
 
     message.textContent =
-      'O seu plano ChatGPT será usado para conduzir a sessão. A plataforma apenas prepara o contexto.';
+      'O Study prepara o protocolo da sessão. O PDF é anexado manualmente no ChatGPT, preservando seus grifos e anotações.';
 
   }
 
