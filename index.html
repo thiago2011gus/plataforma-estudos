@@ -12,9 +12,10 @@
   --shadow:0 8px 30px rgba(32,40,37,.05)
 }
 body.dark{
-  --bg:#111513;--surface:#191e1c;--surface2:#202724;--text:#edf3f0;--muted:#9aa7a0;
-  --line:#2c3531;--accent:#82b8a8;--accent-light:#20352e;--danger:#e99696;
-  --shadow:0 10px 34px rgba(0,0,0,.28)
+  --bg:#252c29;--surface:#2d3530;--surface2:#354039;--text:#f2f5f2;--muted:#b0bbb4;
+  --line:#4a5650;--accent:#a5d5c4;--accent-light:#30433a;--danger:#f0a0a0;
+  --shadow:0 10px 34px rgba(0,0,0,.22);
+  color-scheme:dark
 }
 *{box-sizing:border-box}
 body{margin:0;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
@@ -119,35 +120,43 @@ body.dark .overdue-label{background:#512b2b;color:#ffb2b2}
 .gamification-dashboard-card{display:grid;grid-template-columns:1fr 170px;gap:18px;margin-bottom:18px;padding:20px}
 .gamification-dashboard-main{min-width:0}.gamification-kicker{font-size:9px;color:var(--accent);font-weight:800;letter-spacing:1.1px}.gamification-level-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-top:5px}.gamification-level{font-size:21px;font-weight:780}.gamification-xp{font-size:11px;color:var(--muted);margin-top:3px}.gamification-rank{font-size:10px;color:var(--accent);background:var(--accent-light);padding:6px 8px;border-radius:8px;font-weight:700}.xp-track{height:7px;background:var(--surface2);border-radius:20px;overflow:hidden;margin-top:13px}.xp-track>div{height:100%;width:0;background:var(--accent);border-radius:20px;transition:width .3s}.xp-track.large{height:9px}.gamification-next{font-size:9px;color:var(--muted);margin-top:6px}.gamification-dashboard-side{border-left:1px solid var(--line);padding-left:18px}.game-mini-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}.game-mini-value{font-size:18px;font-weight:760;margin-top:3px}.game-hero{display:grid;grid-template-columns:1.1fr 1.6fr 150px;gap:24px;align-items:center;padding:24px;margin-bottom:18px}.game-hero-level{font-size:30px;font-weight:800;letter-spacing:-.8px;margin-top:4px}.game-hero-rank{font-size:12px;color:var(--muted);margin-top:3px}.game-hero-xp strong{font-size:18px}.game-hero-streak{border-left:1px solid var(--line);padding-left:22px;text-align:center}.game-hero-streak span{font-size:18px}.game-hero-streak strong{display:block;font-size:26px;margin-top:3px}.game-hero-streak small{font-size:9px;color:var(--muted)}.game-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.mission{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid var(--line)}.mission:last-child{border-bottom:0}.mission-check{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--muted);font-size:12px;flex:none}.mission.done .mission-check{background:var(--accent);border-color:var(--accent);color:#fff}.mission-main{flex:1;min-width:0}.mission-title{font-size:12px;font-weight:650}.mission-detail{font-size:9px;color:var(--muted);margin-top:3px}.achievement-list{display:grid;grid-template-columns:1fr 1fr;gap:8px}.achievement{padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}.achievement.locked{opacity:.48}.achievement-icon{font-size:16px;float:left;margin-right:9px}.achievement-title{font-size:11px;font-weight:700}.achievement-desc{font-size:9px;color:var(--muted);margin-top:3px;line-height:1.4}.reward-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.reward-row:last-child{border-bottom:0}.reward-main{flex:1}.reward-title{font-size:12px;font-weight:700}.reward-desc{font-size:9px;color:var(--muted);margin-top:3px}.reward-cost{font-size:11px;color:var(--accent);font-weight:750;white-space:nowrap}.reward-actions{display:flex;gap:6px}@media(max-width:720px){.gamification-dashboard-card{grid-template-columns:1fr}.gamification-dashboard-side{border-left:0;border-top:1px solid var(--line);padding:12px 0 0;display:flex;gap:10px;align-items:center}.game-hero,.game-grid{grid-template-columns:1fr}.game-hero-streak{border-left:0;border-top:1px solid var(--line);padding:14px 0 0}.achievement-list{grid-template-columns:1fr}}
 
-/* DARK MODE — acabamento visual */
-body.dark .sidebar{background:#151a18;border-color:#29312e}
-body.dark .nav-item{color:#aeb9b3}
-body.dark .nav-item:hover{background:#1e2522}
-body.dark .nav-item.active{background:#20352e;color:#8fc3b2}
-body.dark .nav-title{color:#6f7b75}
-body.dark .brand-sub{color:#7f8c85}
-body.dark .bar{background:#2a332f}
-body.dark .topic.done .topic-name{color:#77827d}
-body.dark .modal{background:#191e1c;color:var(--text)}
-body.dark .modal-backdrop{background:rgba(0,0,0,.58)}
-body.dark .btn-danger{background:#3a2525;color:#ef9b9b}
-body.dark .toast{background:#e9f1ee;color:#18201d}
+/* DARK MODE — contraste, hierarquia e superfícies consistentes */
+body.dark .sidebar{background:var(--surface);border-color:var(--line)}
+body.dark .nav-item{color:#c0cbc4}
+body.dark .nav-item:hover{background:var(--surface2)}
+body.dark .nav-item.active{background:var(--accent-light);color:var(--accent)}
+body.dark .nav-title{color:#a1ada5}
+body.dark .brand-sub{color:#a8b4ac}
+body.dark .bar{background:#3a443e}
+body.dark .topic.done .topic-name{color:#a0aca4}
+body.dark .modal{background:var(--surface);color:var(--text);border-color:var(--line)}
+body.dark .modal-backdrop{background:rgba(0,0,0,.66)}
+body.dark .btn-danger{background:#482d2d;color:#ffb4b4}
+body.dark .toast{background:#edf5f0;color:#18201d}
 body.dark .search::placeholder,
 body.dark input::placeholder,
-body.dark textarea::placeholder{color:#6f7b75}
-body.dark .small-btn{background:#191e1c}
-body.dark .small-btn:hover{background:#242c28}
-body.dark .btn-secondary{background:#202724}
-body.dark .seg.active{background:#29322e;color:#edf3f0;box-shadow:0 1px 3px rgba(0,0,0,.24)}
-body.dark .theme-control{background:#191e1c}
-body.dark .date-chip{background:#191e1c}
-body.dark .theme-toggle{background:#191e1c}
-body.dark .sidebar-toggle{background:#191e1c}
-body.dark .agenda-day-cell.today{background:#20352e}
-body.dark .agenda-event.personal{background:#252c29;color:#d9e0dc}
-body.dark .reading-status{background:#202724}
-body.dark .reading-card{background:#191e1c}
-body.dark .reading-card:hover{border-color:#3a4742}
+body.dark textarea::placeholder{color:#a0aca4;opacity:1}
+body.dark .small-btn{background:var(--surface);color:var(--text);border-color:var(--line)}
+body.dark .small-btn:hover{background:var(--surface2);border-color:var(--accent)}
+body.dark .btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--line)}
+body.dark .seg.active{background:var(--surface2);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.24)}
+body.dark .theme-control{background:var(--surface)}
+body.dark .date-chip{background:var(--surface)}
+body.dark .theme-toggle{background:var(--surface)}
+body.dark .sidebar-toggle{background:var(--surface);border-color:var(--line)}
+body.dark .agenda-day-cell.today{background:var(--accent-light);border-color:var(--accent)}
+body.dark .agenda-event.personal{background:var(--surface2);color:var(--text)}
+body.dark .reading-status{background:var(--surface2);color:var(--text)}
+body.dark .reading-card{background:var(--surface)}
+body.dark .reading-card:hover{border-color:var(--line)}
+body.dark a:not(.btn):not(.small-btn){color:var(--accent)}
+body.dark .link-btn,body.dark .organizer-inline-link{color:var(--accent)}
+body.dark .page-sub,body.dark .desc,body.dark .organizer-card-sub,body.dark .metric-detail{color:var(--muted)}
+body.dark .field input,body.dark .field textarea,body.dark .field select,body.dark input,body.dark textarea,body.dark select{color:var(--text);border-color:var(--line)}
+body.dark .organizer-home-hero,body.dark .card,body.dark .subject-detail,body.dark .subject-card{border-color:var(--line)}
+body.dark .status{background:var(--surface2);color:#c1ccc5}
+body.dark .review-due-label.overdue{background:#482d2d;color:#ffb4b4}
+body.dark .btn-primary{background:var(--accent);color:#17221c}
 
 
 /* SETTINGS */
@@ -2401,6 +2410,8 @@ function applyAppearance(){
   const fv=document.getElementById('fontScaleValue');
   if(fs)fs.value=appearance.fontScale;
   if(fv)fv.textContent=appearance.fontScale+'%';
+  // Reaplica a paleta escura quando a cor principal é alterada pelas configurações.
+  if(document.body.classList.contains('dark'))setThemeColors(Number(localStorage.getItem('study_darkness')||50));
 }
 function resetAppearance(){
   appearance={...appearanceDefaults};
@@ -3130,38 +3141,36 @@ function mixHex(lightHex,darkHex,t){
   return '#'+mix(a.r,b.r)+mix(a.g,b.g)+mix(a.b,b.b);
 }
 function setThemeColors(darkness){
-  // No modo escuro, aplicar as variáveis diretamente ao body para que
-  // as declarações de body.dark não sobrescrevam a gradação escolhida.
-  const root=document.body.classList.contains('dark')?document.body:document.documentElement;
+  const dark=document.body.classList.contains('dark');
   const level=Number(darkness)||50;
-  if(document.body.classList.contains('dark')){
+  if(dark){
     const palettes={
-      25:{bg:'#303936',surface:'#39433f',surface2:'#424e48',line:'#56635c',accent:'#a0d0bf',accentLight:'#354b42'},
-      50:{bg:'#202724',surface:'#191e1c',surface2:'#252d29',line:'#35403a',accent:'#8fc5b3',accentLight:'#263d33'},
-      75:{bg:'#101412',surface:'#171c19',surface2:'#1e2521',line:'#2b342e',accent:'#7eaf9f',accentLight:'#20332b'},
-      100:{bg:'#000000',surface:'#080a09',surface2:'#111412',line:'#252a27',accent:'#76a997',accentLight:'#172720'}
+      25:{bg:'#343c38',surface:'#3d4641',surface2:'#47514b',line:'#65716a',accent:'#b5dccc'},
+      50:{bg:'#252c29',surface:'#2d3530',surface2:'#354039',line:'#4a5650',accent:'#a5d5c4'},
+      75:{bg:'#1a201d',surface:'#212824',surface2:'#29312c',line:'#3b4740',accent:'#9bceb9'},
+      100:{bg:'#121715',surface:'#1b221e',surface2:'#252d27',line:'#3a463e',accent:'#a0d6c2'}
     };
-    const p=palettes[level]||palettes[50];
+    const p=palettes[level]||palettes[50],root=document.body,chosen=appearance?.accent||p.accent;
+    // Mantém a cor escolhida, mas aumenta a luminosidade para funcionar sobre fundos escuros.
+    const readableAccent=typeof mixHex==='function'?mixHex(chosen,'#ffffff',0.40):p.accent;
+    const accentLight=typeof mixHex==='function'?mixHex(p.bg,chosen,0.28):'#30433a';
     root.style.setProperty('--bg',p.bg);
     root.style.setProperty('--surface',p.surface);
     root.style.setProperty('--surface2',p.surface2);
     root.style.setProperty('--line',p.line);
-    root.style.setProperty('--accent',appearance?.accent||p.accent);
-    root.style.setProperty('--accent-light',p.accentLight);
+    root.style.setProperty('--accent',readableAccent);
+    root.style.setProperty('--accent-light',accentLight);
+    root.style.setProperty('--muted','#b0bbb4');
   }else{
-    // Remover as variáveis inline deixadas no body pelo modo escuro.
-    // Elas têm prioridade sobre as variáveis do :root e impediam a troca
-    // imediata para o modo claro sem recarregar a página.
-    ['--bg','--surface','--surface2','--line','--accent','--accent-light'].forEach(name=>{
-      document.body.style.removeProperty(name);
-    });
-    const lightRoot=document.documentElement;
-    lightRoot.style.setProperty('--bg','#f6f5f1');
-    lightRoot.style.setProperty('--surface','#ffffff');
-    lightRoot.style.setProperty('--surface2','#f9f9f6');
-    lightRoot.style.setProperty('--line','#e7e7e1');
-    lightRoot.style.setProperty('--accent',appearance?.accent||'#2f6254');
-    lightRoot.style.setProperty('--accent-light','#e8f1ed');
+    ['--bg','--surface','--surface2','--line','--accent','--accent-light','--muted'].forEach(name=>document.body.style.removeProperty(name));
+    const root=document.documentElement;
+    root.style.setProperty('--bg','#f6f5f1');
+    root.style.setProperty('--surface','#ffffff');
+    root.style.setProperty('--surface2','#f9f9f6');
+    root.style.setProperty('--line','#e7e7e1');
+    root.style.setProperty('--accent',appearance?.accent||'#2f6254');
+    root.style.setProperty('--accent-light','#e8f1ed');
+    root.style.setProperty('--muted','#78807c');
   }
 }
 function applyTheme(theme){
