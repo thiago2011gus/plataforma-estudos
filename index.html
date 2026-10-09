@@ -383,7 +383,7 @@ body.dark .agenda-item.task-priority-high .task-priority-badge{background:#41351
       <div class="organizer-home-kicker">Study. · seu espaço pessoal</div>
       <h2 class="organizer-home-title">Um lugar para estudar, organizar e registrar.</h2>
       <div class="organizer-home-copy">Mantenha os estudos como prioridade. Quando surgir uma pendência, uma ideia ou um compromisso, registre aqui e volte ao que estava fazendo.</div>
-      <div class="organizer-home-actions"><button class="btn btn-primary" onclick="showView('myday')">Organizar meu dia</button><button class="btn btn-secondary" onclick="showView('timer')">Começar uma sessão de estudo</button></div>
+      <div class="organizer-home-actions"><button class="btn btn-primary" onclick="showView('myday')">Organizar meu dia</button><button class="btn btn-secondary" onclick="resumeLastStudyTopic()">Retomar último assunto</button></div>
     </div>
     <div class="organizer-grid three home-smart-grid">
       <div class="card organizer-card"><div class="organizer-card-title">Próxima prioridade</div><div class="organizer-card-sub">A tarefa que merece sua atenção primeiro.</div><div id="homeNextAction" class="home-smart-content"></div><button class="organizer-inline-link" type="button" onclick="showView('tasks')">Abrir tarefas →</button></div>
@@ -1545,6 +1545,16 @@ function renderHomeQuickCaptures(){
  const list=document.getElementById('homeQuickCaptureList');if(!list)return;
  const items=getQuickCaptures().slice(0,3);
  list.innerHTML=items.length?'<div class="organizer-list">'+items.map(x=>'<div class="organizer-item"><div class="organizer-item-title">'+escapeHtml(x.title||String(x.text||'').slice(0,75))+'</div><div class="organizer-item-meta">'+escapeHtml(quickKindLabel(x.kind))+' · '+new Date(x.createdAt).toLocaleDateString('pt-BR')+'</div><div class="organizer-actions"><select class="select" aria-label="Classificar captura" onchange="changeQuickCaptureKind(\''+escapeHtml(String(x.id))+'\',this.value)">'+quickCaptureTypeOptions(x.kind)+'</select><button class="small-btn" onclick="organizeQuickCapture(\''+escapeHtml(String(x.id))+'\')">Organizar</button></div></div>').join('')+'</div>':'<div class="organizer-empty">Suas capturas recentes aparecerão aqui para você classificá-las depois.</div>';
+}
+function resumeLastStudyTopic(){
+ const last=getStudyLog().slice().reverse().find(x=>x.subjectId);
+ showView('timer');
+ if(!last){toast('Ainda não há sessão anterior registrada. Escolha a matéria e comece a estudar.');return}
+ const subject=subjects.find(x=>String(x.id)===String(last.subjectId));
+ ['timerSubject','timerSubject2'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=String(last.subjectId)});
+ renderTimerTopics();
+ ['timerTopic','timerTopic2'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=last.topicId==null?'':String(last.topicId)});
+ toast('Último assunto selecionado'+(subject?' · '+subject.name:'')+'. Confira a seleção e inicie o cronômetro.');
 }
 function renderHome(){
  const today=organizerToday(),date=document.getElementById('homeDate');if(date)date.textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
