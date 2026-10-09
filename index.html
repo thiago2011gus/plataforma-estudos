@@ -54,7 +54,7 @@ button:disabled{cursor:not-allowed;opacity:.55}
 .sidebar::-webkit-scrollbar{width:6px}.sidebar::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
 .brand{position:sticky;top:-24px;z-index:2;background:var(--surface);padding-top:24px;margin-top:-24px}
 .brand{padding:0 10px 28px}.brand-title{font-size:22px;font-weight:750;letter-spacing:-.7px}.brand-sub{font-size:11px;color:var(--muted);margin-top:5px}
-.nav-group{margin-top:22px}.nav-title{font-size:10px;letter-spacing:1.2px;color:#9ca39f;text-transform:uppercase;font-weight:750;padding:0 10px 8px}.nav-section-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;border:0;background:transparent;font-family:inherit;text-align:left;cursor:pointer}.nav-section-toggle:hover{color:var(--accent)}.nav-section-chevron{font-size:15px;transition:transform .18s ease}.study-nav-group.is-collapsed .nav-section-chevron{transform:rotate(-90deg)}.study-nav-group.is-collapsed .study-nav-items{display:none}.study-nav-items .nav-item{cursor:grab;touch-action:pan-y}.study-nav-items .nav-item:active{cursor:grabbing}.study-nav-items .nav-item.dragging{opacity:.4}.study-nav-items .nav-item.drag-over{outline:1px dashed var(--accent);outline-offset:1px}.app.sidebar-collapsed .nav-section-toggle{justify-content:center}.app.sidebar-collapsed .nav-section-toggle span:first-child{font-size:0}.app.sidebar-collapsed .nav-section-chevron{display:none}
+.flashcard-study-card{border:1px solid var(--line);background:var(--surface2);border-radius:14px;padding:20px;margin:14px 0}.flashcard-prompt{font-size:18px;font-weight:650;line-height:1.5;white-space:pre-wrap}.flashcard-answer{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);white-space:pre-wrap;line-height:1.6}.flashcard-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}.flashcard-row:last-child{border-bottom:0}.flashcard-meta{font-size:12px;color:var(--muted);margin-top:6px}.flashcard-actions{display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0}.flashcard-rating{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.flashcard-rating .btn{flex:1;min-width:100px}.flashcard-rating-note{font-size:12px;color:var(--muted);margin-top:8px}.nav-group{margin-top:22px}.nav-title{font-size:10px;letter-spacing:1.2px;color:#9ca39f;text-transform:uppercase;font-weight:750;padding:0 10px 8px}.nav-section-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;border:0;background:transparent;font-family:inherit;text-align:left;cursor:pointer}.nav-section-toggle:hover{color:var(--accent)}.nav-section-chevron{font-size:15px;transition:transform .18s ease}.study-nav-group.is-collapsed .nav-section-chevron{transform:rotate(-90deg)}.study-nav-group.is-collapsed .study-nav-items{display:none}.study-nav-items .nav-item{cursor:grab;touch-action:pan-y}.study-nav-items .nav-item:active{cursor:grabbing}.study-nav-items .nav-item.dragging{opacity:.4}.study-nav-items .nav-item.drag-over{outline:1px dashed var(--accent);outline-offset:1px}.app.sidebar-collapsed .nav-section-toggle{justify-content:center}.app.sidebar-collapsed .nav-section-toggle span:first-child{font-size:0}.app.sidebar-collapsed .nav-section-chevron{display:none}
 .nav-item{display:flex;align-items:center;gap:11px;padding:11px 10px;margin:3px 0;border-radius:10px;color:#555d59;font-size:14px}
 .nav-item:hover{background:var(--surface2)}.nav-item.active{background:var(--accent-light);color:var(--accent);font-weight:650}.nav-external-link{text-decoration:none;width:100%}.nav-external-link:hover{color:var(--accent)}.nav-external-label{min-width:0}.app.sidebar-collapsed .nav-external-label{font-size:0}.nav-icon{width:20px;height:20px;flex:0 0 20px;display:inline-flex;align-items:center;justify-content:center;color:var(--muted)}.nav-icon svg{width:17px;height:17px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.nav-item.active .nav-icon{color:var(--accent)}
 .main{margin-left:240px;padding:32px 40px;max-width:1500px}
@@ -208,6 +208,7 @@ body.dark .reading-card:hover{border-color:#3a4742}
     <div class="nav-item" data-view="notes"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg></span>Anotações</div>
     <div class="nav-item" data-view="research"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg></span>Oráculo Jurídico</div>
     <div class="nav-item" data-view="feynman"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"/><path d="m19 15 .9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15Z"/></svg></span>Mentor</div>
+    <div class="nav-item" data-view="flashcards"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="14" height="16" rx="2"/><path d="M4 7v14h13M11 8h6M11 12h6"/></svg></span>Flashcards</div>
     </div>
   </div>
   <div class="nav-group">
@@ -405,6 +406,30 @@ body.dark .reading-card:hover{border-color:#3a4742}
     <div class="reading-grid" id="readingGrid"></div>
   </section>
   <section class="view" id="view-reviews"><div class="card section-card"><div class="section-title">Revisões</div><div class="empty">A estrutura está preparada. Vamos transformar esta tela em revisão espaçada na próxima etapa.</div></div></section>
+  <section class="view" id="view-flashcards">
+  <div class="card section-card">
+    <div class="head"><div><div class="section-title">Flashcards e revisão espaçada</div><div class="desc">Crie cartões manualmente e revise no momento certo, conforme seu desempenho.</div></div><span class="status" id="flashcardDueCount">0 para hoje</span></div>
+    <div class="metrics" style="margin:16px 0">
+      <div class="card metric"><div class="metric-label">Vencidos / para hoje</div><div class="metric-value" id="flashcardDueMetric">0</div></div>
+      <div class="card metric"><div class="metric-label">Cartões cadastrados</div><div class="metric-value" id="flashcardTotalMetric">0</div></div>
+      <div class="card metric"><div class="metric-label">Novos</div><div class="metric-value" id="flashcardNewMetric">0</div></div>
+    </div>
+    <div class="section-title" id="flashcardFormTitle">Criar flashcard</div>
+    <div class="form-grid" style="margin:14px 0">
+      <div class="field"><label for="flashcardSubject">Matéria</label><select id="flashcardSubject" class="select" onchange="updateFlashcardTopics()"></select></div>
+      <div class="field"><label for="flashcardTopic">Tópico</label><select id="flashcardTopic" class="select"></select></div>
+      <div class="field" style="grid-column:1/-1"><label for="flashcardQuestion">Pergunta / frente do cartão</label><textarea id="flashcardQuestion" rows="2" placeholder="Ex.: Quais são os atributos do poder de polícia?"></textarea></div>
+      <div class="field" style="grid-column:1/-1"><label for="flashcardAnswer">Resposta / verso do cartão</label><textarea id="flashcardAnswer" rows="3" placeholder="Escreva a resposta que você quer memorizar..."></textarea></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px"><button class="btn btn-primary" type="button" onclick="saveFlashcard()">Salvar flashcard</button><button class="btn btn-secondary" type="button" id="flashcardCancelEdit" onclick="cancelFlashcardEdit()" style="display:none">Cancelar edição</button></div>
+    <div class="divider" style="border-top:1px solid var(--line);margin:18px 0"></div>
+    <div class="head"><div><div class="section-title">Sessão de revisão</div><div class="desc">Tente responder antes de revelar. Depois avalie como se saiu para calcular o próximo intervalo.</div></div><button class="btn btn-secondary" type="button" onclick="startFlashcardReview()">Revisar agora</button></div>
+    <div id="flashcardReviewArea" style="margin:14px 0"></div>
+    <div class="head" style="margin-top:22px"><div><div class="section-title">Meus cartões</div><div class="desc">Filtre por matéria e edite os cartões quando precisar.</div></div></div>
+    <div class="form-grid" style="margin:12px 0"><div class="field"><label for="flashcardFilterSubject">Matéria</label><select id="flashcardFilterSubject" class="select" onchange="renderFlashcards()"></select></div><div class="field"><label for="flashcardSearch">Buscar cartão</label><input id="flashcardSearch" class="search" placeholder="Pesquisar pergunta ou resposta..." oninput="renderFlashcards()"></div></div>
+    <div id="flashcardList"></div>
+  </div>
+</section>
   <section class="view" id="view-questions">
     <div class="page-head"><div><div class="section-title" style="font-size:23px">Questões e desempenho</div><div class="desc">Resolva questões no Qconcursos e registre seu desempenho por matéria e assunto.</div></div><a class="btn btn-primary" href="https://elite.qconcursos.com/questoes-de-concursos/questoes" target="_blank" rel="noopener noreferrer">Abrir Qconcursos ↗</a></div>
     <div class="card section-card" style="margin-bottom:18px">
@@ -904,7 +929,92 @@ function renderPerformanceOverview(){
   el.innerHTML=rows.length?'<div class="performance-list">'+rows.map(({s,t,p,i})=>'<div class="performance-row"><div><strong>'+escapeHtml(s.name)+'</strong><div>'+escapeHtml(t.name)+'</div></div><div class="performance-score">'+p.percent+'%</div><div class="performance-meta">'+p.correct+'/'+p.total+' questões</div><button class="small-btn" onclick="openTopicPerformance(\''+s.id+'\','+i+')">Editar</button></div>').join('')+'</div>':'<div class="empty">Seus registros de desempenho aparecerão aqui.</div>';
 }
 
-function renderAll(){renderDashboard();renderSubjectsPage();renderTimerSubjects();renderFeynmanSubjects();renderPerformanceSubjects();renderPerformanceOverview();renderTimer();renderPlan();renderStats();renderAgenda();renderReadings();renderGamification();applyAppearance()}
+/* FLASHCARDS — criação manual e repetição espaçada */
+const FLASHCARDS_KEY='study_flashcards_v1';
+let flashcardEditingId=null, flashcardReviewQueue=[], flashcardReviewIndex=0, flashcardRevealed=false;
+function getFlashcards(){try{const v=JSON.parse(localStorage.getItem(FLASHCARDS_KEY)||'[]');return Array.isArray(v)?v:[]}catch(e){return[]}}
+function saveFlashcards(data){localStorage.setItem(FLASHCARDS_KEY,JSON.stringify(data))}
+function flashcardToday(){return localDateKey(new Date())}
+function flashcardDue(card){return !card.dueDate||card.dueDate<=flashcardToday()}
+function renderFlashcardSubjects(){
+  const subject=document.getElementById('flashcardSubject'),filter=document.getElementById('flashcardFilterSubject');
+  if(!subject||!filter)return;
+  const old=subject.value,oldFilter=filter.value;
+  const options=subjects.map(x=>'<option value="'+escapeHtml(x.id)+'">'+escapeHtml(x.name)+'</option>').join('');
+  subject.innerHTML=options||'<option value="">Cadastre uma matéria primeiro</option>';
+  filter.innerHTML='<option value="">Todas as matérias</option>'+options;
+  if(subjects.some(x=>x.id===old))subject.value=old;
+  if(subjects.some(x=>x.id===oldFilter))filter.value=oldFilter;
+  updateFlashcardTopics();
+}
+function updateFlashcardTopics(){
+  const sid=document.getElementById('flashcardSubject')?.value, topic=document.getElementById('flashcardTopic');
+  if(!topic)return;
+  const subject=subjects.find(x=>x.id===sid), old=topic.value;
+  topic.innerHTML='<option value="">Sem tópico específico</option>'+(subject?.topics||[]).map(t=>'<option value="'+escapeHtml(t.name)+'">'+escapeHtml(t.name)+'</option>').join('');
+  if([...(subject?.topics||[])].some(t=>t.name===old))topic.value=old;
+}
+function saveFlashcard(){
+  const subjectId=document.getElementById('flashcardSubject').value, subject=subjects.find(x=>x.id===subjectId);
+  const question=document.getElementById('flashcardQuestion').value.trim(),answer=document.getElementById('flashcardAnswer').value.trim(),topicName=document.getElementById('flashcardTopic').value;
+  if(!subject){toast('Cadastre uma matéria antes de criar flashcards.');return}
+  if(!question||!answer){toast('Preencha a pergunta e a resposta.');return}
+  const cards=getFlashcards();
+  if(flashcardEditingId){
+    const card=cards.find(x=>x.id===flashcardEditingId);
+    if(card){card.subjectId=subject.id;card.subjectName=subject.name;card.topicName=topicName;card.question=question;card.answer=answer;card.updatedAt=new Date().toISOString()}
+  }else cards.push({id:uid(),subjectId:subject.id,subjectName:subject.name,topicName,question,answer,createdAt:new Date().toISOString(),dueDate:flashcardToday(),interval:0,repetitions:0,lapses:0,ease:2.5,lastRating:null});
+  saveFlashcards(cards);cancelFlashcardEdit();renderFlashcards();toast(flashcardEditingId?'Flashcard atualizado.':'Flashcard criado.');
+}
+function editFlashcard(id){
+  const c=getFlashcards().find(x=>x.id===id);if(!c)return;
+  flashcardEditingId=id;document.getElementById('flashcardFormTitle').textContent='Editar flashcard';
+  document.getElementById('flashcardSubject').value=c.subjectId;updateFlashcardTopics();
+  document.getElementById('flashcardTopic').value=c.topicName||'';
+  document.getElementById('flashcardQuestion').value=c.question;document.getElementById('flashcardAnswer').value=c.answer;
+  document.getElementById('flashcardCancelEdit').style.display='inline-flex';
+  document.getElementById('flashcardFormTitle').scrollIntoView({behavior:'smooth',block:'center'});
+}
+function cancelFlashcardEdit(){flashcardEditingId=null;const title=document.getElementById('flashcardFormTitle');if(!title)return;title.textContent='Criar flashcard';document.getElementById('flashcardQuestion').value='';document.getElementById('flashcardAnswer').value='';document.getElementById('flashcardCancelEdit').style.display='none'}
+function deleteFlashcard(id){if(!confirm('Excluir este flashcard?'))return;saveFlashcards(getFlashcards().filter(c=>c.id!==id));renderFlashcards();toast('Flashcard excluído.')}
+function renderFlashcards(){
+  const area=document.getElementById('flashcardList');if(!area)return;
+  const all=getFlashcards(),due=all.filter(flashcardDue),fresh=all.filter(c=>!c.repetitions).length;
+  document.getElementById('flashcardDueCount').textContent=due.length+' para hoje';
+  document.getElementById('flashcardDueMetric').textContent=due.length;
+  document.getElementById('flashcardTotalMetric').textContent=all.length;
+  document.getElementById('flashcardNewMetric').textContent=fresh;
+  const filter=document.getElementById('flashcardFilterSubject')?.value||'',q=(document.getElementById('flashcardSearch')?.value||'').trim().toLowerCase();
+  const cards=all.filter(c=>(!filter||c.subjectId===filter)&&(!q||(c.question+' '+c.answer+' '+c.subjectName+' '+c.topicName).toLowerCase().includes(q))).sort((a,b)=>(a.dueDate||'').localeCompare(b.dueDate||''));
+  area.innerHTML=cards.length?cards.map(c=>'<div class="flashcard-row"><div style="min-width:0;flex:1"><div class="flashcard-prompt" style="font-size:15px">'+escapeHtml(c.question)+'</div><div class="flashcard-meta">'+escapeHtml(c.subjectName||'Matéria removida')+(c.topicName?' · '+escapeHtml(c.topicName):'')+' · '+(flashcardDue(c)?'Revisão pendente':'Próxima revisão: '+escapeHtml(c.dueDate))+'</div><details style="margin-top:8px"><summary style="cursor:pointer;color:var(--accent)">Ver resposta</summary><div class="flashcard-answer">'+escapeHtml(c.answer)+'</div></details></div><div class="flashcard-actions"><button class="btn btn-secondary" type="button" onclick="editFlashcard(\''+c.id+'\')">Editar</button><button class="btn btn-secondary" type="button" onclick="deleteFlashcard(\''+c.id+'\')">Excluir</button></div></div>').join(''):'<div class="empty">Nenhum flashcard encontrado. Crie seu primeiro cartão acima.</div>';
+  if(!flashcardReviewQueue.length)document.getElementById('flashcardReviewArea').innerHTML=due.length?'<div class="desc">'+due.length+' cartão(ões) aguardando revisão. Clique em “Revisar agora” para começar.</div>':'<div class="empty">Nenhuma revisão pendente para hoje. Você pode criar cartões novos acima.</div>';
+}
+function startFlashcardReview(){
+  flashcardReviewQueue=getFlashcards().filter(flashcardDue).sort((a,b)=>(a.dueDate||'').localeCompare(b.dueDate||'')).map(c=>c.id);
+  flashcardReviewIndex=0;flashcardRevealed=false;renderFlashcardReviewCard();
+}
+function renderFlashcardReviewCard(){
+  const el=document.getElementById('flashcardReviewArea');if(!el)return;
+  if(flashcardReviewIndex>=flashcardReviewQueue.length){el.innerHTML='<div class="empty">Sessão concluída! Você revisou todos os cartões que estavam pendentes nesta sessão.</div>';flashcardReviewQueue=[];renderFlashcards();return}
+  const c=getFlashcards().find(x=>x.id===flashcardReviewQueue[flashcardReviewIndex]);
+  if(!c){flashcardReviewIndex++;renderFlashcardReviewCard();return}
+  el.innerHTML='<div class="flashcard-study-card"><div class="flashcard-meta">'+escapeHtml(c.subjectName||'')+(c.topicName?' · '+escapeHtml(c.topicName):'')+' · Cartão '+(flashcardReviewIndex+1)+' de '+flashcardReviewQueue.length+'</div><div class="flashcard-prompt" style="margin-top:12px">'+escapeHtml(c.question)+'</div>'+(flashcardRevealed?'<div class="flashcard-answer">'+escapeHtml(c.answer)+'</div><div style="margin-top:16px;font-weight:650">Como foi sua lembrança?</div><div class="flashcard-rating"><button class="btn btn-secondary" onclick="rateFlashcard(\''+c.id+'\',0)">Errei</button><button class="btn btn-secondary" onclick="rateFlashcard(\''+c.id+'\',1)">Difícil</button><button class="btn btn-primary" onclick="rateFlashcard(\''+c.id+'\',2)">Lembrei</button><button class="btn btn-primary" onclick="rateFlashcard(\''+c.id+'\',3)">Fácil</button></div><div class="flashcard-rating-note">O próximo intervalo é calculado a partir desta avaliação.</div>':'<button class="btn btn-primary" style="margin-top:18px" onclick="flashcardRevealed=true;renderFlashcardReviewCard()">Revelar resposta</button>')+'</div>';
+}
+function rateFlashcard(id,rating){
+  const cards=getFlashcards(),c=cards.find(x=>x.id===id);if(!c)return;
+  const today=new Date();let interval;
+  if(rating===0){c.lapses=(c.lapses||0)+1;c.repetitions=0;c.interval=0;c.dueDate=flashcardToday()}
+  else{
+    const previous=Number(c.interval||0),ease=Number(c.ease||2.5);
+    if(rating===1){interval=previous<1?1:Math.max(1,Math.round(previous*1.2));c.ease=Math.max(1.3,ease-0.15)}
+    if(rating===2){interval=previous<1?1:previous<3?3:Math.max(previous+1,Math.round(previous*ease));c.ease=Math.min(3.0,ease+0.0)}
+    if(rating===3){interval=previous<1?3:Math.max(3,Math.round(previous*(ease+0.5)));c.ease=Math.min(3.2,ease+0.15)}
+    c.interval=interval;c.repetitions=(c.repetitions||0)+1;const next=new Date(today);next.setDate(next.getDate()+interval);c.dueDate=localDateKey(next)
+  }
+  c.lastReviewed=flashcardToday();c.lastRating=rating;saveFlashcards(cards);flashcardReviewIndex++;flashcardRevealed=false;renderFlashcardReviewCard();renderFlashcards();
+}
+
+function renderAll(){renderFlashcardSubjects();renderFlashcards();renderDashboard();renderSubjectsPage();renderTimerSubjects();renderFeynmanSubjects();renderPerformanceSubjects();renderPerformanceOverview();renderTimer();renderPlan();renderStats();renderAgenda();renderReadings();renderGamification();applyAppearance()}
 
 
 /* GAMIFICAÇÃO */
@@ -1098,7 +1208,8 @@ function showView(name){
     notes:['Anotações','Centralize suas notas de estudo.'],
     research:['Oráculo Jurídico','Pesquise legislação, jurisprudência e conceitos com rigor.'],
     settings:['Configurações','Personalize o visual e a experiência da plataforma.'],
-    feynman:['Mentor','Estude com perguntas orientadas para identificar lacunas na sua compreensão.']
+    feynman:['Mentor','Estude com perguntas orientadas para identificar lacunas na sua compreensão.'],
+    flashcards:['Flashcards','Memorize o conteúdo com revisões espaçadas e acompanhe seu desempenho.']
   };
   if(titles[name]){document.getElementById('pageTitle').textContent=titles[name][0];document.getElementById('pageSub').textContent=titles[name][1]}
 }
