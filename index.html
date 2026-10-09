@@ -274,6 +274,17 @@ body.dark .reading-card:hover{border-color:#3a4742}
 .organizer-priority-list .organizer-item.priority-high{margin:6px 0}
 body.dark .organizer-item.priority-high{background:#2b281f;border-color:#66542e;border-left-color:#d6a84e}
 body.dark .priority-tag{background:#41351d!important;color:#f0cc78!important}
+
+.agenda-event.task-event{background:var(--surface2);color:var(--text);border-left:3px solid #9ca7a0}
+.agenda-event.task-priority-high{background:#f8e9c8;color:#815815;border-left-color:#c28b28;font-weight:750}
+.agenda-item.task-event{background:var(--surface2)}
+.agenda-item.task-priority-high{border-color:#e4c17e;border-left:4px solid #c28b28;background:#fff9ed}
+.agenda-item.task-priority-high .task-priority-badge{background:#f8e9c8;color:#815815}
+body.dark .agenda-event.task-event{background:#252c29;color:#d9e0dc;border-left-color:#75857b}
+body.dark .agenda-event.task-priority-high{background:#41351d;color:#f0cc78;border-left-color:#d6a84e}
+body.dark .agenda-item.task-priority-high{background:#2b281f;border-color:#66542e;border-left-color:#d6a84e}
+body.dark .agenda-item.task-priority-high .task-priority-badge{background:#41351d;color:#f0cc78}
+
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -1244,7 +1255,7 @@ function savePersonalTask(){
   const isEditing=!!editingPersonalTaskId,tasks=getPersonalTasks(),dueDate=document.getElementById('personalTaskDue')?.value||organizerToday(),priority=document.getElementById('personalTaskPriority')?.value||'medium',notes=(document.getElementById('personalTaskNotes')?.value||'').trim();
   if(isEditing){const task=tasks.find(t=>String(t.id)===String(editingPersonalTaskId));if(task)Object.assign(task,{title,dueDate,priority,notes,updatedAt:new Date().toISOString()})}
   else tasks.push({id:organizerId(),title,dueDate,priority,notes,createdAt:new Date().toISOString(),done:false});
-  savePersonalTasks(tasks);cancelTaskEdit();renderPersonalTasks();renderMyDay();toast(isEditing?'Tarefa atualizada.':'Tarefa salva.');
+  savePersonalTasks(tasks);cancelTaskEdit();renderPersonalTasks();renderMyDay();renderHome();renderAgenda();toast(isEditing?'Tarefa atualizada.':'Tarefa salva.');
 }
 function editPersonalTask(id){
   const t=getPersonalTasks().find(x=>String(x.id)===String(id));if(!t)return;editingPersonalTaskId=String(id);
@@ -1256,8 +1267,8 @@ function cancelTaskEdit(){
   const p=document.getElementById('personalTaskPriority');if(p)p.value='medium';const t=document.getElementById('taskFormTitle');if(t)t.textContent='Nova tarefa';
   const s=document.getElementById('personalTaskSaveBtn');if(s)s.textContent='Salvar tarefa';const b=document.getElementById('personalTaskCancelBtn');if(b)b.style.display='none';
 }
-function togglePersonalTask(id){const a=getPersonalTasks(),t=a.find(x=>String(x.id)===String(id));if(!t)return;t.done=!t.done;t.completedAt=t.done?new Date().toISOString():null;savePersonalTasks(a);renderPersonalTasks();renderMyDay()}
-function deletePersonalTask(id){if(!confirm('Excluir esta tarefa?'))return;savePersonalTasks(getPersonalTasks().filter(t=>String(t.id)!==String(id)));renderPersonalTasks();renderMyDay();toast('Tarefa removida.')}
+function togglePersonalTask(id){const a=getPersonalTasks(),t=a.find(x=>String(x.id)===String(id));if(!t)return;t.done=!t.done;t.completedAt=t.done?new Date().toISOString():null;savePersonalTasks(a);renderPersonalTasks();renderMyDay();renderHome();renderAgenda()}
+function deletePersonalTask(id){if(!confirm('Excluir esta tarefa?'))return;savePersonalTasks(getPersonalTasks().filter(t=>String(t.id)!==String(id)));renderPersonalTasks();renderMyDay();renderHome();renderAgenda();toast('Tarefa removida.')}
 function renderPersonalTasks(){
  const dueInput=document.getElementById('personalTaskDue');if(dueInput&&!dueInput.value)dueInput.value=organizerToday();
  const list=document.getElementById('personalTaskList');if(!list)return;const filter=document.getElementById('personalTaskFilter')?.value||'open',today=organizerToday(),rank={high:0,medium:1,low:2};
@@ -1311,7 +1322,7 @@ function captureToAgenda(id){
 function captureToTask(id){
  const a=getQuickCaptures(),x=a.find(i=>String(i.id)===String(id));if(!x)return;const title=x.title||String(x.text||'').split('\n')[0].slice(0,100)||'Tarefa sem título';
  const tasks=getPersonalTasks();tasks.push({id:organizerId(),title,dueDate:organizerToday(),priority:'medium',notes:x.title?x.text:'',createdAt:new Date().toISOString(),done:false});savePersonalTasks(tasks);
- saveQuickCaptures(a.filter(i=>String(i.id)!==String(id)));renderQuickCaptures();renderPersonalTasks();renderMyDay();toast('Item convertido em tarefa.');
+ saveQuickCaptures(a.filter(i=>String(i.id)!==String(id)));renderQuickCaptures();renderPersonalTasks();renderMyDay();renderHome();renderAgenda();toast('Item convertido em tarefa.');
 }
 function captureToNotebook(id){
  const a=getQuickCaptures(),x=a.find(i=>String(i.id)===String(id));if(!x)return;const entries=getNotebookEntries();
@@ -1484,7 +1495,12 @@ let agendaDate=new Date(); agendaDate.setDate(1);
 let agendaSelected=localDateKey(new Date());
 function getAgenda(){try{return JSON.parse(localStorage.getItem(AGENDA_KEY)||'[]')}catch(e){return[]}}
 function saveAgenda(a){localStorage.setItem(AGENDA_KEY,JSON.stringify(a))}
-function agendaTypeLabel(t){return({study:'Estudo',questions:'Questões',review:'Revisão',feynman:'Feynman',work:'Trabalho',personal:'Pessoal'})[t]||'Outro'}
+function getAgendaDisplayItems(){
+ const tasks=getPersonalTasks().filter(t=>String(t.dueDate||'').trim()).map(t=>({id:'personal-task-'+String(t.id),taskId:String(t.id),title:t.title,date:t.dueDate,start:'',end:'',type:'task',subjectId:'',notes:t.notes||'',done:!!t.done,priority:t.priority||'medium',isTask:true}));
+ return getAgenda().concat(tasks);
+}
+function agendaTypeLabel(t){return({study:'Estudo',questions:'Questões',review:'Revisão',feynman:'Feynman',work:'Trabalho',personal:'Pessoal',task:'Tarefa'})[t]||'Outro'}
+function editPersonalTaskFromAgenda(id){showView('tasks');editPersonalTask(id)}
 function agendaDateLabel(k){return new Date(k+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'})}
 function agendaPrevMonth(){agendaDate.setMonth(agendaDate.getMonth()-1);renderAgenda()}
 function agendaNextMonth(){agendaDate.setMonth(agendaDate.getMonth()+1);renderAgenda()}
@@ -1492,13 +1508,25 @@ function agendaToday(){agendaDate=new Date();agendaDate.setDate(1);agendaSelecte
 function agendaSelectDay(k){agendaSelected=k;agendaDate=new Date(k+'T12:00:00');agendaDate.setDate(1);renderAgenda()}
 function renderAgenda(){
  const cal=document.getElementById('agendaCalendar'),dayEl=document.getElementById('agendaDay');if(!cal||!dayEl)return;
- const ev=getAgenda(),y=agendaDate.getFullYear(),m=agendaDate.getMonth(),first=new Date(y,m,1),last=new Date(y,m+1,0),off=(first.getDay()+6)%7,total=Math.ceil((off+last.getDate())/7)*7;
- document.getElementById('agendaMonth').textContent=agendaDate.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+ const ev=getAgendaDisplayItems(),y=agendaDate.getFullYear(),m=agendaDate.getMonth(),first=new Date(y,m,1),last=new Date(y,m+1,0),off=(first.getDay()+6)%7,total=Math.ceil((off+last.getDate())/7)*7;
+ const monthEl=document.getElementById('agendaMonth');if(monthEl)monthEl.textContent=agendaDate.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
  let h='<div class="agenda-weekdays">'+['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'].map(x=>'<div class="agenda-weekday">'+x+'</div>').join('')+'</div><div class="agenda-month-grid">';
- for(let i=0;i<total;i++){let d=new Date(y,m,i-off+1),k=localDateKey(d),inside=d.getMonth()===m,es=ev.filter(e=>e.date===k).sort((a,b)=>(a.start||'').localeCompare(b.start||''));h+='<div class="agenda-day-cell '+(inside?'':'muted')+' '+(k===agendaSelected?'selected ':'')+(k===localDateKey(new Date())?'today':'')+'" onclick="agendaSelectDay(\''+k+'\')"><div class="agenda-day-number">'+d.getDate()+'</div>'+es.slice(0,3).map(e=>'<div class="agenda-event '+(e.done?'agenda-done':'')+'">'+(e.start?e.start+' ':'')+escapeHtml(e.title)+'</div>').join('')+(es.length>3?'<div class="agenda-event">+'+(es.length-3)+' mais</div>':'')+'</div>'}
+ for(let i=0;i<total;i++){
+  let d=new Date(y,m,i-off+1),k=localDateKey(d),inside=d.getMonth()===m,es=ev.filter(e=>e.date===k).sort((a,b)=>(a.start||'').localeCompare(b.start||''));
+  h+='<div class="agenda-day-cell '+(inside?'':'muted')+' '+(k===agendaSelected?'selected ':'')+(k===localDateKey(new Date())?'today':'')+'" onclick="agendaSelectDay(\''+k+'\')"><div class="agenda-day-number">'+d.getDate()+'</div>'+es.slice(0,3).map(e=>'<div class="agenda-event '+(e.done?'agenda-done ':'')+(e.isTask?'task-event '+(e.priority==='high'?'task-priority-high':''):(e.type==='personal'?'personal':e.type==='review'?'revision':''))+'">'+(e.isTask?'Tarefa · ':e.start?e.start+' ':'')+escapeHtml(e.title)+'</div>').join('')+(es.length>3?'<div class="agenda-event">+'+(es.length-3)+' mais</div>':'')+'</div>';
+ }
  h+='</div>';cal.innerHTML=h;
  const selected=ev.filter(e=>e.date===agendaSelected).sort((a,b)=>(a.start||'').localeCompare(b.start||''));
- dayEl.innerHTML='<div class="agenda-day-head"><div class="agenda-date-title">'+escapeHtml(agendaDateLabel(agendaSelected))+'</div><button class="small-btn" onclick="openAgendaModal()">+ Adicionar</button></div>'+(selected.length?'<div class="agenda-list">'+selected.map(e=>'<div class="agenda-item '+(e.done?'agenda-done':'')+'"><div class="agenda-time">'+(e.start||'Sem horário')+(e.end?' — '+e.end:'')+'</div><div class="agenda-item-main"><div class="agenda-item-title">'+escapeHtml(e.title)+'</div><div class="agenda-item-meta"><span class="agenda-type">'+agendaTypeLabel(e.type)+'</span>'+(e.subjectId?' · '+escapeHtml(subjects.find(s=>s.id===e.subjectId)?.name||''):'')+'</div></div><div class="agenda-actions"><button class="small-btn" onclick="toggleAgendaDone(\''+e.id+'\')">'+(e.done?'↩':'✓')+'</button><button class="small-btn" onclick="openAgendaModal(\''+e.id+'\')">Editar</button><button class="small-btn" onclick="deleteAgenda(\''+e.id+'\')">×</button></div></div>').join('')+'</div>':'<div class="agenda-empty">Nenhum compromisso neste dia.</div>');
+ const rows=selected.map(e=>{
+  const rowClasses='agenda-item '+(e.done?'agenda-done ':'')+(e.isTask?'task-event '+(e.priority==='high'?'task-priority-high':''):'');
+  const timeLabel=e.isTask?'Prazo':((e.start||'Sem horário')+(e.end?' — '+e.end:''));
+  const typeMarkup=e.isTask?'<span class="agenda-type task-type">Tarefa</span>'+(e.priority==='high'?' <span class="agenda-type task-priority-badge">Prioridade alta</span>':''):'<span class="agenda-type">'+agendaTypeLabel(e.type)+'</span>'+(e.subjectId?' · '+escapeHtml(subjects.find(s=>String(s.id)===String(e.subjectId))?.name||''):'');
+  const actions=e.isTask
+    ?'<button class="small-btn" aria-label="Concluir tarefa" title="Concluir tarefa" onclick="togglePersonalTask(\''+escapeHtml(e.taskId)+'\')">'+(e.done?'↩':'✓')+'</button><button class="small-btn" onclick="editPersonalTaskFromAgenda(\''+escapeHtml(e.taskId)+'\')">Editar</button>'
+    :'<button class="small-btn" onclick="toggleAgendaDone(\''+escapeHtml(e.id)+'\')">'+(e.done?'↩':'✓')+'</button><button class="small-btn" onclick="openAgendaModal(\''+escapeHtml(e.id)+'\')">Editar</button><button class="small-btn" onclick="deleteAgenda(\''+escapeHtml(e.id)+'\')">×</button>';
+  return '<div class="'+rowClasses+'"><div class="agenda-time">'+timeLabel+'</div><div class="agenda-item-main"><div class="agenda-item-title">'+escapeHtml(e.title)+'</div><div class="agenda-item-meta">'+typeMarkup+(e.isTask&&e.notes?'<div>'+escapeHtml(e.notes)+'</div>':'')+'</div></div><div class="agenda-actions">'+actions+'</div></div>';
+ }).join('');
+ dayEl.innerHTML='<div class="agenda-day-head"><div class="agenda-date-title">'+escapeHtml(agendaDateLabel(agendaSelected))+'</div><button class="small-btn" onclick="openAgendaModal()">+ Adicionar</button></div>'+(selected.length?'<div class="agenda-list">'+rows+'</div>':'<div class="agenda-empty">Nenhum compromisso ou tarefa com prazo neste dia.</div>');
 }
 function openAgendaModal(id=null){
  window.editingAgendaId=id;
