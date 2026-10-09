@@ -190,6 +190,7 @@ body.dark .reading-card:hover{border-color:#3a4742}
     <div class="nav-item" data-view="reading"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v14M12 7C9 4 5 4 3 5v14c3-1 6-1 9 2M12 7c3-3 7-3 9-2v14c-3-1-6-1-9 2"/></svg></span>Leituras</div>
     <div class="nav-item" data-view="reviews"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.5-3"/></svg></span>Revisões</div>
     <div class="nav-item" data-view="questions"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></svg></span>Questões</div>
+    <div class="nav-item" data-view="materials"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H10l2 2h6.5A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5Z"/><path d="M3 9h18"/></svg></span>Biblioteca de materiais</div>
     <div class="nav-item" data-view="notes"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg></span>Anotações</div>
     <div class="nav-item" data-view="research"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg></span>Oráculo Jurídico</div>
     <div class="nav-item" data-view="feynman"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"/><path d="m19 15 .9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15Z"/></svg></span>IA · Feynman</div>
@@ -400,6 +401,29 @@ body.dark .reading-card:hover{border-color:#3a4742}
       <div id="performanceMessage" class="desc" style="margin-top:10px"></div>
     </div>
     <div class="card section-card"><div class="section-title">Desempenho por assunto</div><div id="performanceOverview"></div></div>
+  </section>
+  <section class="view" id="view-materials">
+    <div class="page-head">
+      <div><div class="section-title" style="font-size:23px">Biblioteca de materiais</div><div class="desc">Conecte uma pasta do Google Drive e catalogue os PDFs das suas aulas por matéria e assunto.</div></div>
+    </div>
+    <div class="card section-card" style="margin-bottom:18px">
+      <div class="section-title">Sincronizar pasta do Google Drive</div>
+      <div class="desc" style="margin-bottom:14px">Abra a pasta no Drive e copie o ID da URL. Exemplo: drive.google.com/drive/folders/<strong>ID_DA_PASTA</strong>. A pasta deve estar acessível pela conta Google que você conectar.</div>
+      <div class="form-grid">
+        <div class="field"><label>ID da pasta do Drive</label><input id="studyDriveFolderId" type="text" placeholder="Cole aqui o ID da pasta"></div>
+        <div class="field"><label>Filtro</label><input type="text" value="Arquivos PDF" disabled></div>
+      </div>
+      <div class="toolbar" style="margin-top:14px;flex-direction:row;flex-wrap:wrap">
+        <button class="btn btn-primary" type="button" onclick="syncStudyDriveMaterials()">Buscar PDFs na pasta</button>
+        <button class="btn btn-secondary" type="button" onclick="showView('settings')">Configurar conexão Google</button>
+      </div>
+      <div id="studyMaterialsStatus" class="desc" style="margin-top:12px">Configure o Client ID do Google em Configurações antes da primeira sincronização.</div>
+    </div>
+    <div class="card section-card">
+      <div class="head"><div><div class="section-title">PDFs encontrados</div><div class="desc">Associe cada arquivo à matéria e ao assunto para preparar o uso na Revisão Ativa.</div></div><span class="status" id="studyMaterialsCount">0 arquivos</span></div>
+      <div id="studyDriveMaterialsList"><div class="empty">Nenhuma sincronização realizada ainda.</div></div>
+      <div class="ai-placeholder" style="margin-top:16px">Nesta primeira etapa, o Study lista os PDFs da pasta e salva suas associações neste navegador. A leitura do conteúdo dos PDFs e o uso desse conteúdo pela IA serão a próxima etapa. Os arquivos continuam privados no seu Drive; não compartilhe a pasta publicamente.</div>
+    </div>
   </section>
   <section class="view" id="view-notes"><div class="card section-card"><div class="section-title">Anotações</div><div class="empty">Na próxima etapa: notas vinculadas a matérias e tópicos.</div></div></section>
 
@@ -1535,12 +1559,78 @@ function toast(msg){
 }
 
 const STUDY_DRIVE_CLIENT_KEY='study_google_drive_client_id';
+const STUDY_MATERIALS_KEY='study_drive_materials_v1';
+const STUDY_DRIVE_FOLDER_KEY='study_drive_materials_folder_v1';
 let studyDriveAccessToken=null;
 function saveStudyGoogleClientId(){const id=(document.getElementById('studyGoogleClientId')?.value||'').trim();if(!id||!id.endsWith('.apps.googleusercontent.com')){alert('Informe um Client ID OAuth válido do Google.');return;}localStorage.setItem(STUDY_DRIVE_CLIENT_KEY,id);updateStudyDriveStatus('Client ID salvo. Clique em Conectar Google Drive.');toast('Configuração do Google Drive salva.');}
 function updateStudyDriveStatus(message){const el=document.getElementById('studyDriveStatus');if(el)el.textContent=message;}
 function loadStudyDriveSettings(){const input=document.getElementById('studyGoogleClientId');if(input)input.value=localStorage.getItem(STUDY_DRIVE_CLIENT_KEY)||'';if(localStorage.getItem(STUDY_DRIVE_CLIENT_KEY))updateStudyDriveStatus('Client ID configurado. Conecte para usar o Drive.');}
-function getStudyDriveToken(){return new Promise((resolve,reject)=>{const id=localStorage.getItem(STUDY_DRIVE_CLIENT_KEY);if(!id){alert('Primeiro, informe e salve o Client ID do Google Cloud.');reject(new Error('Client ID não configurado.'));return;}if(!window.google?.accounts?.oauth2){reject(new Error('A autenticação Google ainda está carregando. Aguarde e tente novamente.'));return;}const client=google.accounts.oauth2.initTokenClient({client_id:id,scope:'https://www.googleapis.com/auth/drive.file',callback:(response)=>{if(response?.error){updateStudyDriveStatus('Falha na autorização: '+response.error);reject(new Error(response.error));return;}studyDriveAccessToken=response.access_token;updateStudyDriveStatus('Google Drive conectado nesta sessão.');resolve(response.access_token);}});client.requestAccessToken({prompt:''});});}
+function getStudyDriveToken(){return new Promise((resolve,reject)=>{const id=localStorage.getItem(STUDY_DRIVE_CLIENT_KEY);if(!id){alert('Primeiro, informe e salve o Client ID do Google Cloud.');reject(new Error('Client ID não configurado.'));return;}if(!window.google?.accounts?.oauth2){reject(new Error('A autenticação Google ainda está carregando. Aguarde e tente novamente.'));return;}const client=google.accounts.oauth2.initTokenClient({client_id:id,scope:'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/drive.file',callback:(response)=>{if(response?.error){updateStudyDriveStatus('Falha na autorização: '+response.error);reject(new Error(response.error));return;}studyDriveAccessToken=response.access_token;updateStudyDriveStatus('Google Drive conectado nesta sessão.');resolve(response.access_token);}});client.requestAccessToken({prompt:''});});}
 async function connectStudyDrive(){try{await getStudyDriveToken();toast('Google Drive conectado.');}catch(e){if(e.message!=='Client ID não configurado.')alert('Não foi possível conectar ao Google Drive: '+e.message);}}
+
+function getStudyDriveMaterials(){try{return JSON.parse(localStorage.getItem(STUDY_MATERIALS_KEY)||'[]')}catch(e){return[]}}
+function saveStudyDriveMaterials(items){localStorage.setItem(STUDY_MATERIALS_KEY,JSON.stringify(items));renderStudyDriveMaterials()}
+function renderStudyDriveMaterials(){
+  const list=document.getElementById('studyDriveMaterialsList');if(!list)return;
+  const items=getStudyDriveMaterials();
+  const count=document.getElementById('studyMaterialsCount');if(count)count.textContent=items.length+' arquivo'+(items.length===1?'':'s');
+  if(!items.length){list.innerHTML='<div class="empty">Nenhum PDF catalogado. Informe o ID da pasta e clique em “Buscar PDFs na pasta”.</div>';return;}
+  list.innerHTML=items.map((file,index)=>{
+    const subjectOptions='<option value="">Selecione a matéria</option>'+subjects.map(s=>'<option value="'+escapeHtml(String(s.id))+'" '+(String(file.subjectId||'')===String(s.id)?'selected':'')+'>'+escapeHtml(s.name)+'</option>').join('');
+    const selectedSubject=subjects.find(s=>String(s.id)===String(file.subjectId));
+    const topicOptions='<option value="">Selecione o assunto</option>'+((selectedSubject?.topics)||[]).map(t=>'<option value="'+escapeHtml(t.name)+'" '+(file.topicName===t.name?'selected':'')+'>'+escapeHtml(t.name)+'</option>').join('');
+    const size=file.size?formatStudyFileSize(Number(file.size)):'Tamanho indisponível';
+    const modified=file.modifiedTime?'Atualizado em '+new Date(file.modifiedTime).toLocaleDateString('pt-BR'):'';
+    return '<div class="card" style="padding:14px;margin-bottom:10px;box-shadow:none"><div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap"><div style="flex:1;min-width:200px"><div style="font-size:13px;font-weight:700;overflow-wrap:anywhere">'+escapeHtml(file.name)+'</div><div class="desc">'+escapeHtml(size)+' · '+escapeHtml(modified)+'</div></div><a class="small-btn" style="text-decoration:none" href="'+escapeHtml(file.webViewLink||('https://drive.google.com/file/d/'+encodeURIComponent(file.id)+'/view'))+'" target="_blank" rel="noopener noreferrer">Abrir PDF ↗</a></div><div class="form-grid" style="margin-top:12px"><div class="field"><label>Matéria</label><select class="select" id="materialSubject_'+index+'" onchange="updateStudyMaterialTopicOptions('+index+')">'+subjectOptions+'</select></div><div class="field"><label>Assunto</label><select class="select" id="materialTopic_'+index+'">'+topicOptions+'</select></div></div><div class="toolbar" style="margin-top:10px;flex-direction:row;flex-wrap:wrap"><button class="small-btn" onclick="saveStudyMaterialAssociation('+index+')">Salvar associação</button>'+(file.subjectId&&file.topicName?'<span class="status done">Associado à matéria</span>':'<span class="status">Pendente de associação</span>')+'</div></div>';
+  }).join('');
+}
+function formatStudyFileSize(bytes){if(!Number.isFinite(bytes)||bytes<0)return'Tamanho indisponível';if(bytes<1024)return bytes+' B';if(bytes<1048576)return(Math.round(bytes/102.4)/10)+' KB';return(Math.round(bytes/104857.6)/10)+' MB'}
+function updateStudyMaterialTopicOptions(index){
+  const subjectId=document.getElementById('materialSubject_'+index)?.value;
+  const topic=document.getElementById('materialTopic_'+index);
+  const selected=subjects.find(s=>String(s.id)===String(subjectId));
+  if(!topic)return;
+  topic.innerHTML='<option value="">Selecione o assunto</option>'+((selected?.topics)||[]).map(t=>'<option value="'+escapeHtml(t.name)+'">'+escapeHtml(t.name)+'</option>').join('');
+}
+async function syncStudyDriveMaterials(){
+  const folderInput=document.getElementById('studyDriveFolderId');
+  const folderId=(folderInput?.value||'').trim();
+  const status=document.getElementById('studyMaterialsStatus');
+  if(!folderId){if(status)status.textContent='Informe o ID da pasta do Google Drive.';return}
+  if(!/^[a-zA-Z0-9_-]{10,}$/.test(folderId)){if(status)status.textContent='O ID parece inválido. Copie apenas o identificador da URL da pasta.';return}
+  try{
+    localStorage.setItem(STUDY_DRIVE_FOLDER_KEY,folderId);
+    if(status)status.textContent='Conectando ao Google Drive e procurando PDFs…';
+    const token=await getStudyDriveToken();
+    const q=encodeURIComponent("'"+folderId+"' in parents and mimeType='application/pdf' and trashed=false");
+    const url='https://www.googleapis.com/drive/v3/files?q='+q+'&pageSize=100&orderBy=name&fields=files(id,name,mimeType,modifiedTime,size,webViewLink,parents),nextPageToken';
+    const response=await fetch(url,{headers:{Authorization:'Bearer '+token}});
+    if(!response.ok){let message='';try{message=(await response.json()).error?.message||''}catch(e){}throw new Error(message||'Consulta ao Drive falhou ('+response.status+').')}
+    const data=await response.json();
+    const existing=getStudyDriveMaterials();
+    const byId=new Map(existing.map(item=>[item.id,item]));
+    (data.files||[]).forEach(file=>{const old=byId.get(file.id)||{};byId.set(file.id,{...old,...file,folderId,discoveredAt:old.discoveredAt||new Date().toISOString()})});
+    const items=Array.from(byId.values()).filter(item=>item.folderId===folderId||item.parents?.includes(folderId)).sort((a,b)=>a.name.localeCompare(b.name,'pt-BR'));
+    saveStudyDriveMaterials(items);
+    if(status)status.textContent=(data.files||[]).length+' PDF(s) encontrado(s) nesta pasta. Arquivos já associados foram preservados.';
+    toast('Biblioteca sincronizada.');
+  }catch(e){if(status)status.textContent='Não foi possível sincronizar: '+e.message;if(e.message!=='Client ID não configurado.')alert('Falha ao buscar PDFs no Google Drive: '+e.message)}
+}
+function saveStudyMaterialAssociation(index){
+  const items=getStudyDriveMaterials(),file=items[index];if(!file)return;
+  const subjectId=document.getElementById('materialSubject_'+index)?.value||'';
+  const topicName=document.getElementById('materialTopic_'+index)?.value||'';
+  const subject=subjects.find(s=>String(s.id)===String(subjectId));
+  if(!subject||!topicName){alert('Selecione uma matéria e um assunto cadastrado em Matérias.');return}
+  if(!(subject.topics||[]).some(t=>t.name===topicName)){alert('Esse assunto não pertence à matéria selecionada. Atualize a seleção.');return}
+  file.subjectId=subject.id;file.subjectName=subject.name;file.topicName=topicName;file.associatedAt=new Date().toISOString();
+  localStorage.setItem(STUDY_MATERIALS_KEY,JSON.stringify(items));renderStudyDriveMaterials();toast('Associação do material salva.');
+}
+function loadStudyDriveMaterialsSettings(){
+  const input=document.getElementById('studyDriveFolderId');if(input)input.value=localStorage.getItem(STUDY_DRIVE_FOLDER_KEY)||'';
+  renderStudyDriveMaterials();
+}
+
 function buildStudyBackupObject(){const data={app:'Study.',format:'study-backup',version:STUDY_BACKUP_VERSION,createdAt:new Date().toISOString(),data:{}};for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key&&key.startsWith('study_'))data.data[key]=localStorage.getItem(key);}return data;}
 async function saveStudyBackupToDrive(){try{const backup=buildStudyBackupObject(),token=await getStudyDriveToken();const q=encodeURIComponent("name='Study-backup.json' and trashed=false");const list=await fetch('https://www.googleapis.com/drive/v3/files?q='+q+'&fields=files(id,name,modifiedTime)&pageSize=100',{headers:{Authorization:'Bearer '+token}});if(!list.ok)throw new Error('Consulta do Drive falhou ('+list.status+').');const existing=(await list.json()).files?.[0];const metadata={name:'Study-backup.json',mimeType:'application/json'};const boundary='study_backup_'+Date.now();const body=new Blob(['--'+boundary+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify(metadata)+'\r\n--'+boundary+'\r\nContent-Type: application/json\r\n\r\n'+JSON.stringify(backup,null,2)+'\r\n--'+boundary+'--'],{type:'multipart/related; boundary='+boundary});const url=existing?'https://www.googleapis.com/upload/drive/v3/files/'+encodeURIComponent(existing.id)+'?uploadType=multipart':'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';const response=await fetch(url,{method:existing?'PATCH':'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'multipart/related; boundary='+boundary},body});if(!response.ok){let msg='';try{msg=(await response.json()).error?.message||''}catch(e){}throw new Error(msg||'Upload falhou ('+response.status+').');}updateStudyDriveStatus('Backup salvo no Drive em '+new Date().toLocaleString('pt-BR')+'.');toast('Backup salvo no Google Drive.');}catch(e){alert('Não foi possível salvar no Drive: '+e.message);}}
 async function restoreStudyBackupFromDrive(){try{const token=await getStudyDriveToken(),q=encodeURIComponent("name='Study-backup.json' and trashed=false");const list=await fetch('https://www.googleapis.com/drive/v3/files?q='+q+'&orderBy=modifiedTime desc&fields=files(id,name,modifiedTime)&pageSize=100',{headers:{Authorization:'Bearer '+token}});if(!list.ok)throw new Error('Consulta do Drive falhou ('+list.status+').');const file=(await list.json()).files?.[0];if(!file)throw new Error('Não encontrei Study-backup.json no Drive. Salve um backup primeiro.');const response=await fetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(file.id)+'?alt=media',{headers:{Authorization:'Bearer '+token}});if(!response.ok)throw new Error('Download falhou ('+response.status+').');const backup=await response.json();if(backup?.format!=='study-backup'||backup?.app!=='Study.'||!backup.data||typeof backup.data!=='object'||Array.isArray(backup.data))throw new Error('O arquivo não é um backup válido do Study.');const entries=Object.entries(backup.data);if(!entries.length||entries.some(([k,v])=>!k.startsWith('study_')||typeof v!=='string'))throw new Error('O backup está incompleto ou inválido.');if(!confirm('Restaurar o backup criado em '+new Date(backup.createdAt).toLocaleString('pt-BR')+'? Os dados atuais serão substituídos. Antes, será baixada uma cópia dos dados atuais.'))return;const current=buildStudyBackupObject(),blob=new Blob([JSON.stringify(current,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='backup-study-antes-restauracao-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);Object.keys(localStorage).filter(k=>k.startsWith('study_')).forEach(k=>localStorage.removeItem(k));entries.forEach(([k,v])=>localStorage.setItem(k,v));alert('Backup restaurado. A página será recarregada.');location.reload();}catch(e){alert('Não foi possível restaurar do Drive: '+e.message);}}
@@ -2425,6 +2515,7 @@ document.getElementById('themeToggle').addEventListener('click',toggleTheme);
 document.getElementById('dateChip').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
 loadStudyDriveSettings();
 renderAll();
+loadStudyDriveMaterialsSettings();
 </script>
 </body>
 </html>
