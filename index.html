@@ -1256,7 +1256,7 @@ function cancelWrongQuestionEdit(){
 function deleteWrongQuestion(id){if(!confirm('Excluir esta questão do banco de erros?'))return;saveWrongQuestions(getWrongQuestions().filter(q=>String(q.id)!==String(id)));renderWrongQuestionBank();renderReviews();renderDashboard();renderHome();renderStats();toast('Questão removida do banco.')}
 function gradeWrongQuestion(id,rating){
  const items=getWrongQuestions(),q=items.find(x=>String(x.id)===String(id));if(!q)return;
- const days=rating===0?1:rating===1?3:rating===2?7:14,next=new Date();next.setDate(next.getDate()+days);q.dueDate=localDateKey(next);q.interval=days;q.lastReviewed=wrongQuestionToday();
+ const previous=Number(q.interval||0),days=rating===0?1:rating===1?Math.max(3,Math.round(previous*1.2)):rating===2?(previous<7?7:Math.round(previous*1.8)):(previous<14?14:Math.round(previous*2.4)),next=new Date();next.setDate(next.getDate()+days);q.dueDate=localDateKey(next);q.interval=days;q.lastReviewed=wrongQuestionToday();
  q.repetitions=Number(q.repetitions||0)+(rating===0?0:1);if(rating===0)q.lapses=Number(q.lapses||0)+1;
  q.lastRating=rating;q.history=Array.isArray(q.history)?q.history:[];q.history.push({date:wrongQuestionToday(),rating,days});q.updatedAt=new Date().toISOString();
  saveWrongQuestions(items);renderWrongQuestionBank();renderReviews();renderDashboard();renderHome();renderStats();toast(rating===0?'Registrado: revisar novamente amanhã.':'Próxima revisão programada para '+next.toLocaleDateString('pt-BR')+'.');
@@ -1479,8 +1479,8 @@ function deleteQuickCapture(id){if(!confirm('Excluir este item da captura rápid
 function notebookTypeLabel(t){return({knowledge:'Conhecimento',idea:'Ideia',quote:'Citação',journal:'Journal / reflexão',reading:'Nota de leitura'})[t]||'Anotação'}
 function saveNotebookEntry(){
  const title=(document.getElementById('notebookEntryTitle')?.value||'').trim(),content=(document.getElementById('notebookEntryContent')?.value||'').trim();if(!title&&!content){alert('Escreva um título ou conteúdo para salvar.');return}
- const subjectId=document.getElementById('notebookEntrySubject')?.value||'',subjectObj=subjects.find(x=>String(x.id)===String(subjectId)),topicName=document.getElementById('notebookEntryTopic')?.value||'';
- const entries=getNotebookEntries(),entry={title:title||'Anotação sem título',type:document.getElementById('notebookEntryType')?.value||'knowledge',subjectId,subject:subjectObj?.name||'',topicName,source:(document.getElementById('notebookEntrySource')?.value||'').trim(),content,updatedAt:new Date().toISOString()};
+ const selectedSubjectId=document.getElementById('notebookEntrySubject')?.value||'',legacySubject=selectedSubjectId.startsWith('legacy:'),subjectId=legacySubject?'':selectedSubjectId,subjectObj=subjects.find(x=>String(x.id)===String(subjectId)),subjectName=subjectObj?.name||(legacySubject?decodeURIComponent(selectedSubjectId.slice(7)):'') ,topicName=document.getElementById('notebookEntryTopic')?.value||'';
+ const entries=getNotebookEntries(),entry={title:title||'Anotação sem título',type:document.getElementById('notebookEntryType')?.value||'knowledge',subjectId,subject:subjectName,topicName,source:(document.getElementById('notebookEntrySource')?.value||'').trim(),content,updatedAt:new Date().toISOString()};
  if(editingNotebookEntryId){const old=entries.find(e=>String(e.id)===String(editingNotebookEntryId));if(old)Object.assign(old,entry)}
  else entries.unshift({...entry,id:organizerId(),createdAt:new Date().toISOString()});
  saveNotebookEntries(entries);cancelNotebookEdit();renderNotebook();renderMyDay();toast('Registro salvo no caderno.');
@@ -1488,7 +1488,7 @@ function saveNotebookEntry(){
 function editNotebookEntry(id){
  const e=getNotebookEntries().find(x=>String(x.id)===String(id));if(!e)return;editingNotebookEntryId=String(id);
  document.getElementById('notebookEntryTitle').value=e.title||'';document.getElementById('notebookEntryType').value=e.type||'knowledge';
- const sub=document.getElementById('notebookEntrySubject');if(sub){const id=e.subjectId||subjects.find(x=>x.name===e.subject)?.id||'';sub.value=String(id);updateNotebookTopics(e.topicName||'')}
+ const sub=document.getElementById('notebookEntrySubject');if(sub){const matchedId=e.subjectId||subjects.find(x=>x.name===e.subject)?.id||'';if(!matchedId&&e.subject){const legacyValue='legacy:'+encodeURIComponent(e.subject);if(![...sub.options].some(o=>o.value===legacyValue))sub.insertAdjacentHTML('beforeend','<option value="'+escapeHtml(legacyValue)+'">'+escapeHtml(e.subject)+' (registro antigo)</option>');sub.value=legacyValue}else{sub.value=String(matchedId)}updateNotebookTopics(e.topicName||'')}
  document.getElementById('notebookEntrySource').value=e.source||'';document.getElementById('notebookEntryContent').value=e.content||'';
  document.getElementById('notebookFormTitle').textContent='Editar registro';document.getElementById('notebookSaveBtn').textContent='Salvar alterações';document.getElementById('notebookCancelEdit').style.display='';window.scrollTo({top:0,behavior:'smooth'});
 }
