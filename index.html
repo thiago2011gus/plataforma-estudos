@@ -157,6 +157,16 @@ body.dark .reading-card:hover{border-color:#3a4742}
 @media(max-width:1050px){.trail-next{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:720px){.trail-next{grid-template-columns:1fr;gap:10px}.trail-next .schedule-day{padding:16px}.trail-next .schedule-day-head{margin-bottom:12px}}
 
+
+.topic-performance-empty{grid-column:2/-1;font-size:11px;color:var(--muted);margin:-4px 0 8px}
+.topic-performance-summary{grid-column:2/-1;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:-4px 0 8px;padding:9px 11px;border-radius:9px;background:var(--surface2);font-size:12px;color:var(--muted)}
+.topic-performance-summary strong{color:var(--accent)}
+.topic-performance-summary p{flex-basis:100%;margin:0;color:var(--text);white-space:pre-wrap}
+.performance-list{display:flex;flex-direction:column;gap:8px}
+.performance-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.performance-row strong{font-size:13px}.performance-row div div{font-size:12px;color:var(--muted);margin-top:3px}.performance-score{font-size:18px;font-weight:700;color:var(--accent)}.performance-meta{font-size:12px;color:var(--muted)}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.form-grid .field{margin:0}.form-grid input,.form-grid textarea,.form-grid select{width:100%;box-sizing:border-box}.form-grid textarea{min-height:84px}
+@media(max-width:650px){.form-grid{grid-template-columns:1fr}.performance-row{grid-template-columns:minmax(0,1fr) auto;gap:8px}.performance-meta{grid-column:1}.performance-row button{grid-column:2;grid-row:2}}
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -373,7 +383,24 @@ body.dark .reading-card:hover{border-color:#3a4742}
     <div class="reading-grid" id="readingGrid"></div>
   </section>
   <section class="view" id="view-reviews"><div class="card section-card"><div class="section-title">Revisões</div><div class="empty">A estrutura está preparada. Vamos transformar esta tela em revisão espaçada na próxima etapa.</div></div></section>
-  <section class="view" id="view-questions"><div class="card section-card"><div class="section-title">Questões</div><div class="empty">Na próxima etapa: registro de questões, acertos, erros e desempenho por matéria.</div></div></section>
+  <section class="view" id="view-questions">
+    <div class="page-head"><div><div class="section-title" style="font-size:23px">Questões e desempenho</div><div class="desc">Resolva questões no Qconcursos e registre seu desempenho por matéria e assunto.</div></div><a class="btn btn-primary" href="https://elite.qconcursos.com/questoes-de-concursos/questoes" target="_blank" rel="noopener noreferrer">Abrir Qconcursos ↗</a></div>
+    <div class="card section-card" style="margin-bottom:18px">
+      <div class="section-title">Registrar desempenho</div>
+      <div class="desc" style="margin-bottom:14px">Os dados ficam vinculados ao tópico cadastrado em Matérias e aparecem também no acompanhamento do plano.</div>
+      <div class="form-grid">
+        <div class="field"><label>Matéria</label><select class="select" id="performanceSubject" onchange="renderPerformanceTopics()"></select></div>
+        <div class="field"><label>Assunto</label><select class="select" id="performanceTopic" onchange="loadPerformanceForm()"></select></div>
+        <div class="field"><label>Questões resolvidas</label><input id="performanceTotal" type="number" min="0" step="1" placeholder="Ex.: 40" oninput="updatePerformancePercent()"></div>
+        <div class="field"><label>Acertos</label><input id="performanceCorrect" type="number" min="0" step="1" placeholder="Ex.: 32" oninput="updatePerformancePercent()"></div>
+        <div class="field"><label>Percentual de acertos</label><input id="performancePercent" type="text" readonly placeholder="Calculado automaticamente"></div>
+        <div class="field"><label>Observações</label><textarea id="performanceNotes" rows="3" placeholder="Dificuldades, erros recorrentes, pontos para revisar..."></textarea></div>
+      </div>
+      <div class="toolbar" style="margin-top:14px"><button class="btn btn-primary" onclick="saveTopicPerformance()">Salvar desempenho</button><button class="btn btn-secondary" onclick="clearPerformanceForm()">Limpar campos</button></div>
+      <div id="performanceMessage" class="desc" style="margin-top:10px"></div>
+    </div>
+    <div class="card section-card"><div class="section-title">Desempenho por assunto</div><div id="performanceOverview"></div></div>
+  </section>
   <section class="view" id="view-notes"><div class="card section-card"><div class="section-title">Anotações</div><div class="empty">Na próxima etapa: notas vinculadas a matérias e tópicos.</div></div></section>
 
   <section class="view" id="view-settings">
@@ -902,7 +929,8 @@ function renderSubjectsPage(){
           <div class="topic-drag" title="Arraste para reorganizar">⋮⋮</div>
           <input type="checkbox" ${t.done?'checked':''} onchange="toggleTopic('${s.id}',${i})">
           <div class="topic-name">${escapeHtml(t.name)}</div>
-          <div class="topic-actions"><button class="small-btn" onclick="renameTopic('${s.id}',${i})">Editar</button><button class="small-btn" onclick="deleteTopic('${s.id}',${i})">×</button></div>
+          <div class="topic-actions"><button class="small-btn" onclick="openTopicPerformance('${s.id}',${i})">Desempenho</button><button class="small-btn" onclick="renameTopic('${s.id}',${i})">Editar</button><button class="small-btn" onclick="deleteTopic('${s.id}',${i})">×</button></div>
+          ${renderTopicPerformanceSummary(s.id,i)}
         </div>`).join(''):`<div class="empty">Ainda não há tópicos.</div>`}
       </div>
       <div class="topic-add"><input id="newTopic-${s.id}" placeholder="Adicionar tópico..." onkeydown="if(event.key==='Enter')addTopic('${s.id}')"><button class="small-btn" onclick="addTopic('${s.id}')">Adicionar</button></div>
@@ -930,7 +958,70 @@ function renderTimerTopics(){
   });
 }
 
-function renderAll(){renderDashboard();renderSubjectsPage();renderTimerSubjects();renderFeynmanSubjects();renderTimer();renderPlan();renderStats();renderAgenda();renderReadings();renderGamification();applyAppearance()}
+
+const PERFORMANCE_KEY='study_topic_performance_v1';
+function getTopicPerformance(){try{return JSON.parse(localStorage.getItem(PERFORMANCE_KEY)||'{}')}catch(e){return{}}}
+function saveTopicPerformanceData(data){localStorage.setItem(PERFORMANCE_KEY,JSON.stringify(data))}
+function performanceKey(subjectId,topicIndex){const s=subjects.find(x=>x.id===subjectId);const t=s?.topics?.[topicIndex];return s&&t?subjectId+'::'+t.name.toLowerCase().trim():''}
+function renderPerformanceSubjects(){
+  const el=document.getElementById('performanceSubject');if(!el)return;
+  const prev=el.value;
+  el.innerHTML=subjects.length?subjects.map(s=>'<option value="'+s.id+'">'+escapeHtml(s.name)+'</option>').join(''):'<option value="">Cadastre uma matéria</option>';
+  if(subjects.some(s=>s.id===prev))el.value=prev;
+  renderPerformanceTopics();
+}
+function renderPerformanceTopics(){
+  const subjectId=document.getElementById('performanceSubject')?.value;
+  const el=document.getElementById('performanceTopic');if(!el)return;
+  const s=subjects.find(x=>x.id===subjectId);const prev=el.value;
+  el.innerHTML=s?.topics?.length?s.topics.map((t,i)=>'<option value="'+i+'">'+escapeHtml(t.name)+'</option>').join(''):'<option value="">Cadastre um assunto em Matérias</option>';
+  if(s?.topics?.[Number(prev)])el.value=prev;
+  loadPerformanceForm();
+}
+function updatePerformancePercent(){
+  const total=Number(document.getElementById('performanceTotal')?.value)||0;
+  const correct=Number(document.getElementById('performanceCorrect')?.value)||0;
+  const percent=document.getElementById('performancePercent');if(percent)percent.value=total>0&&correct<=total&&correct>=0?Math.round(correct/total*100)+'%':'';
+}
+function loadPerformanceForm(){
+  const subjectId=document.getElementById('performanceSubject')?.value;
+  const topicIndex=Number(document.getElementById('performanceTopic')?.value);
+  const key=performanceKey(subjectId,topicIndex),p=getTopicPerformance()[key]||{};
+  const total=document.getElementById('performanceTotal'),correct=document.getElementById('performanceCorrect'),notes=document.getElementById('performanceNotes');
+  if(!total)return;
+  total.value=p.total??'';correct.value=p.correct??'';notes.value=p.notes||'';updatePerformancePercent();
+  const msg=document.getElementById('performanceMessage');if(msg)msg.textContent=p.updatedAt?'Último registro: '+new Date(p.updatedAt).toLocaleString('pt-BR'):'';
+}
+function saveTopicPerformance(){
+  const subjectId=document.getElementById('performanceSubject')?.value,topicIndex=Number(document.getElementById('performanceTopic')?.value);
+  const key=performanceKey(subjectId,topicIndex),total=Number(document.getElementById('performanceTotal')?.value),correct=Number(document.getElementById('performanceCorrect')?.value);
+  if(!key){alert('Cadastre ou selecione uma matéria e um assunto primeiro.');return}
+  if(!Number.isInteger(total)||total<0||!Number.isInteger(correct)||correct<0||correct>total){alert('Informe números válidos: acertos não podem superar questões resolvidas.');return}
+  const data=getTopicPerformance();data[key]={subjectId,topicName:subjects.find(s=>s.id===subjectId).topics[topicIndex].name,total,correct,percent:total?Math.round(correct/total*100):0,notes:document.getElementById('performanceNotes').value.trim(),updatedAt:new Date().toISOString()};
+  saveTopicPerformanceData(data);renderSubjectsPage();renderPerformanceOverview();loadPerformanceForm();
+  const msg=document.getElementById('performanceMessage');if(msg)msg.textContent='Desempenho salvo e vinculado ao assunto.';
+}
+function clearPerformanceForm(){
+  ['performanceTotal','performanceCorrect','performanceNotes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+  updatePerformancePercent();
+}
+function openTopicPerformance(subjectId,topicIndex){
+  const view=document.querySelector('.nav-item[data-view="questions"]');if(view)view.click();
+  const subject=document.getElementById('performanceSubject');if(subject){subject.value=subjectId;renderPerformanceTopics();const topic=document.getElementById('performanceTopic');if(topic)topic.value=String(topicIndex);loadPerformanceForm();}
+}
+function renderTopicPerformanceSummary(subjectId,topicIndex){
+  const p=getTopicPerformance()[performanceKey(subjectId,topicIndex)];
+  if(!p)return '<div class="topic-performance-empty">Sem desempenho registrado</div>';
+  return '<div class="topic-performance-summary"><strong>'+p.percent+'% de acertos</strong><span>'+p.correct+'/'+p.total+' questões</span>'+(p.notes?'<p>'+escapeHtml(p.notes)+'</p>':'')+'</div>';
+}
+function renderPerformanceOverview(){
+  const el=document.getElementById('performanceOverview');if(!el)return;
+  const data=getTopicPerformance(),rows=[];
+  subjects.forEach(s=>s.topics.forEach((t,i)=>{const p=data[performanceKey(s.id,i)];if(p)rows.push({s,t,p,i})}));
+  el.innerHTML=rows.length?'<div class="performance-list">'+rows.map(({s,t,p,i})=>'<div class="performance-row"><div><strong>'+escapeHtml(s.name)+'</strong><div>'+escapeHtml(t.name)+'</div></div><div class="performance-score">'+p.percent+'%</div><div class="performance-meta">'+p.correct+'/'+p.total+' questões</div><button class="small-btn" onclick="openTopicPerformance(\''+s.id+'\','+i+')">Editar</button></div>').join('')+'</div>':'<div class="empty">Seus registros de desempenho aparecerão aqui.</div>';
+}
+
+function renderAll(){renderDashboard();renderSubjectsPage();renderTimerSubjects();renderFeynmanSubjects();renderPerformanceSubjects();renderPerformanceOverview();renderTimer();renderPlan();renderStats();renderAgenda();renderReadings();renderGamification();applyAppearance()}
 
 
 /* GAMIFICAÇÃO */
