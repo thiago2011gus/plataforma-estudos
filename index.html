@@ -1986,7 +1986,7 @@ function renderReadings(){
  g.innerHTML=list.map(r=>{
   const p=readingProgress(r),id=escapeHtml(String(r.id)),cover=String(r.coverUrl||'').trim(),author=String(r.author||'').trim(),country=readingCountryLabel(r),rating=Number(r.rating)||0;
   const coverMarkup=cover
-   ?'<div class="reading-cover"><img src="'+escapeHtml(cover)+'" alt="Capa de '+escapeHtml(r.title)+'" loading="lazy" onerror="this.style.display=\\'none\\';this.nextElementSibling.style.display=\\'grid\\'"><div class="reading-cover-placeholder" style="display:none"> <span>'+escapeHtml((r.title||'L').slice(0,1).toUpperCase())+'</span></div></div>'
+   ?'<div class="reading-cover"><img src="'+escapeHtml(cover)+'" alt="Capa de '+escapeHtml(r.title)+'" loading="lazy" onerror="this.style.display=&#39;none&#39;;this.nextElementSibling.style.display=&#39;grid&#39;"><div class="reading-cover-placeholder" style="display:none"> <span>'+escapeHtml((r.title||'L').slice(0,1).toUpperCase())+'</span></div></div>'
    :'<div class="reading-cover reading-cover-placeholder"><span>'+escapeHtml((r.title||'L').slice(0,1).toUpperCase())+'</span></div>';
   const dates=(r.startDate||r.completionDate)?'<div class="reading-detail-line">'+(r.startDate?'<span><b>Início</b> '+readingDateDisplay(r.startDate)+'</span>':'')+(r.completionDate?'<span><b>Término</b> '+readingDateDisplay(r.completionDate)+'</span>':'')+'</div>':'';
   const authorPlace=country?'<div class="reading-detail-line"><span><b>Origem do autor</b> '+escapeHtml(country)+'</span></div>':'';
