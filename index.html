@@ -60,15 +60,9 @@ button:disabled{cursor:not-allowed;opacity:.55}
 .date-chip{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 14px;color:var(--muted);font-size:12px}
 .theme-toggle{width:40px;height:40px;border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-size:17px;transition:.2s}
 .theme-toggle:hover{background:var(--surface2);transform:translateY(-1px)}
-.theme-control{display:none;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:4px 7px;height:40px}
-body.dark .theme-control{display:flex}
-.theme-control-label{font-size:10px;color:var(--muted);white-space:nowrap;font-weight:650}
-.theme-control.fade-selected{opacity:0;transform:scale(.96);pointer-events:none;transition:opacity .16s ease,transform .16s ease}.theme-control.selection-hidden{display:none!important}
-.theme-presets{display:flex;gap:2px;background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:2px}
-.theme-preset{border:0;background:transparent;color:var(--muted);padding:6px 8px;border-radius:6px;font-size:10px;font-weight:650;line-height:1;transition:.18s}
-.theme-preset:hover{color:var(--text);background:var(--surface)}
-.theme-preset.active{background:var(--accent-light);color:var(--accent);box-shadow:0 1px 2px rgba(0,0,0,.08)}
-@media(max-width:720px){.theme-control{max-width:100%;overflow:auto}.theme-control-label{display:none}.theme-presets{flex:none}.theme-preset{padding:6px 7px}}
+.darkness-options{flex-wrap:wrap}
+.darkness-options .seg{white-space:nowrap}
+.darkness-options .seg.active{background:var(--accent-light);color:var(--accent)}
 .view{display:none}.view.active{display:block}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow)}
 .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}.metric{padding:19px 20px}
@@ -147,7 +141,7 @@ body.dark .reading-card:hover{border-color:#3a4742}
 .schedule-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}.schedule-day{min-height:190px}.schedule-day.current{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent-light)}.schedule-day-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.schedule-day-name{text-transform:capitalize;font-weight:750;font-size:12px}.schedule-day-date{font-size:9px;color:var(--muted)}.schedule-block{padding:10px;border-radius:10px;background:var(--surface2);border:1px solid var(--line);margin-bottom:8px}.schedule-kicker{font-size:9px;color:var(--accent);font-weight:750;text-transform:uppercase;letter-spacing:.04em}.schedule-content{font-size:10px;line-height:1.5;white-space:pre-line;margin-top:5px}.schedule-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}.schedule-actions .small-btn{font-size:9px}.schedule-q{font-size:9px;color:var(--muted);line-height:1.45;margin-top:7px}.schedule-empty{font-size:10px;color:var(--muted);padding:10px 0}.schedule-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}.schedule-stat{padding:13px;border:1px solid var(--line);border-radius:10px;background:var(--surface2)}.schedule-stat-label{font-size:9px;color:var(--muted)}.schedule-stat-value{font-size:18px;font-weight:800;margin-top:3px}@media(max-width:1100px){.schedule-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:720px){.schedule-grid,.schedule-summary{grid-template-columns:1fr}}
 
 @media(max-width:1050px){.metrics{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.subjects-grid{grid-template-columns:1fr 1fr}.settings-shell,.ai-layout{grid-template-columns:1fr}.preview-panel{min-height:auto}.settings-row{grid-template-columns:1fr}}
-@media(max-width:720px){.sidebar{position:static;width:auto;border-right:0;border-bottom:1px solid var(--line);padding:16px}.nav-item{display:none}.nav-item.active{display:flex}.nav-group{margin-top:10px}.main{margin-left:0;padding:20px 15px}.topbar{flex-direction:column;gap:12px}.topbar-actions{width:100%;justify-content:space-between}.theme-control{flex:1;justify-content:center}.theme-slider{flex:1;max-width:130px}.metrics{grid-template-columns:1fr 1fr}.subjects-grid{grid-template-columns:1fr}.page-head{align-items:stretch;flex-direction:column}.toolbar{align-items:stretch;flex-direction:column}.search{width:100%}}
+@media(max-width:720px){.sidebar{position:static;width:auto;border-right:0;border-bottom:1px solid var(--line);padding:16px}.nav-item{display:none}.nav-item.active{display:flex}.nav-group{margin-top:10px}.main{margin-left:0;padding:20px 15px}.topbar{flex-direction:column;gap:12px}.topbar-actions{width:100%;justify-content:space-between}.metrics{grid-template-columns:1fr 1fr}.subjects-grid{grid-template-columns:1fr}.page-head{align-items:stretch;flex-direction:column}.toolbar{align-items:stretch;flex-direction:column}.search{width:100%}}
 </style>
 </head>
 <body>
@@ -186,11 +180,6 @@ body.dark .reading-card:hover{border-color:#3a4742}
       <p class="page-sub" id="pageSub">Vamos avançar um pouco mais hoje?</p>
     </div>
     <div class="topbar-actions">
-      <div class="theme-control" id="themeControl">
-        <span class="theme-control-label">Escuro</span>
-        <input class="theme-slider" id="themeSlider" type="range" min="0" max="100" step="1" value="50" aria-label="Intensidade do modo escuro">
-        <span class="theme-value" id="themeValue">50%</span>
-      </div>
       <button class="theme-toggle" id="themeToggle" aria-label="Alternar modo escuro" title="Alternar modo escuro">☾</button>
       <div class="date-chip" id="dateChip"></div>
     </div>
@@ -422,10 +411,21 @@ body.dark .reading-card:hover{border-color:#3a4742}
           </div>
 
           <div class="settings-row">
-            <div><div class="settings-label">Modo de interface</div><div class="settings-help">O botão do topo continua controlando claro/escuro.</div></div>
+            <div><div class="settings-label">Modo de interface</div><div class="settings-help">Escolha entre tema claro e escuro.</div></div>
             <div class="segmented" id="themeModeOptions">
               <button class="seg" data-theme-mode="light">Claro</button>
               <button class="seg" data-theme-mode="dark">Escuro</button>
+            </div>
+            <span></span>
+          </div>
+
+          <div class="settings-row">
+            <div><div class="settings-label">Gradação do modo escuro</div><div class="settings-help">Define a intensidade do fundo quando o tema escuro estiver ativo.</div></div>
+            <div class="segmented darkness-options" id="darknessOptions">
+              <button class="seg" data-darkness="25">Suave</button>
+              <button class="seg" data-darkness="50">Médio</button>
+              <button class="seg" data-darkness="75">Profundo</button>
+              <button class="seg" data-darkness="100">OLED</button>
             </div>
             <span></span>
           </div>
@@ -1437,7 +1437,11 @@ function applyAppearance(){
 }
 function resetAppearance(){
   appearance={...appearanceDefaults};
-  saveAppearance();applyAppearance();toast('Visual restaurado.');
+  saveAppearance();applyAppearance();
+  localStorage.setItem('study_darkness','50');
+  applyDarkness(50);
+  setThemeColors(50);
+  toast('Visual restaurado.');
 }
 document.querySelectorAll('#accentOptions .swatch').forEach(b=>b.addEventListener('click',()=>{
   appearance.accent=b.dataset.accent;saveAppearance();applyAppearance();toast('Cor principal atualizada.');
@@ -2183,21 +2187,14 @@ function applyTheme(theme){
     btn.setAttribute('title',dark?'Ativar modo claro':'Ativar modo escuro');
   }
   setThemeColors(Number(localStorage.getItem('study_darkness')||50));
-  const control=document.querySelector('.theme-control');
-  if(control) control.classList.remove('selection-hidden');
 }
 function applyDarkness(value){
   const v=Math.max(0,Math.min(100,Number(value)||0));
   localStorage.setItem('study_darkness',String(v));
-  document.querySelectorAll('.theme-preset').forEach(btn=>{
+  document.querySelectorAll('#darknessOptions .seg').forEach(btn=>{
     btn.classList.toggle('active',Number(btn.dataset.darkness)===v);
   });
   if(document.body.classList.contains('dark')) setThemeColors(v);
-  setTimeout(()=>{
-    const control=document.querySelector('.theme-control');
-    if(control) control.classList.add('fade-selected');
-    setTimeout(()=>control?.classList.remove('fade-selected'),220);
-  },80);
 }
 
 function toggleTheme(){
@@ -2214,16 +2211,10 @@ document.getElementById('newReadingBtn')?.addEventListener('click',function(e){e
 
 applySidebarState(localStorage.getItem(SIDEBAR_KEY)==='1');
 applyTheme(localStorage.getItem(THEME_KEY)||'light');
-document.querySelectorAll('.theme-preset').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    applyDarkness(btn.dataset.darkness);
-    const control=document.querySelector('.theme-control');
-    if(control){
-      control.classList.add('fade-selected');
-      setTimeout(()=>control.classList.add('selection-hidden'),180);
-    }
-  });
+document.querySelectorAll('#darknessOptions .seg').forEach(btn=>{
+  btn.addEventListener('click',()=>applyDarkness(btn.dataset.darkness));
 });
+applyDarkness(Number(localStorage.getItem('study_darkness')||50));
 document.getElementById('themeToggle').addEventListener('click',toggleTheme);
 document.getElementById('dateChip').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
 renderAll();
