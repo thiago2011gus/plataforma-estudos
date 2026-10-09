@@ -142,6 +142,21 @@ body.dark .reading-card:hover{border-color:#3a4742}
 
 @media(max-width:1050px){.metrics{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.subjects-grid{grid-template-columns:1fr 1fr}.settings-shell,.ai-layout{grid-template-columns:1fr}.preview-panel{min-height:auto}.settings-row{grid-template-columns:1fr}}
 @media(max-width:720px){.sidebar{position:static;width:auto;border-right:0;border-bottom:1px solid var(--line);padding:16px}.nav-item{display:none}.nav-item.active{display:flex}.nav-group{margin-top:10px}.main{margin-left:0;padding:20px 15px}.topbar{flex-direction:column;gap:12px}.topbar-actions{width:100%;justify-content:space-between}.metrics{grid-template-columns:1fr 1fr}.subjects-grid{grid-template-columns:1fr}.page-head{align-items:stretch;flex-direction:column}.toolbar{align-items:stretch;flex-direction:column}.search{width:100%}}
+
+/* Refinamento visual das próximas etapas da trilha */
+.trail-next{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:stretch}
+.trail-next .schedule-day{min-height:0;padding:18px 18px 20px;display:flex;flex-direction:column;gap:0;border-radius:14px;box-shadow:0 3px 14px rgba(37,43,54,.035);transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.trail-next .schedule-day:hover{transform:translateY(-2px);border-color:#cbd5e1;box-shadow:0 8px 22px rgba(37,43,54,.07)}
+.trail-next .schedule-day-head{gap:12px;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.trail-next .schedule-day-name{font-size:13px;line-height:1.4;color:var(--text);text-transform:none}
+.trail-next .trail-done{font-size:10px;font-weight:650;color:#2563eb;background:#e8efff;border-radius:999px;padding:5px 8px;white-space:nowrap}
+.trail-next .schedule-kicker{font-size:10px;line-height:1.5;letter-spacing:.045em;color:var(--muted);margin-bottom:5px}
+.trail-next .schedule-content{font-size:13px;line-height:1.6;color:var(--text);margin-top:2px;overflow-wrap:anywhere}
+.trail-next .schedule-q{font-size:11px;line-height:1.55;margin-top:12px;padding:10px 11px;border-radius:9px;background:var(--surface2);color:var(--muted)}
+.trail-next .schedule-q strong{color:var(--text)}
+@media(max-width:1050px){.trail-next{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:720px){.trail-next{grid-template-columns:1fr;gap:10px}.trail-next .schedule-day{padding:16px}.trail-next .schedule-day-head{margin-bottom:12px}}
+
 </style>
 </head>
 <body>
