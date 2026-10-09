@@ -1530,8 +1530,14 @@ function saveAgenda(a){localStorage.setItem(AGENDA_KEY,JSON.stringify(a))}
 function taskOccursOn(t,date){if(!t.dueDate||date<t.dueDate)return false;const mode=t.repeat||'none';if(mode==='daily')return true;if(mode==='weekly')return (t.repeatDays||[]).includes(new Date(date+'T12:00:00').getDay());return date===t.dueDate}
 function taskDoneOn(t,date){return t.repeat&&t.repeat!=='none'?(t.doneDates||[]).includes(date):!!t.done}
 function taskOverdueOn(t,date,now=new Date()){
- if(!t||taskDoneOn(t,date)||!taskOccursOn(t,date))return false;
- const today=organizerToday();if(date<today)return true;if(date>today||!t.time)return false;
+ if(!t||taskDoneOn(t,date))return false;
+ const today=organizerToday(),repeating=t.repeat&&t.repeat!=='none';
+ if(date<today)return taskOccursOn(t,date);
+ if(date>today)return false;
+ if(repeating&&!taskOccursOn(t,date))return false;
+ if(!repeating&&t.dueDate<today)return true;
+ if(!repeating&&t.dueDate!==today)return false;
+ if(!t.time)return false;
  const parts=String(t.time).split(':').map(Number);return now.getHours()*60+now.getMinutes()>parts[0]*60+parts[1];
 }
 function getAgendaDisplayItems(startDate=null,endDate=null){
