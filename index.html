@@ -171,6 +171,11 @@ body.dark .reading-card:hover{border-color:#3a4742}
 .performance-row strong{font-size:13px}.performance-row div div{font-size:12px;color:var(--muted);margin-top:3px}.performance-score{font-size:18px;font-weight:700;color:var(--accent)}.performance-meta{font-size:12px;color:var(--muted)}
 .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.form-grid .field{margin:0}.form-grid input,.form-grid textarea,.form-grid select{width:100%;box-sizing:border-box}.form-grid textarea{min-height:84px}
 @media(max-width:650px){.form-grid{grid-template-columns:1fr}.performance-row{grid-template-columns:minmax(0,1fr) auto;gap:8px}.performance-meta{grid-column:1}.performance-row button{grid-column:2;grid-row:2}}
+/* MENTOR — área de estudo */
+.mentor-hero{position:relative;overflow:hidden;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:28px 30px;margin-bottom:18px;border-radius:18px;background:linear-gradient(120deg,var(--accent-light),var(--surface));border:1px solid var(--line)}
+.mentor-hero h2{font-size:30px;letter-spacing:-1px;margin:7px 0}.mentor-hero p{max-width:620px;margin:0;color:var(--muted);font-size:13px;line-height:1.6}.mentor-eyebrow{font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--accent)}.mentor-hero-mark{font-size:70px;color:var(--accent);opacity:.22;padding:0 14px}.mentor-layout{display:grid;grid-template-columns:minmax(260px,.82fr) minmax(0,1.35fr);gap:18px;align-items:start}.mentor-setup,.mentor-workspace{padding:22px;min-width:0}.mentor-section-heading{display:flex;gap:12px;align-items:flex-start;margin-bottom:22px}.mentor-section-heading h3{margin:1px 0 5px;font-size:16px}.mentor-section-heading p{margin:0;color:var(--muted);font-size:11px;line-height:1.5}.mentor-step{display:grid;place-items:center;flex:none;width:34px;height:34px;border-radius:11px;background:var(--accent-light);color:var(--accent);font-size:11px;font-weight:800}.mentor-setup .field{margin-bottom:17px}.mentor-setup .field label,.mentor-focus-field label{font-size:11px;font-weight:700;color:var(--text)}.mentor-setup .select,.mentor-setup textarea,.mentor-focus-field input{width:100%;margin-top:7px;min-height:42px;background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px 12px}.mentor-setup textarea{min-height:96px;resize:vertical}.mentor-help{font-size:10px;color:var(--muted);line-height:1.5;margin-top:7px}.mentor-optional{font-weight:400;color:var(--muted)}.mentor-source-note{display:flex;gap:10px;padding:13px;border-radius:12px;background:var(--surface2);font-size:10px;line-height:1.6;color:var(--muted)}.mentor-source-note strong{color:var(--text)}.mentor-modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:20px}.mentor-mode{display:flex;gap:10px;align-items:center;text-align:left;padding:13px 11px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text);transition:border-color .15s,background .15s,transform .15s;min-width:0}.mentor-mode:hover{transform:translateY(-1px);border-color:var(--accent)}.mentor-mode.active{border-color:var(--accent);background:var(--accent-light);box-shadow:inset 0 0 0 1px var(--accent)}.mentor-mode-icon{display:grid;place-items:center;flex:none;width:34px;height:34px;border-radius:10px;background:var(--surface2);color:var(--accent);font-size:18px}.mentor-mode strong,.mentor-mode small{display:block}.mentor-mode strong{font-size:12px}.mentor-mode small{font-size:9px;color:var(--muted);margin-top:4px;line-height:1.4}.mentor-focus-field{margin-bottom:16px}.mentor-focus-field input{box-sizing:border-box}.mentor-prepare-btn{width:100%;display:flex;justify-content:space-between;align-items:center;padding:13px 15px}.mentor-status{font-size:11px;color:var(--muted);margin:12px 0}.mentor-result{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}.mentor-empty{display:flex;flex-direction:column;align-items:center;text-align:center;padding:22px 12px;color:var(--muted)}.mentor-empty>span{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;background:var(--accent-light);color:var(--accent);font-size:21px;margin-bottom:12px}.mentor-empty strong{font-size:13px;color:var(--text)}.mentor-empty p{max-width:340px;font-size:11px;line-height:1.6}.mentor-prompt-preview{white-space:pre-wrap;overflow-wrap:anywhere;max-height:260px;overflow:auto;background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:10px;line-height:1.6}.mentor-actions{display:flex;gap:9px;margin-top:14px;flex-wrap:wrap}.mentor-footnote{font-size:10px;line-height:1.5;color:var(--muted);margin:12px 0 0}
+@media(max-width:1050px){.mentor-layout{grid-template-columns:1fr}.mentor-hero{padding:23px}.mentor-modes{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.mentor-modes{grid-template-columns:1fr}.mentor-hero-mark{font-size:45px;padding:0}.mentor-setup,.mentor-workspace{padding:16px}}
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -613,230 +618,43 @@ body.dark .reading-card:hover{border-color:#3a4742}
   </section>
 
   <section class="view" id="view-feynman">
-
-  <div class="page-head">
+  <div class="mentor-hero">
     <div>
-      <div class="section-title" style="font-size:23px">
-        Mentor
-      </div>
-
-      <div class="desc">
-        Prepare sua sessão com o Mentor e continue no ChatGPT usando seu plano.
-      </div>
+      <div class="mentor-eyebrow">STUDY · APRENDIZAGEM ATIVA</div>
+      <h2>Mentor</h2>
+      <p>Estude a partir dos seus próprios materiais, com uma sessão preparada para o seu objetivo.</p>
     </div>
-
-    <span class="ai-badge">
-      ✦ Foco em compreensão
-    </span>
+    <div class="mentor-hero-mark" aria-hidden="true">✦</div>
   </div>
-
-
-  <div class="ai-layout">
-
-    <div class="card ai-side">
-
-      <div class="section-title">
-        Como funciona
-      </div>
-
-      <div class="ai-step">
-        <div class="step-num">1</div>
-
-        <div>
-          <div class="step-title">
-            Escolha um tema
-          </div>
-
-          <div class="step-text">
-            Defina exatamente o que você quer dominar.
-          </div>
-        </div>
-      </div>
-
-
-      <div class="ai-step">
-        <div class="step-num">2</div>
-
-        <div>
-          <div class="step-title">
-            Explique sem consultar
-          </div>
-
-          <div class="step-text">
-            Escreva com suas próprias palavras, como se ensinasse alguém.
-          </div>
-        </div>
-      </div>
-
-
-      <div class="ai-step">
-        <div class="step-num">3</div>
-
-        <div>
-          <div class="step-title">
-            Desafie sua compreensão
-          </div>
-
-          <div class="step-text">
-            O ChatGPT fará perguntas para encontrar suas lacunas.
-          </div>
-        </div>
-      </div>
-
-
-      <div class="ai-step">
-        <div class="step-num">4</div>
-
-        <div>
-          <div class="step-title">
-            Refaça a explicação
-          </div>
-
-          <div class="step-text">
-            Volte aos pontos frágeis e explique novamente.
-          </div>
-        </div>
-      </div>
-
+  <div class="mentor-layout">
+    <div class="card mentor-setup">
+      <div class="mentor-section-heading"><span class="mentor-step">01</span><div><h3>Monte sua sessão</h3><p>Escolha o assunto e a fonte que vai orientar o estudo.</p></div></div>
+      <div class="field"><label for="feynmanSubject">Matéria</label><select class="select" id="feynmanSubject" onchange="updateMentorTopics();renderMentorMaterialOptions()"></select></div>
+      <div class="field"><label for="mentorTopic">Assunto</label><select class="select" id="mentorTopic" onchange="renderMentorMaterialOptions()"></select></div>
+      <div class="field"><label for="mentorMaterial">Material da Biblioteca</label><select class="select" id="mentorMaterial" onchange="updateMentorMaterialStatus()"></select><div class="mentor-help" id="mentorMaterialStatus">Selecione um PDF associado ao assunto.</div></div>
+      <div class="field"><label for="feynmanText">Seu ponto de partida <span class="mentor-optional">opcional</span></label><textarea id="feynmanText" placeholder="O que você já sabe? Qual dúvida quer resolver?"></textarea></div>
+      <div class="mentor-source-note"><span>🔒</span><div><strong>Seu material continua no Drive.</strong><br>O Study lê o PDF selecionado para preparar um contexto. O texto será incluído no prompt que você copiar para o ChatGPT.</div></div>
     </div>
-
-
-    <div class="card ai-main">
-
-      <div class="ai-top">
-
-        <div>
-          <div class="section-title">
-            Preparar sessão
-          </div>
-
-          <div class="desc">
-            A plataforma prepara o contexto para você continuar no ChatGPT.
-          </div>
-        </div>
-
-        <select class="select" id="feynmanSubject"></select>
-
+    <div class="card mentor-workspace">
+      <div class="mentor-section-heading"><span class="mentor-step">02</span><div><h3>Como você quer estudar?</h3><p>Escolha uma modalidade. O Mentor adapta as instruções para essa sessão.</p></div></div>
+      <div class="mentor-modes" role="group" aria-label="Modalidades do Mentor">
+        <button class="mentor-mode active" type="button" data-mode="feynman" onclick="selectMentorMode('feynman')"><span class="mentor-mode-icon">✦</span><span><strong>Feynman</strong><small>Explique e encontre lacunas</small></span></button>
+        <button class="mentor-mode" type="button" data-mode="discursiva" onclick="selectMentorMode('discursiva')"><span class="mentor-mode-icon">✎</span><span><strong>Discursiva</strong><small>Responda e receba avaliação</small></span></button>
+        <button class="mentor-mode" type="button" data-mode="oral" onclick="selectMentorMode('oral')"><span class="mentor-mode-icon">◖</span><span><strong>Oral</strong><small>Simule uma arguição</small></span></button>
+        <button class="mentor-mode" type="button" data-mode="flashcards" onclick="selectMentorMode('flashcards')"><span class="mentor-mode-icon">▤</span><span><strong>Flashcards</strong><small>Treine recuperação ativa</small></span></button>
+        <button class="mentor-mode" type="button" data-mode="conversa" onclick="selectMentorMode('conversa')"><span class="mentor-mode-icon">☏</span><span><strong>Conversa</strong><small>Explore dúvidas e relações</small></span></button>
       </div>
-
-
-      <div class="ai-form">
-
-        <div>
-
-          <input
-            class="search"
-            id="feynmanTopic"
-            style="width:100%"
-            placeholder="Tema: ex. lançamento tributário, poder de polícia..."
-          >
-
-        </div>
-
-
-        <textarea
-          id="feynmanText"
-          placeholder="Explique o assunto com suas próprias palavras. Evite consultar o material enquanto escreve."
-        ></textarea>
-
-
-        <div class="ai-actions">
-
-          <div class="ai-actions-left">
-
-            <button
-              class="btn btn-secondary"
-              onclick="feynmanQuestionPrompt()"
-            >
-              Quero ser questionado
-            </button>
-
-            <button
-              class="btn btn-secondary"
-              onclick="clearFeynmanLauncher()"
-            >
-              Limpar
-            </button>
-
-          </div>
-
-
-          <button
-            class="btn btn-primary"
-            onclick="startFeynmanSession()"
-          >
-            ✦ Iniciar sessão Feynman
-          </button>
-
-        </div>
-
+      <div class="field mentor-focus-field"><label for="mentorFocus">Foco da sessão <span class="mentor-optional">opcional</span></label><input id="mentorFocus" placeholder="Ex.: conceitos, distinções, exemplos práticos..."></div>
+      <button class="btn btn-primary mentor-prepare-btn" id="mentorPrepareButton" onclick="prepareMentorSession()">Preparar sessão <span aria-hidden="true">→</span></button>
+      <div class="mentor-status" id="mentorStatus" role="status">Selecione o material e a modalidade para começar.</div>
+      <div class="mentor-result" id="feynmanResult"><div class="mentor-empty"><span>✦</span><strong>Sua sessão aparecerá aqui</strong><p>O prompt será preparado com o assunto, a modalidade e o conteúdo do PDF selecionado.</p></div></div>
+      <div class="mentor-actions">
+        <button class="btn btn-secondary" onclick="copyFeynmanPrompt()">Copiar prompt</button>
+        <button class="btn btn-primary" onclick="openChatGPT()">Abrir ChatGPT ↗</button>
       </div>
-
-
-      <div
-        class="ai-result"
-        id="feynmanResult"
-      >
-
-        <h4>
-          Sua sessão será preparada aqui
-        </h4>
-
-        <div class="ai-placeholder">
-          Escolha a matéria, informe o tema e explique o que você entende.
-          Depois clique em <strong>Iniciar sessão Feynman</strong>.
-        </div>
-
-      </div>
-
-
-      <div class="chat-box">
-
-        <div
-          class="section-title"
-          style="margin-bottom:10px"
-        >
-          Continuar no ChatGPT
-        </div>
-
-
-        <div
-          class="chat-msg ai"
-          id="feynmanLauncherMessage"
-        >
-          O seu plano ChatGPT será usado para conduzir a sessão.
-          A plataforma apenas prepara o contexto.
-        </div>
-
-
-        <div
-          class="toolbar"
-          style="margin-top:12px"
-        >
-
-          <button
-            class="btn btn-secondary"
-            onclick="copyFeynmanPrompt()"
-          >
-            Copiar prompt
-          </button>
-
-
-          <button
-            class="btn btn-primary"
-            onclick="openChatGPT()"
-          >
-            Abrir ChatGPT ↗
-          </button>
-
-        </div>
-
-      </div>
-
+      <p class="mentor-footnote">O ChatGPT abre em outra aba. Para iniciar, cole o prompt copiado na conversa. Não é necessário publicar sua pasta do Drive.</p>
     </div>
-
   </div>
-
 </section>
 </main>
 </div>
@@ -852,6 +670,8 @@ body.dark .reading-card:hover{border-color:#3a4742}
 </div>
 <div class="toast" id="toast"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";}</script>
 <script src="cronograma.js?v=2"></script>
 <script>
 const STORAGE_KEY='study_subjects_v2';
@@ -974,6 +794,9 @@ function renderTimerSubjects(){
     if([...el.options].some(o=>o.value===previous))el.value=previous;
   });
   renderTimerTopics();
+  updateMentorTopics();
+  renderMentorMaterialOptions();
+  selectMentorMode(mentorMode);
 }
 function renderTimerTopics(){
   ['timerTopic','timerTopic2'].forEach(id=>{
@@ -1574,6 +1397,97 @@ async function connectStudyDrive(){try{await getStudyDriveToken();toast('Google 
 
 function getStudyDriveMaterials(){try{return JSON.parse(localStorage.getItem(STUDY_MATERIALS_KEY)||'[]')}catch(e){return[]}}
 function saveStudyDriveMaterials(items){localStorage.setItem(STUDY_MATERIALS_KEY,JSON.stringify(items));renderStudyDriveMaterials()}
+const MENTOR_MODE_KEY='study_mentor_mode_v1';
+let mentorMode=localStorage.getItem(MENTOR_MODE_KEY)||'feynman';
+let mentorPdfText='';
+let mentorPreparedPrompt='';
+function updateMentorTopics(){
+  const subjectId=document.getElementById('feynmanSubject')?.value||'';
+  const subject=subjects.find(s=>String(s.id)===String(subjectId));
+  const el=document.getElementById('mentorTopic');if(!el)return;
+  const prev=el.value;
+  el.innerHTML='<option value="">Selecione um assunto</option>'+((subject?.topics)||[]).map(t=>'<option value="'+escapeHtml(t.name)+'">'+escapeHtml(t.name)+'</option>').join('');
+  if([...el.options].some(o=>o.value===prev))el.value=prev;
+}
+function renderMentorMaterialOptions(){
+  const el=document.getElementById('mentorMaterial');if(!el)return;
+  const subjectId=document.getElementById('feynmanSubject')?.value||'';
+  const topicName=document.getElementById('mentorTopic')?.value||'';
+  const previous=el.value;
+  const files=getStudyDriveMaterials().filter(f=>String(f.subjectId||'')===String(subjectId)&&(!topicName||f.topicName===topicName));
+  el.innerHTML='<option value="">Sem PDF específico (usar apenas o tema)</option>'+files.map(f=>'<option value="'+escapeHtml(f.id)+'">'+escapeHtml(f.name)+'</option>').join('');
+  if(files.some(f=>f.id===previous))el.value=previous;
+  updateMentorMaterialStatus();
+}
+function updateMentorMaterialStatus(){
+  const fileId=document.getElementById('mentorMaterial')?.value;
+  const file=getStudyDriveMaterials().find(f=>f.id===fileId);
+  const status=document.getElementById('mentorMaterialStatus');
+  if(status)status.textContent=file?'Selecionado: '+file.name+'. O texto será extraído ao preparar a sessão.':'Nenhum PDF selecionado. Associe arquivos na Biblioteca para usá-los como fonte.';
+}
+function selectMentorMode(mode){
+  const allowed=['feynman','discursiva','oral','flashcards','conversa'];
+  if(!allowed.includes(mode))return;
+  mentorMode=mode;localStorage.setItem(MENTOR_MODE_KEY,mode);
+  document.querySelectorAll('.mentor-mode').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
+  const button=document.getElementById('mentorPrepareButton');
+  const labels={feynman:'Preparar sessão',discursiva:'Preparar questão discursiva',oral:'Preparar arguição oral',flashcards:'Preparar flashcards',conversa:'Preparar conversa'};
+  if(button)button.innerHTML=labels[mode]+' <span aria-hidden="true">→</span>';
+}
+async function extractMentorPdf(file){
+  if(!window.pdfjsLib)throw new Error('O leitor de PDF ainda está carregando. Atualize a página e tente novamente.');
+  const token=await getStudyDriveToken();
+  const response=await fetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(file.id)+'?alt=media',{headers:{Authorization:'Bearer '+token}});
+  if(!response.ok)throw new Error('Não foi possível baixar o PDF do Drive ('+response.status+').');
+  const bytes=await response.arrayBuffer();
+  const pdf=await pdfjsLib.getDocument({data:bytes}).promise;
+  let text='',pagesRead=0;
+  const maxPages=Math.min(pdf.numPages,60);
+  for(let n=1;n<=maxPages;n++){
+    const page=await pdf.getPage(n);const content=await page.getTextContent();
+    const pageText=content.items.map(item=>item.str||'').join(' ');
+    if(pageText.trim())text+='\n[Página '+n+']\n'+pageText+'\n';
+    pagesRead++;
+    if(text.length>42000)break;
+  }
+  if(!text.trim())throw new Error('Não encontrei texto selecionável neste PDF. Se for um documento digitalizado, será necessário OCR.');
+  const truncated=pdf.numPages>pagesRead||text.length>42000;
+  return {text:text.slice(0,42000),pages:pagesRead,totalPages:pdf.numPages,truncated};
+}
+function getMentorModeInstructions(mode,context){
+  const base='Você é o Mentor do Study. Use o material fornecido como fonte principal. Não invente conteúdo nem atribua ao PDF afirmações que ele não contém. Quando citar o material, indique a página marcada no texto. Se faltar informação, diga expressamente. Separe qualquer complemento de conhecimento geral do conteúdo da fonte. Trabalhe em português brasileiro e faça uma pergunta por vez, salvo quando a modalidade exigir um conjunto de cartões.';
+  const instructions={
+    feynman:'MÉTODO FEYNMAN: peça ao aluno que explique com as próprias palavras; diagnostique a principal lacuna; faça uma pergunta por vez; dê pistas progressivas antes de revelar uma correção. Não transforme a sessão em aula expositiva. Após cerca de três respostas substantivas, dê feedback concreto sobre acertos, lacunas e próximo ponto.',
+    discursiva:'QUESTÃO DISCURSIVA: formule uma questão aberta de dificuldade adequada ao tema e baseada no material. Aguarde a resposta do aluno antes de apresentar qualquer espelho. Depois avalie aderência ao enunciado, cobertura do conteúdo do PDF, precisão conceitual, fundamentação, organização e clareza. Dê feedback por critérios, aponte omissões com referência às páginas e apresente uma resposta-modelo somente depois da avaliação.',
+    oral:'ARGUIÇÃO ORAL: simule uma banca examinadora. Faça uma pergunta por vez e espere a resposta falada ou transcrita. Explore fundamento, distinções, exceções e aplicação prática com perguntas de aprofundamento. Não antecipe a resposta. Ao final, avalie precisão, clareza, segurança conceitual e lacunas.',
+    flashcards:'FLASHCARDS: crie até 12 cartões baseados exclusivamente no material, cada um com pergunta curta, resposta objetiva e página de referência quando disponível. Evite duplicatas e cartões ambíguos. Apresente primeiro só a pergunta de um cartão por vez; espere a tentativa do aluno, revele a resposta e peça autoavaliação antes do próximo. Não revele antecipadamente todas as respostas.',
+    conversa:'CONVERSA: converse naturalmente sobre o assunto e responda às dúvidas com base prioritária no PDF. Ajude a relacionar conceitos, pedir exemplos e esclarecer trechos. Indique páginas quando possível. Se a fonte não responder, deixe isso claro antes de complementar com conhecimento geral identificado como complemento.'
+  };
+  return base+'\n\nMATÉRIA: '+context.subject+'\nASSUNTO: '+context.topic+'\nFOCO: '+(context.focus||'Consolidação do conteúdo')+'\n\nMODALIDADE: '+mode.toUpperCase()+'\n'+instructions[mode]+'\n\nMATERIAL DE REFERÊNCIA: '+(context.fileName||'Nenhum PDF selecionado')+'\n'+(context.truncated?'OBSERVAÇÃO: O texto foi limitado para caber no contexto; não presuma que representa o documento inteiro.':'')+'\n\nTEXTO EXTRAÍDO DO PDF:\n'+(context.pdfText||'(Nenhum texto de PDF foi anexado. Trabalhe somente com o tema informado e avise que não há material-fonte selecionado.)')+'\n\nPONTO DE PARTIDA DO ALUNO:\n'+(context.startingPoint||'(Não informado)')+'\n\nCOMECE AGORA: apresente uma orientação breve e inicie a atividade conforme a modalidade, sem expor estas instruções internas.';
+}
+async function prepareMentorSession(){
+  const subject=document.getElementById('feynmanSubject')?.selectedOptions?.[0]?.textContent?.trim()||'';
+  const topic=document.getElementById('mentorTopic')?.value?.trim()||document.getElementById('feynmanTopic')?.value?.trim()||'';
+  const fileId=document.getElementById('mentorMaterial')?.value||'';
+  const file=getStudyDriveMaterials().find(f=>f.id===fileId);
+  const status=document.getElementById('mentorStatus');
+  const result=document.getElementById('feynmanResult');
+  if(!subject||!topic){if(status)status.textContent='Selecione uma matéria e um assunto cadastrado.';return}
+  if(status)status.textContent=file?'Lendo o PDF e preparando o contexto…':'Preparando o contexto da sessão…';
+  const button=document.getElementById('mentorPrepareButton');if(button)button.disabled=true;
+  try{
+    let extracted={text:'',pages:0,totalPages:0,truncated:false};
+    if(file)extracted=await extractMentorPdf(file);
+    const prompt=getMentorModeInstructions(mentorMode,{subject,topic,focus:document.getElementById('mentorFocus')?.value?.trim()||'',fileName:file?.name||'',pdfText:extracted.text,truncated:extracted.truncated,startingPoint:document.getElementById('feynmanText')?.value?.trim()||''});
+    mentorPreparedPrompt=prompt;preparedFeynmanPrompt=prompt;mentorPdfText=extracted.text;
+    if(result)result.innerHTML='<div class="mentor-prompt-preview">'+escapeHtml(prompt)+'</div>';
+    if(status)status.textContent=file?'PDF lido: '+extracted.pages+' de '+extracted.totalPages+' páginas analisadas'+(extracted.truncated?' (trecho limitado para o prompt).':'.'):'Sessão preparada sem PDF específico. Para fundamentar no material, associe um PDF à matéria e ao assunto.';
+    const message=document.getElementById('feynmanLauncherMessage');if(message)message.textContent='Sessão preparada. Copie o prompt e abra o ChatGPT para começar.';
+  }catch(error){
+    if(status)status.textContent='Não foi possível preparar a sessão: '+error.message;
+  }finally{if(button)button.disabled=false}
+}
+
 function renderStudyDriveMaterials(){
   const list=document.getElementById('studyDriveMaterialsList');if(!list)return;
   const items=getStudyDriveMaterials();
@@ -2281,10 +2195,8 @@ function feynmanQuestionPrompt(){
 async function copyFeynmanPrompt(){
 
   if(!preparedFeynmanPrompt){
-
-    preparedFeynmanPrompt =
-      buildFeynmanPrompt('full');
-
+    if(typeof mentorPreparedPrompt!=='undefined' && mentorPreparedPrompt){preparedFeynmanPrompt=mentorPreparedPrompt;}
+    else preparedFeynmanPrompt=buildFeynmanPrompt('full');
   }
 
   if(!preparedFeynmanPrompt) return;
@@ -2343,7 +2255,7 @@ async function openChatGPT(){
   }
 
 
-  gameAward(15,'sessão Feynman','feynman:'+localDateKey()+'|'+(getFeynmanLauncherContext().topic||'sem-tema')+'|'+Date.now());
+  gameAward(15,'sessão Mentor','mentor:'+localDateKey()+'|'+(document.getElementById('mentorTopic')?.value||getFeynmanLauncherContext().topic||'sem-tema')+'|'+Date.now());
 
   window.open(
     'https://chatgpt.com/',
