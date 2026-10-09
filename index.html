@@ -54,7 +54,7 @@ button:disabled{cursor:not-allowed;opacity:.55}
 .sidebar::-webkit-scrollbar{width:6px}.sidebar::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
 .brand{position:sticky;top:-24px;z-index:2;background:var(--surface);padding-top:24px;margin-top:-24px}
 .brand{padding:0 10px 28px}.brand-title{font-size:22px;font-weight:750;letter-spacing:-.7px}.brand-sub{font-size:11px;color:var(--muted);margin-top:5px}
-.nav-group{margin-top:22px}.nav-title{font-size:10px;letter-spacing:1.2px;color:#9ca39f;text-transform:uppercase;font-weight:750;padding:0 10px 8px}
+.nav-group{margin-top:22px}.nav-title{font-size:10px;letter-spacing:1.2px;color:#9ca39f;text-transform:uppercase;font-weight:750;padding:0 10px 8px}.nav-section-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;border:0;background:transparent;font-family:inherit;text-align:left;cursor:pointer}.nav-section-toggle:hover{color:var(--accent)}.nav-section-chevron{font-size:15px;transition:transform .18s ease}.study-nav-group.is-collapsed .nav-section-chevron{transform:rotate(-90deg)}.study-nav-group.is-collapsed .study-nav-items{display:none}.study-nav-items .nav-item{cursor:grab;touch-action:pan-y}.study-nav-items .nav-item:active{cursor:grabbing}.study-nav-items .nav-item.dragging{opacity:.4}.study-nav-items .nav-item.drag-over{outline:1px dashed var(--accent);outline-offset:1px}.app.sidebar-collapsed .nav-section-toggle{justify-content:center}.app.sidebar-collapsed .nav-section-toggle span:first-child{font-size:0}.app.sidebar-collapsed .nav-section-chevron{display:none}
 .nav-item{display:flex;align-items:center;gap:11px;padding:11px 10px;margin:3px 0;border-radius:10px;color:#555d59;font-size:14px}
 .nav-item:hover{background:var(--surface2)}.nav-item.active{background:var(--accent-light);color:var(--accent);font-weight:650}.nav-external-link{text-decoration:none;width:100%}.nav-external-link:hover{color:var(--accent)}.nav-external-label{min-width:0}.app.sidebar-collapsed .nav-external-label{font-size:0}.nav-icon{width:20px;height:20px;flex:0 0 20px;display:inline-flex;align-items:center;justify-content:center;color:var(--muted)}.nav-icon svg{width:17px;height:17px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.nav-item.active .nav-icon{color:var(--accent)}
 .main{margin-left:240px;padding:32px 40px;max-width:1500px}
@@ -194,8 +194,9 @@ body.dark .reading-card:hover{border-color:#3a4742}
     <div class="nav-item" data-view="subjects"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span>Matérias</div>
     <div class="nav-item" data-view="settings"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/><path d="m19.4 15 .1.1 1.1.9-1.5 2.6-1.4-.6a8 8 0 0 1-1.6.9l-.2 1.5h-3l-.3-1.5a8 8 0 0 1-1.6-.9l-1.4.6-1.5-2.6 1.1-.9a7 7 0 0 1 0-1.9l-1.1-.9 1.5-2.6 1.4.6a8 8 0 0 1 1.6-.9l.3-1.5h3l.2 1.5a8 8 0 0 1 1.6.9l1.4-.6 1.5 2.6-1.1.9a7 7 0 0 1-.1 1.8Z" transform="translate(-1 -1) scale(1.08)"/></svg></span>Configurações</div>
   </div>
-  <div class="nav-group">
-    <div class="nav-title">Estudo</div>
+  <div class="nav-group study-nav-group" id="studyNavGroup">
+    <button type="button" class="nav-title nav-section-toggle" id="studySectionToggle" aria-expanded="true" aria-controls="studyNavItems"><span>Estudo</span><span class="nav-section-chevron" aria-hidden="true">⌄</span></button>
+    <div class="study-nav-items" id="studyNavItems">
     <div class="nav-item" data-view="timer"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6M12 2v3"/></svg></span>Cronômetro</div>
     <div class="nav-item" data-view="stats"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10h4v10M10 20V4h4v16M16 20v-7h4v7"/></svg></span>Estatísticas</div>
     <div class="nav-item" data-view="gamification"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg></span>Conquistas</div>
@@ -2467,11 +2468,66 @@ function toggleTheme(){
   applyTheme(theme);
 }
 
+const STUDY_NAV_ORDER_KEY='study_sidebar_study_order_v1';
+const STUDY_NAV_COLLAPSED_KEY='study_sidebar_study_collapsed_v1';
+function initStudySidebarControls(){
+  const group=document.getElementById('studyNavGroup');
+  const items=document.getElementById('studyNavItems');
+  const toggle=document.getElementById('studySectionToggle');
+  if(!group||!items||!toggle)return;
+  const savedCollapsed=localStorage.getItem(STUDY_NAV_COLLAPSED_KEY)==='1';
+  group.classList.toggle('is-collapsed',savedCollapsed);
+  toggle.setAttribute('aria-expanded',String(!savedCollapsed));
+  toggle.title=savedCollapsed?'Expandir seção Estudo':'Recolher seção Estudo';
+  toggle.addEventListener('click',()=>{
+    const collapsed=group.classList.toggle('is-collapsed');
+    localStorage.setItem(STUDY_NAV_COLLAPSED_KEY,collapsed?'1':'0');
+    toggle.setAttribute('aria-expanded',String(!collapsed));
+    toggle.title=collapsed?'Expandir seção Estudo':'Recolher seção Estudo';
+  });
+  const restoreOrder=()=>{
+    let order=[];
+    try{order=JSON.parse(localStorage.getItem(STUDY_NAV_ORDER_KEY)||'[]')}catch(e){order=[]}
+    const nodes=[...items.querySelectorAll('.nav-item[data-view]')];
+    const byId=new Map(nodes.map(node=>[node.dataset.view,node]));
+    order.forEach(id=>{const node=byId.get(id);if(node){items.appendChild(node);byId.delete(id)}});
+    byId.forEach(node=>items.appendChild(node));
+  };
+  const saveOrder=()=>localStorage.setItem(STUDY_NAV_ORDER_KEY,JSON.stringify([...items.querySelectorAll('.nav-item[data-view]')].map(node=>node.dataset.view)));
+  restoreOrder();
+  let dragged=null;
+  items.querySelectorAll('.nav-item[data-view]').forEach(node=>{
+    node.draggable=true;
+    node.addEventListener('dragstart',event=>{
+      dragged=node;node.classList.add('dragging');
+      event.dataTransfer.effectAllowed='move';
+      event.dataTransfer.setData('text/plain',node.dataset.view);
+    });
+    node.addEventListener('dragover',event=>{
+      if(!dragged||dragged===node)return;
+      event.preventDefault();event.dataTransfer.dropEffect='move';
+      items.querySelectorAll('.drag-over').forEach(el=>el.classList.remove('drag-over'));
+      node.classList.add('drag-over');
+    });
+    node.addEventListener('drop',event=>{
+      event.preventDefault();
+      if(!dragged||dragged===node)return;
+      const rect=node.getBoundingClientRect();
+      const after=event.clientY>rect.top+rect.height/2;
+      items.insertBefore(dragged,after?node.nextSibling:node);
+      saveOrder();
+    });
+    node.addEventListener('dragend',()=>{
+      dragged=null;items.querySelectorAll('.dragging,.drag-over').forEach(el=>el.classList.remove('dragging','drag-over'));
+    });
+  });
+}
 document.getElementById('sidebarToggle')?.addEventListener('click',toggleSidebar);
 // Botões principais da Agenda e Leituras
 document.getElementById('newAgendaBtn')?.addEventListener('click',function(e){e.preventDefault();openAgendaModal();});
 document.getElementById('newReadingBtn')?.addEventListener('click',function(e){e.preventDefault();openReadingModal();});
 
+initStudySidebarControls();
 applySidebarState(localStorage.getItem(SIDEBAR_KEY)==='1');
 applyTheme(localStorage.getItem(THEME_KEY)||'light');
 document.querySelectorAll('#darknessOptions .seg').forEach(btn=>{
