@@ -1272,13 +1272,40 @@ function saveQuickCapture(){
  const a=getQuickCaptures();a.unshift({id:organizerId(),title,text,kind,createdAt:new Date().toISOString()});saveQuickCaptures(a);document.getElementById('quickCaptureText').value='';document.getElementById('quickCaptureTitle').value='';renderQuickCaptures();renderMyDay();toast('Anotação guardada na captura rápida.');
 }
 function saveMyDayQuickCapture(){
- const el=document.getElementById('myDayQuickText'),text=(el?.value||'').trim();if(!text){el?.focus();return}
- const a=getQuickCaptures();a.unshift({id:organizerId(),title:'',text,kind:'task',createdAt:new Date().toISOString()});saveQuickCaptures(a);el.value='';renderQuickCaptures();renderMyDay();toast('Captura salva.');
+ const el=document.getElementById('myDayQuickText'),text=(el?.value||'').trim(),kind=document.getElementById('myDayQuickKind')?.value||'task';if(!text){el?.focus();return}
+ const a=getQuickCaptures();a.unshift({id:organizerId(),title:'',text,kind,createdAt:new Date().toISOString()});saveQuickCaptures(a);el.value='';const select=document.getElementById('myDayQuickKind');if(select)select.value='task';renderQuickCaptures();renderMyDay();renderHome();toast('Captura salva.');
+}
+function saveHomeQuickCapture(){
+ const el=document.getElementById('homeQuickCaptureText'),text=(el?.value||'').trim(),kind=document.getElementById('homeQuickCaptureKind')?.value||'task';if(!text){el?.focus();return}
+ const a=getQuickCaptures();a.unshift({id:organizerId(),title:'',text,kind,createdAt:new Date().toISOString()});saveQuickCaptures(a);el.value='';const select=document.getElementById('homeQuickCaptureKind');if(select)select.value='task';renderQuickCaptures();renderMyDay();renderHome();toast('Captura salva.');
+}
+function quickCaptureTypeOptions(selected){
+ const kinds=[['task','Tarefa / pendência'],['idea','Ideia'],['reminder','Lembrete / compromisso'],['knowledge','Conhecimento / leitura']];
+ return kinds.map(([value,label])=>'<option value="'+value+'" '+(value===selected?'selected':'')+'>'+label+'</option>').join('');
+}
+function changeQuickCaptureKind(id,kind){
+ const items=getQuickCaptures(),item=items.find(x=>String(x.id)===String(id));if(!item)return;
+ if(!['task','idea','reminder','knowledge'].includes(kind))return;
+ item.kind=kind;saveQuickCaptures(items);renderQuickCaptures();renderMyDay();renderHome();toast('Categoria atualizada.');
+}
+function organizeQuickCapture(id){
+ const item=getQuickCaptures().find(x=>String(x.id)===String(id));if(!item)return;
+ if(item.kind==='task')return captureToTask(id);
+ if(item.kind==='reminder')return captureToAgenda(id);
+ return captureToNotebook(id);
 }
 function renderQuickCaptures(){
  const list=document.getElementById('quickCaptureList'),items=getQuickCaptures(),count=document.getElementById('quickCaptureCount');if(count)count.textContent=items.length+' item'+(items.length===1?'':'s');
  if(!list)return;
- list.innerHTML=items.length?'<div class="organizer-list">'+items.map(x=>'<div class="organizer-item"><div class="organizer-item-title">'+escapeHtml(x.title||String(x.text||'').slice(0,80))+'</div><div class="organizer-item-meta">'+escapeHtml(quickKindLabel(x.kind))+' · '+new Date(x.createdAt).toLocaleDateString('pt-BR')+(x.title&&x.text?'<br>'+escapeHtml(x.text):'')+'</div><div class="organizer-actions"><button class="small-btn" onclick="captureToTask(\''+escapeHtml(String(x.id))+'\')">Virar tarefa</button><button class="small-btn" onclick="captureToNotebook(\''+escapeHtml(String(x.id))+'\')">Guardar no caderno</button><button class="small-btn" onclick="deleteQuickCapture(\''+escapeHtml(String(x.id))+'\')">Excluir</button></div></div>').join('')+'</div>':'<div class="organizer-empty">A caixa está vazia. Registre uma ideia ou pendência quando precisar.</div>';
+ list.innerHTML=items.length?'<div class="organizer-list">'+items.map(x=>'<div class="organizer-item"><div class="organizer-item-title">'+escapeHtml(x.title||String(x.text||'').slice(0,80))+'</div><div class="organizer-item-meta">'+escapeHtml(quickKindLabel(x.kind))+' · '+new Date(x.createdAt).toLocaleDateString('pt-BR')+(x.title&&x.text?'<br>'+escapeHtml(x.text):'')+'</div><div class="organizer-actions"><select class="select" aria-label="Classificar captura" onchange="changeQuickCaptureKind(\''+escapeHtml(String(x.id))+'\',this.value)">'+quickCaptureTypeOptions(x.kind)+'</select><button class="small-btn" onclick="organizeQuickCapture(\''+escapeHtml(String(x.id))+'\')">Organizar</button><button class="small-btn" onclick="deleteQuickCapture(\''+escapeHtml(String(x.id))+'\')">Excluir</button></div></div>').join('')+'</div>':'<div class="organizer-empty">A caixa está vazia. Registre uma ideia ou pendência quando precisar.</div>';
+}
+function captureToAgenda(id){
+ const item=getQuickCaptures().find(x=>String(x.id)===String(id));if(!item)return;
+ window.quickCapturePendingAgendaId=String(id);openAgendaModal();
+ const title=document.getElementById('agendaTitle'),type=document.getElementById('agendaType'),date=document.getElementById('agendaDate'),notes=document.getElementById('agendaNotes');
+ if(title)title.value=item.title||String(item.text||'').split('\n')[0].slice(0,100);
+ if(type)type.value='personal';if(date)date.value=organizerToday();if(notes)notes.value=item.text||'';
+ toast('Confira a data e o horário antes de salvar o compromisso.');
 }
 function captureToTask(id){
  const a=getQuickCaptures(),x=a.find(i=>String(i.id)===String(id));if(!x)return;const title=x.title||String(x.text||'').split('\n')[0].slice(0,100)||'Tarefa sem título';
@@ -1349,7 +1376,7 @@ function renderMyDay(){
  const habits=getPersonalHabits().filter(h=>h.active!==false),done=habits.filter(h=>(h.doneDates||[]).includes(today)).length,hm=document.getElementById('myDayHabits');if(hm)hm.textContent=done+'/'+habits.length;
  const hl=document.getElementById('myDayHabitList');if(hl)hl.innerHTML=habits.length?habits.slice(0,6).map(h=>'<div class="organizer-item"><div class="organizer-item-main"><input type="checkbox" '+((h.doneDates||[]).includes(today)?'checked':'')+' onchange="toggleHabit(\''+escapeHtml(String(h.id))+'\')" aria-label="Marcar hábito"><div class="organizer-item-title">'+escapeHtml(h.name)+'</div></div></div>').join(''):'<div class="organizer-empty">Cadastre os hábitos que deseja acompanhar.</div>';
  const inbox=getQuickCaptures(),im=document.getElementById('myDayInbox');if(im)im.textContent=inbox.length;
- const recent=document.getElementById('myDayRecentCapture');if(recent)recent.innerHTML=inbox.slice(0,2).map(x=>'<div class="organizer-item"><div class="organizer-item-title">'+escapeHtml(x.title||String(x.text||'').slice(0,75))+'</div><div class="organizer-item-meta">'+escapeHtml(quickKindLabel(x.kind))+'</div></div>').join('')||'<div class="organizer-item-meta">Nada na caixa de entrada.</div>';
+ const recent=document.getElementById('myDayRecentCapture');if(recent)recent.innerHTML=inbox.slice(0,2).map(x=>'<div class="organizer-item"><div class="organizer-item-title">'+escapeHtml(x.title||String(x.text||'').slice(0,75))+'</div><div class="organizer-item-meta">'+escapeHtml(quickKindLabel(x.kind))+'</div><div class="organizer-actions"><select class="select" aria-label="Classificar captura" onchange="changeQuickCaptureKind(\''+escapeHtml(String(x.id))+'\',this.value)">'+quickCaptureTypeOptions(x.kind)+'</select><button class="small-btn" onclick="organizeQuickCapture(\''+escapeHtml(String(x.id))+'\')">Organizar</button></div></div>').join('')||'<div class="organizer-item-meta">Nada na caixa de entrada.</div>';
  const journal=document.getElementById('myDayJournalInput');if(journal){const e=getNotebookEntries().find(x=>x.type==='journal'&&x.dayKey===today);journal.value=e?.content||''}
 }
 
@@ -1473,8 +1500,8 @@ function openAgendaModal(id=null){
  document.body.insertAdjacentHTML('beforeend','<div class="modal-backdrop open" id="agendaModal"><div class="modal"><h3>'+(e?'Editar compromisso':'Novo compromisso')+'</h3><p>Organize um compromisso de estudo ou da sua rotina.</p><div class="agenda-modal-grid"><label>Compromisso<input class="input" id="agendaTitle" value="'+escapeHtml(e?.title||'')+'"></label><label>Tipo<select class="select" id="agendaType"><option value="study">Estudo</option><option value="questions">Questões</option><option value="review">Revisão</option><option value="feynman">Feynman</option><option value="work">Trabalho</option><option value="personal">Pessoal</option></select></label><label>Data<input class="input" id="agendaDate" type="date" value="'+(e?.date||agendaSelected)+'"></label><label>Início<input class="input" id="agendaStart" type="time" value="'+(e?.start||'')+'"></label><label>Fim<input class="input" id="agendaEnd" type="time" value="'+(e?.end||'')+'"></label><label>Matéria<select class="select" id="agendaSubject"><option value="">Nenhuma</option>'+options+'</select></label><label class="full">Observações<textarea class="input" id="agendaNotes" rows="3">'+escapeHtml(e?.notes||'')+'</textarea></label></div><div class="modal-actions"><button class="btn btn-secondary" onclick="closeAgendaModal()">Cancelar</button><button class="btn btn-primary" onclick="saveAgendaModal()">Salvar</button></div></div></div>');
  if(e){document.getElementById('agendaType').value=e.type||'study';document.getElementById('agendaSubject').value=e.subjectId||''}
 }
-function closeAgendaModal(){document.getElementById('agendaModal')?.remove();window.editingAgendaId=null}
-function saveAgendaModal(){const title=document.getElementById('agendaTitle').value.trim(),date=document.getElementById('agendaDate').value;if(!title||!date){toast('Informe o compromisso e a data.');return}const a=getAgenda(),id=window.editingAgendaId||'a'+Date.now(),old=a.find(x=>x.id===id),item={id,title,date,start:document.getElementById('agendaStart').value,end:document.getElementById('agendaEnd').value,type:document.getElementById('agendaType').value,subjectId:document.getElementById('agendaSubject').value,notes:document.getElementById('agendaNotes').value.trim(),done:old?.done||false};const i=a.findIndex(x=>x.id===id);if(i>=0)a[i]=item;else a.push(item);saveAgenda(a);agendaSelected=date;agendaDate=new Date(date+'T12:00:00');agendaDate.setDate(1);closeAgendaModal();renderAgenda();toast('Compromisso salvo.')}
+function closeAgendaModal(){document.getElementById('agendaModal')?.remove();window.editingAgendaId=null;window.quickCapturePendingAgendaId=null}
+function saveAgendaModal(){const title=document.getElementById('agendaTitle').value.trim(),date=document.getElementById('agendaDate').value,captureId=window.quickCapturePendingAgendaId;if(!title||!date){toast('Informe o compromisso e a data.');return}const a=getAgenda(),id=window.editingAgendaId||'a'+Date.now(),old=a.find(x=>x.id===id),item={id,title,date,start:document.getElementById('agendaStart').value,end:document.getElementById('agendaEnd').value,type:document.getElementById('agendaType').value,subjectId:document.getElementById('agendaSubject').value,notes:document.getElementById('agendaNotes').value.trim(),done:old?.done||false};const i=a.findIndex(x=>x.id===id);if(i>=0)a[i]=item;else a.push(item);saveAgenda(a);agendaSelected=date;agendaDate=new Date(date+'T12:00:00');agendaDate.setDate(1);closeAgendaModal();if(captureId){saveQuickCaptures(getQuickCaptures().filter(x=>String(x.id)!==String(captureId)));renderQuickCaptures();renderMyDay();renderHome()}renderAgenda();toast('Compromisso salvo.')}
 function toggleAgendaDone(id){const a=getAgenda(),e=a.find(x=>x.id===id);if(e){const was=e.done;e.done=!e.done;saveAgenda(a);if(!was)gameAward(10,'compromisso concluído','agenda:'+id);renderAgenda();renderGamification()}}
 function deleteAgenda(id){if(confirm('Excluir este compromisso?')){saveAgenda(getAgenda().filter(e=>e.id!==id));renderAgenda()}}
  
