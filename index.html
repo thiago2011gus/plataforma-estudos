@@ -1934,6 +1934,11 @@ function renderReadingSessionHistory(){
  const visible=readingHistoryExpanded?sessions:sessions.slice(0,8);
  list.innerHTML='<div class="reading-session-history-list">'+visible.map(x=>'<article class="reading-history-item"><div class="reading-history-main"><div class="reading-history-title">'+escapeHtml(x.bookTitle||'Leitura')+'</div><div class="reading-history-meta">'+new Date(x.endedAt||x.date).toLocaleString('pt-BR',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+' · '+readingDurationLabel(x.durationSeconds)+(x.pagesRead?' · '+x.pagesRead+' páginas lidas':'')+(x.progressAfter>x.progressBefore?' · '+x.progressAfter.toFixed(0)+'% concluído':'')+'</div>'+(x.note?'<div class="reading-history-note">'+escapeHtml(x.note)+'</div>':'')+'</div><span class="reading-history-check">✓</span></article>').join('')+'</div>'+(sessions.length>8?'<button type="button" class="small-btn" style="margin-top:10px" onclick="toggleReadingHistory()">'+(readingHistoryExpanded?'Mostrar menos':'Ver histórico completo ('+sessions.length+')')+'</button>':'');
 }
+function preserveReadingTimerOnPageExit(){
+ const state=getReadingTimerState();if(!state||!state.startedAt)return;
+ state.elapsedSeconds=readingSessionElapsed(state);state.startedAt=null;saveReadingTimerState(state);
+}
+window.addEventListener('pagehide',preserveReadingTimerOnPageExit);
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
 
 const STUDY_CURRENT_VIEW_KEY='study_current_view_v1';
