@@ -214,6 +214,45 @@ body.dark .reading-card:hover{border-color:#3a4742}
   .metric{padding:13px}
 }
 
+
+/* ORGANIZAÇÃO PESSOAL */
+.organizer-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:14px}
+.organizer-grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.organizer-card{padding:18px;min-width:0}
+.organizer-card-title{font-size:15px;font-weight:750}
+.organizer-card-sub{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5}
+.organizer-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
+.organizer-form .field{margin-bottom:0;min-width:0}
+.organizer-form .wide{grid-column:1/-1}
+.organizer-form input,.organizer-form textarea,.organizer-form select{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px 11px;background:var(--surface);color:var(--text);outline:0}
+.organizer-form textarea{min-height:95px;resize:vertical}
+.organizer-list{display:grid;gap:8px;margin-top:12px}
+.organizer-item{padding:12px 0;border-bottom:1px solid var(--line)}
+.organizer-item:last-child{border-bottom:0}
+.organizer-item-main{display:flex;align-items:flex-start;gap:10px;min-width:0}
+.organizer-item input[type=checkbox]{margin-top:3px;accent-color:var(--accent)}
+.organizer-item-title{font-size:13px;font-weight:700;overflow-wrap:anywhere}
+.organizer-item-meta{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5}
+.organizer-item.done .organizer-item-title{text-decoration:line-through;color:var(--muted)}
+.organizer-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.organizer-tag{display:inline-flex;border-radius:6px;padding:4px 7px;background:var(--surface2);color:var(--muted);font-size:10px;font-weight:650}
+.organizer-priority-high{background:#f7e8e8;color:#a95757}
+.organizer-capture-box{display:flex;gap:9px;align-items:stretch;margin-top:12px}
+.organizer-capture-box textarea{flex:1;min-width:0;min-height:76px;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--surface);color:var(--text);resize:vertical}
+.organizer-habit-week{display:grid;grid-template-columns:repeat(7,minmax(22px,1fr));gap:5px;margin-top:12px}
+.organizer-habit-day{text-align:center;font-size:9px;color:var(--muted)}
+.organizer-habit-dot{width:20px;height:20px;border-radius:6px;border:1px solid var(--line);margin:5px auto 0;display:grid;place-items:center;font-size:10px}
+.organizer-habit-dot.done{background:var(--accent);border-color:var(--accent);color:#fff}
+.organizer-notebook-entry{padding:15px;border:1px solid var(--line);border-radius:12px;background:var(--surface);margin-bottom:10px}
+.organizer-notebook-content{white-space:pre-wrap;font-size:13px;line-height:1.65;margin-top:9px;overflow-wrap:anywhere}
+.organizer-empty{padding:22px;text-align:center;color:var(--muted);font-size:12px;border:1px dashed var(--line);border-radius:10px}
+.organizer-today-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.organizer-date{font-size:12px;color:var(--muted);margin-top:5px}
+.organizer-priority-list{display:grid;gap:2px}
+.organizer-inline-link{border:0;background:none;color:var(--accent);font-size:12px;padding:0;cursor:pointer}
+@media(max-width:1000px){.organizer-grid.three{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:720px){.organizer-grid,.organizer-grid.three{grid-template-columns:1fr}.organizer-form{grid-template-columns:1fr}.organizer-form .wide{grid-column:auto}.organizer-capture-box{flex-direction:column}.organizer-habit-week{gap:2px}}
+
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -223,27 +262,34 @@ body.dark .reading-card:hover{border-color:#3a4742}
   <div class="brand"><div class="brand-title">Study.</div><div class="brand-sub">Minha plataforma de estudos</div></div>
   <div class="nav-group">
     <div class="nav-title">Principal</div>
-    <div class="nav-item active" data-view="dashboard"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9v12h14V9M9 21v-7h6v7"/></svg></span>Dashboard</div>
-    <div class="nav-item" data-view="plan"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>Meu plano</div>
-    <div class="nav-item" data-view="subjects"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span>Matérias</div>
+    <div class="nav-item active" data-view="myday"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/></svg></span>Meu dia</div>
     <div class="nav-item" data-view="settings"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/><path d="m19.4 15 .1.1 1.1.9-1.5 2.6-1.4-.6a8 8 0 0 1-1.6.9l-.2 1.5h-3l-.3-1.5a8 8 0 0 1-1.6-.9l-1.4.6-1.5-2.6 1.1-.9a7 7 0 0 1 0-1.9l-1.1-.9 1.5-2.6 1.4.6a8 8 0 0 1 1.6-.9l.3-1.5h3l.2 1.5a8 8 0 0 1 1.6.9l1.4-.6 1.5 2.6-1.1.9a7 7 0 0 1-.1 1.8Z" transform="translate(-1 -1) scale(1.08)"/></svg></span>Configurações</div>
   </div>
   <div class="nav-group study-nav-group" id="studyNavGroup">
     <button type="button" class="nav-title nav-section-toggle" id="studySectionToggle" aria-expanded="true" aria-controls="studyNavItems"><span>Estudo</span><span class="nav-section-chevron" aria-hidden="true">⌄</span></button>
     <div class="study-nav-items" id="studyNavItems">
+    <div class="nav-item" data-view="dashboard"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9v12h14V9M9 21v-7h6v7"/></svg></span>Visão geral</div>
+    <div class="nav-item" data-view="plan"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>Meu plano</div>
+    <div class="nav-item" data-view="subjects"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span>Matérias</div>
     <div class="nav-item" data-view="timer"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6M12 2v3"/></svg></span>Cronômetro</div>
     <div class="nav-item" data-view="stats"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10h4v10M10 20V4h4v16M16 20v-7h4v7"/></svg></span>Estatísticas</div>
     <div class="nav-item" data-view="gamification"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg></span>Conquistas</div>
-    <div class="nav-item" data-view="agenda"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg></span>Agenda</div>
-    <div class="nav-item" data-view="reading"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v14M12 7C9 4 5 4 3 5v14c3-1 6-1 9 2M12 7c3-3 7-3 9-2v14c-3-1-6-1-9 2"/></svg></span>Leituras</div>
     <div class="nav-item" data-view="reviews"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.5-3"/></svg></span>Revisões</div>
     <div class="nav-item" data-view="questions"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></svg></span>Questões</div>
     <div class="nav-item" data-view="materials"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H10l2 2h6.5A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5Z"/><path d="M3 9h18"/></svg></span>Biblioteca de materiais</div>
-    <div class="nav-item" data-view="notes"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg></span>Anotações</div>
     <div class="nav-item" data-view="research"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg></span>Oráculo Jurídico</div>
     <div class="nav-item" data-view="feynman"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"/><path d="m19 15 .9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15Z"/></svg></span>Mentor</div>
     <div class="nav-item" data-view="flashcards"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="14" height="16" rx="2"/><path d="M4 7v14h13M11 8h6M11 12h6"/></svg></span>Flashcards</div>
     </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-title">Organização pessoal</div>
+    <div class="nav-item" data-view="tasks"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="17" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></span>Tarefas</div>
+    <div class="nav-item" data-view="capture"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>Captura rápida</div>
+    <div class="nav-item" data-view="notes"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h10l4 4v14H5z"/><path d="M14 3v5h5M8 12h8M8 16h8"/></svg></span>Caderno</div>
+    <div class="nav-item" data-view="agenda"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg></span>Agenda</div>
+    <div class="nav-item" data-view="reading"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v14M12 7C9 4 5 4 3 5v14c3-1 6-1 9 2M12 7c3-3 7-3 9-2v14c-3-1-6-1-9 2"/></svg></span>Leituras</div>
+    <div class="nav-item" data-view="habits"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.5-3"/></svg></span>Hábitos</div>
   </div>
   <div class="nav-group">
     <div class="nav-title">Acessos rápidos</div>
@@ -267,6 +313,28 @@ body.dark .reading-card:hover{border-color:#3a4742}
       <div class="date-chip" id="dateChip"></div>
     </div>
   </div>
+
+  <section class="view" id="view-myday">
+    <div class="organizer-today-top">
+      <div><div class="section-title" style="font-size:23px">Meu dia</div><div class="desc">Organize o que importa e depois volte ao foco.</div><div class="organizer-date" id="myDayDate"></div></div>
+      <div class="toolbar"><button class="btn btn-secondary" type="button" onclick="showView('capture')">+ Captura rápida</button><button class="btn btn-primary" type="button" onclick="showView('timer')">Iniciar estudo</button></div>
+    </div>
+    <div class="metrics">
+      <div class="card metric"><div class="metric-label">Estudo registrado hoje</div><div class="metric-value" id="myDayStudyTime">0h 00</div><div class="metric-detail">Seu estudo continua sendo a prioridade.</div></div>
+      <div class="card metric"><div class="metric-label">Tarefas em aberto</div><div class="metric-value" id="myDayOpenTasks">0</div><div class="metric-detail">Com prazo para hoje ou prioridade alta.</div></div>
+      <div class="card metric"><div class="metric-label">Hábitos de hoje</div><div class="metric-value" id="myDayHabits">0/0</div><div class="metric-detail">Consistência sem cobrança excessiva.</div></div>
+      <div class="card metric"><div class="metric-label">Itens na captura</div><div class="metric-value" id="myDayInbox">0</div><div class="metric-detail">Ideias e pendências para organizar depois.</div></div>
+    </div>
+    <div class="organizer-grid">
+      <div class="card organizer-card"><div class="head"><div><div class="organizer-card-title">Prioridades de hoje</div><div class="organizer-card-sub">Até três coisas importantes para tirar da frente.</div></div><button class="organizer-inline-link" onclick="showView('tasks')">Todas as tarefas →</button></div><div id="myDayPriorityList" class="organizer-priority-list"></div></div>
+      <div class="card organizer-card"><div class="head"><div><div class="organizer-card-title">Compromissos</div><div class="organizer-card-sub">O que está marcado para hoje.</div></div><button class="organizer-inline-link" onclick="showView('agenda')">Abrir agenda →</button></div><div id="myDayAgendaList" class="organizer-list"></div></div>
+    </div>
+    <div class="organizer-grid">
+      <div class="card organizer-card"><div class="head"><div><div class="organizer-card-title">Hábitos</div><div class="organizer-card-sub">Marque o que fizer hoje.</div></div><button class="organizer-inline-link" onclick="showView('habits')">Gerenciar →</button></div><div id="myDayHabitList" class="organizer-list"></div></div>
+      <div class="card organizer-card"><div class="head"><div><div class="organizer-card-title">Captura rápida</div><div class="organizer-card-sub">Registre agora; organize depois.</div></div><button class="organizer-inline-link" onclick="showView('capture')">Abrir caixa de entrada →</button></div><div class="organizer-capture-box"><textarea id="myDayQuickText" placeholder="Uma ideia, tarefa ou lembrete..."></textarea><button class="btn btn-primary" type="button" onclick="saveMyDayQuickCapture()">Salvar</button></div><div id="myDayRecentCapture" class="organizer-list"></div></div>
+    </div>
+    <div class="card organizer-card"><div class="head"><div><div class="organizer-card-title">Fechamento do dia</div><div class="organizer-card-sub">Opcional: o que avançou, o que ficou pendente e o próximo passo.</div></div><button class="organizer-inline-link" onclick="showView('notes')">Abrir caderno →</button></div><textarea id="myDayJournalInput" rows="3" placeholder="Um registro breve do dia..." style="width:100%;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--surface);color:var(--text);resize:vertical"></textarea><div class="toolbar" style="margin-top:9px"><button class="btn btn-secondary" onclick="saveDailyJournal()">Salvar no caderno</button></div></div>
+  </section>
 
   <section class="view active" id="view-dashboard">
     <div class="metrics">
@@ -410,6 +478,37 @@ body.dark .reading-card:hover{border-color:#3a4742}
       </div>
     </div>
   </section>
+  <section class="view" id="view-tasks">
+    <div class="page-head"><div><div class="section-title" style="font-size:23px">Tarefas</div><div class="desc">Pendências com prazo e prioridade, separadas do estudo em si.</div></div><button class="btn btn-secondary" onclick="showView('capture')">Captura rápida ↗</button></div>
+    <div class="card organizer-card" style="margin-bottom:16px"><div class="organizer-card-title" id="taskFormTitle">Nova tarefa</div>
+      <div class="organizer-form">
+        <div class="field wide"><label for="personalTaskTitle">Tarefa</label><input id="personalTaskTitle" placeholder="O que precisa ser feito?"></div>
+        <div class="field"><label for="personalTaskDue">Prazo</label><input id="personalTaskDue" type="date"></div>
+        <div class="field"><label for="personalTaskPriority">Prioridade</label><select id="personalTaskPriority" class="select"><option value="medium">Normal</option><option value="high">Alta</option><option value="low">Baixa</option></select></div>
+        <div class="field wide"><label for="personalTaskNotes">Observações (opcional)</label><textarea id="personalTaskNotes" placeholder="Detalhes ou próximo passo..."></textarea></div>
+      </div>
+      <div class="toolbar" style="margin-top:12px"><button id="personalTaskSaveBtn" class="btn btn-primary" onclick="savePersonalTask()">Salvar tarefa</button><button id="personalTaskCancelBtn" class="btn btn-secondary" onclick="cancelTaskEdit()" style="display:none">Cancelar edição</button></div>
+    </div>
+    <div class="card organizer-card"><div class="head"><div><div class="organizer-card-title">Minha lista</div><div class="organizer-card-sub">Conclua, edite ou remova suas tarefas.</div></div><select class="select" id="personalTaskFilter" onchange="renderPersonalTasks()"><option value="open">Em aberto</option><option value="today">Para hoje</option><option value="upcoming">Futuras</option><option value="done">Concluídas</option><option value="all">Todas</option></select></div><div id="personalTaskList"></div></div>
+  </section>
+  <section class="view" id="view-capture">
+    <div class="page-head"><div><div class="section-title" style="font-size:23px">Captura rápida</div><div class="desc">Tire da cabeça em poucos segundos. Você organiza depois, quando houver tempo.</div></div><span class="status" id="quickCaptureCount">0 itens</span></div>
+    <div class="card organizer-card" style="margin-bottom:16px"><div class="organizer-card-title">Anotar agora</div>
+      <div class="organizer-form">
+        <div class="field"><label for="quickCaptureKind">Que tipo de coisa é?</label><select id="quickCaptureKind" class="select"><option value="task">Tarefa / pendência</option><option value="idea">Ideia</option><option value="reminder">Lembrete</option><option value="knowledge">Conhecimento / leitura</option></select></div>
+        <div class="field"><label for="quickCaptureTitle">Título (opcional)</label><input id="quickCaptureTitle" placeholder="Um rótulo curto"></div>
+        <div class="field wide"><label for="quickCaptureText">Anotação</label><textarea id="quickCaptureText" placeholder="Escreva sem se preocupar em organizar..."></textarea></div>
+      </div>
+      <div class="toolbar" style="margin-top:12px"><button class="btn btn-primary" onclick="saveQuickCapture()">Guardar na caixa de entrada</button></div>
+    </div>
+    <div class="card organizer-card"><div class="organizer-card-title">Caixa de entrada</div><div class="organizer-card-sub">Transforme cada item em tarefa ou guarde-o no caderno.</div><div id="quickCaptureList"></div></div>
+  </section>
+  <section class="view" id="view-habits">
+    <div class="page-head"><div><div class="section-title" style="font-size:23px">Hábitos</div><div class="desc">Acompanhe poucas rotinas importantes, sem transformar consistência em cobrança.</div></div></div>
+    <div class="card organizer-card" style="margin-bottom:16px"><div class="organizer-card-title">Adicionar hábito</div><div class="toolbar" style="margin-top:12px"><input id="newHabitName" class="search" style="flex:1;width:auto" placeholder="Ex.: Ler 20 minutos por dia" onkeydown="if(event.key==='Enter')addHabit()"><button class="btn btn-primary" onclick="addHabit()">Adicionar</button></div></div>
+    <div class="card organizer-card"><div class="head"><div><div class="organizer-card-title">Minha semana</div><div class="organizer-card-sub">Marque o hábito no dia em que realizá-lo.</div></div><span class="status" id="habitSummary">0 hábitos</span></div><div id="habitList"></div></div>
+  </section>
+
   <section class="view" id="view-agenda">
     <div class="page-head">
       <div><div class="section-title" style="font-size:23px">Agenda</div><div class="desc">Organize seus compromissos de estudo e sua rotina, sem prender a trilha a datas.</div></div>
@@ -514,7 +613,21 @@ body.dark .reading-card:hover{border-color:#3a4742}
       <div class="ai-placeholder" style="margin-top:16px">As associações ficam salvas neste navegador. O link abre o arquivo no Google Drive; se você tiver uma versão anotada, poderá anexá-la manualmente no ChatGPT. Os arquivos continuam privados no seu Drive; não compartilhe a pasta publicamente.</div>
     </div>
   </section>
-  <section class="view" id="view-notes"><div class="card section-card"><div class="section-title">Anotações</div><div class="empty">Na próxima etapa: notas vinculadas a matérias e tópicos.</div></div></section>
+  <section class="view" id="view-notes">
+    <div class="page-head"><div><div class="section-title" style="font-size:23px">Caderno</div><div class="desc">Guarde ideias, aprendizados, citações e reflexões para consultar depois.</div></div><span class="status">Registro pessoal</span></div>
+    <div class="card organizer-card" style="margin-bottom:16px">
+      <div class="organizer-card-title" id="notebookFormTitle">Nova anotação</div>
+      <div class="organizer-form">
+        <div class="field"><label for="notebookEntryTitle">Título</label><input id="notebookEntryTitle" placeholder="Qual é a ideia central?"></div>
+        <div class="field"><label for="notebookEntryType">Tipo de registro</label><select id="notebookEntryType" class="select"><option value="knowledge">Conhecimento</option><option value="idea">Ideia</option><option value="quote">Citação</option><option value="journal">Journal / reflexão</option><option value="reading">Nota de leitura</option></select></div>
+        <div class="field"><label for="notebookEntrySubject">Matéria / assunto (opcional)</label><input id="notebookEntrySubject" placeholder="Ex.: Direito Administrativo"></div>
+        <div class="field"><label for="notebookEntrySource">Fonte / página (opcional)</label><input id="notebookEntrySource" placeholder="Ex.: livro, autor, p. 42"></div>
+        <div class="field wide"><label for="notebookEntryContent">Sua anotação</label><textarea id="notebookEntryContent" placeholder="Registre com suas palavras o que vale guardar..."></textarea></div>
+      </div>
+      <div class="toolbar" style="margin-top:12px"><button class="btn btn-primary" id="notebookSaveBtn" type="button" onclick="saveNotebookEntry()">Salvar no caderno</button><button class="btn btn-secondary" type="button" id="notebookCancelEdit" onclick="cancelNotebookEdit()" style="display:none">Cancelar edição</button></div>
+    </div>
+    <div class="card organizer-card"><div class="head"><div><div class="organizer-card-title">Meus registros</div><div class="organizer-card-sub">Pesquise por título, conteúdo, assunto ou fonte.</div></div><input id="notebookSearch" class="search" style="max-width:280px;width:45%" placeholder="Buscar no caderno..." oninput="renderNotebook()"></div><div id="notebookList"></div></div>
+  </section>
 
   <section class="view" id="view-settings">
     <div class="page-head">
@@ -1049,7 +1162,144 @@ function rateFlashcard(id,rating){
   c.lastReviewed=flashcardToday();c.lastRating=rating;saveFlashcards(cards);flashcardReviewIndex++;flashcardRevealed=false;renderFlashcardReviewCard();renderFlashcards();
 }
 
-function renderAll(){renderFlashcardSubjects();renderFlashcards();renderDashboard();renderSubjectsPage();renderTimerSubjects();renderFeynmanSubjects();renderPerformanceSubjects();renderPerformanceOverview();renderTimer();renderPlan();renderStats();renderAgenda();renderReadings();renderGamification();applyAppearance()}
+
+/* ORGANIZAÇÃO PESSOAL */
+const PERSONAL_TASKS_KEY='study_personal_tasks_v1';
+const QUICK_CAPTURE_KEY='study_quick_capture_v1';
+const NOTEBOOK_ENTRIES_KEY='study_notebook_entries_v1';
+const PERSONAL_HABITS_KEY='study_personal_habits_v1';
+let editingPersonalTaskId=null;
+let editingNotebookEntryId=null;
+function readStudyArray(key){try{const value=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(value)?value:[]}catch(e){return[]}}
+function writeStudyArray(key,value){localStorage.setItem(key,JSON.stringify(value))}
+function getPersonalTasks(){return readStudyArray(PERSONAL_TASKS_KEY)}
+function savePersonalTasks(v){writeStudyArray(PERSONAL_TASKS_KEY,v)}
+function getQuickCaptures(){return readStudyArray(QUICK_CAPTURE_KEY)}
+function saveQuickCaptures(v){writeStudyArray(QUICK_CAPTURE_KEY,v)}
+function getNotebookEntries(){return readStudyArray(NOTEBOOK_ENTRIES_KEY)}
+function saveNotebookEntries(v){writeStudyArray(NOTEBOOK_ENTRIES_KEY,v)}
+function getPersonalHabits(){return readStudyArray(PERSONAL_HABITS_KEY)}
+function savePersonalHabits(v){writeStudyArray(PERSONAL_HABITS_KEY,v)}
+function organizerToday(){return localDateKey(new Date())}
+function organizerId(){return 'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function taskPriorityLabel(p){return({high:'Prioridade alta',medium:'Prioridade normal',low:'Prioridade baixa'})[p]||'Prioridade normal'}
+function taskDateLabel(date){if(!date)return'Sem prazo';if(date===organizerToday())return'Hoje';return new Date(date+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})}
+function savePersonalTask(){
+  const title=(document.getElementById('personalTaskTitle')?.value||'').trim();
+  if(!title){alert('Escreva o que precisa ser feito.');document.getElementById('personalTaskTitle')?.focus();return}
+  const isEditing=!!editingPersonalTaskId,tasks=getPersonalTasks(),dueDate=document.getElementById('personalTaskDue')?.value||'',priority=document.getElementById('personalTaskPriority')?.value||'medium',notes=(document.getElementById('personalTaskNotes')?.value||'').trim();
+  if(isEditing){const task=tasks.find(t=>String(t.id)===String(editingPersonalTaskId));if(task)Object.assign(task,{title,dueDate,priority,notes,updatedAt:new Date().toISOString()})}
+  else tasks.push({id:organizerId(),title,dueDate,priority,notes,createdAt:new Date().toISOString(),done:false});
+  savePersonalTasks(tasks);cancelTaskEdit();renderPersonalTasks();renderMyDay();toast(isEditing?'Tarefa atualizada.':'Tarefa salva.');
+}
+function editPersonalTask(id){
+  const t=getPersonalTasks().find(x=>String(x.id)===String(id));if(!t)return;editingPersonalTaskId=String(id);
+  document.getElementById('personalTaskTitle').value=t.title||'';document.getElementById('personalTaskDue').value=t.dueDate||'';document.getElementById('personalTaskPriority').value=t.priority||'medium';document.getElementById('personalTaskNotes').value=t.notes||'';
+  document.getElementById('taskFormTitle').textContent='Editar tarefa';document.getElementById('personalTaskSaveBtn').textContent='Salvar alterações';document.getElementById('personalTaskCancelBtn').style.display='';document.getElementById('personalTaskTitle').focus();window.scrollTo({top:0,behavior:'smooth'});
+}
+function cancelTaskEdit(){
+  editingPersonalTaskId=null;['personalTaskTitle','personalTaskDue','personalTaskNotes'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
+  const p=document.getElementById('personalTaskPriority');if(p)p.value='medium';const t=document.getElementById('taskFormTitle');if(t)t.textContent='Nova tarefa';
+  const s=document.getElementById('personalTaskSaveBtn');if(s)s.textContent='Salvar tarefa';const b=document.getElementById('personalTaskCancelBtn');if(b)b.style.display='none';
+}
+function togglePersonalTask(id){const a=getPersonalTasks(),t=a.find(x=>String(x.id)===String(id));if(!t)return;t.done=!t.done;t.completedAt=t.done?new Date().toISOString():null;savePersonalTasks(a);renderPersonalTasks();renderMyDay()}
+function deletePersonalTask(id){if(!confirm('Excluir esta tarefa?'))return;savePersonalTasks(getPersonalTasks().filter(t=>String(t.id)!==String(id)));renderPersonalTasks();renderMyDay();toast('Tarefa removida.')}
+function renderPersonalTasks(){
+ const list=document.getElementById('personalTaskList');if(!list)return;const filter=document.getElementById('personalTaskFilter')?.value||'open',today=organizerToday(),rank={high:0,medium:1,low:2};
+ let tasks=getPersonalTasks().slice().sort((a,b)=>rank[a.priority]-rank[b.priority]||(a.dueDate||'9999-12-31').localeCompare(b.dueDate||'9999-12-31'));
+ tasks=tasks.filter(t=>filter==='open'?!t.done:filter==='today'?!t.done&&t.dueDate===today:filter==='upcoming'?!t.done&&t.dueDate&&t.dueDate>today:filter==='done'?!!t.done:true);
+ if(!tasks.length){list.innerHTML='<div class="organizer-empty">Nenhuma tarefa nesta lista. Você está em dia ou pode registrar uma nova.</div>';return}
+ list.innerHTML='<div class="organizer-list">'+tasks.map(t=>'<div class="organizer-item '+(t.done?'done':'')+'"><div class="organizer-item-main"><input type="checkbox" '+(t.done?'checked':'')+' aria-label="Concluir tarefa" onchange="togglePersonalTask(\''+escapeHtml(String(t.id))+'\')"><div style="flex:1;min-width:0"><div class="organizer-item-title">'+escapeHtml(t.title)+'</div><div class="organizer-item-meta">'+escapeHtml(taskDateLabel(t.dueDate))+' · '+escapeHtml(taskPriorityLabel(t.priority))+(t.notes?'<br>'+escapeHtml(t.notes):'')+'</div></div></div><div class="organizer-actions"><button class="small-btn" onclick="editPersonalTask(\''+escapeHtml(String(t.id))+'\')">Editar</button><button class="small-btn" onclick="deletePersonalTask(\''+escapeHtml(String(t.id))+'\')">Excluir</button></div></div>').join('')+'</div>';
+}
+function quickKindLabel(k){return({task:'Tarefa / pendência',idea:'Ideia',reminder:'Lembrete',knowledge:'Conhecimento / leitura'})[k]||'Anotação'}
+function saveQuickCapture(){
+ const text=(document.getElementById('quickCaptureText')?.value||'').trim(),title=(document.getElementById('quickCaptureTitle')?.value||'').trim(),kind=document.getElementById('quickCaptureKind')?.value||'task';
+ if(!text&&!title){alert('Escreva uma anotação antes de salvar.');document.getElementById('quickCaptureText')?.focus();return}
+ const a=getQuickCaptures();a.unshift({id:organizerId(),title,text,kind,createdAt:new Date().toISOString()});saveQuickCaptures(a);document.getElementById('quickCaptureText').value='';document.getElementById('quickCaptureTitle').value='';renderQuickCaptures();renderMyDay();toast('Anotação guardada na captura rápida.');
+}
+function saveMyDayQuickCapture(){
+ const el=document.getElementById('myDayQuickText'),text=(el?.value||'').trim();if(!text){el?.focus();return}
+ const a=getQuickCaptures();a.unshift({id:organizerId(),title:'',text,kind:'task',createdAt:new Date().toISOString()});saveQuickCaptures(a);el.value='';renderQuickCaptures();renderMyDay();toast('Captura salva.');
+}
+function renderQuickCaptures(){
+ const list=document.getElementById('quickCaptureList'),items=getQuickCaptures(),count=document.getElementById('quickCaptureCount');if(count)count.textContent=items.length+' item'+(items.length===1?'':'s');
+ if(!list)return;
+ list.innerHTML=items.length?'<div class="organizer-list">'+items.map(x=>'<div class="organizer-item"><div class="organizer-item-title">'+escapeHtml(x.title||String(x.text||'').slice(0,80))+'</div><div class="organizer-item-meta">'+escapeHtml(quickKindLabel(x.kind))+' · '+new Date(x.createdAt).toLocaleDateString('pt-BR')+(x.title&&x.text?'<br>'+escapeHtml(x.text):'')+'</div><div class="organizer-actions"><button class="small-btn" onclick="captureToTask(\''+escapeHtml(String(x.id))+'\')">Virar tarefa</button><button class="small-btn" onclick="captureToNotebook(\''+escapeHtml(String(x.id))+'\')">Guardar no caderno</button><button class="small-btn" onclick="deleteQuickCapture(\''+escapeHtml(String(x.id))+'\')">Excluir</button></div></div>').join('')+'</div>':'<div class="organizer-empty">A caixa está vazia. Registre uma ideia ou pendência quando precisar.</div>';
+}
+function captureToTask(id){
+ const a=getQuickCaptures(),x=a.find(i=>String(i.id)===String(id));if(!x)return;const title=x.title||String(x.text||'').split('\n')[0].slice(0,100)||'Tarefa sem título';
+ const tasks=getPersonalTasks();tasks.push({id:organizerId(),title,dueDate:'',priority:'medium',notes:x.title?x.text:'',createdAt:new Date().toISOString(),done:false});savePersonalTasks(tasks);
+ saveQuickCaptures(a.filter(i=>String(i.id)!==String(id)));renderQuickCaptures();renderPersonalTasks();renderMyDay();toast('Item convertido em tarefa.');
+}
+function captureToNotebook(id){
+ const a=getQuickCaptures(),x=a.find(i=>String(i.id)===String(id));if(!x)return;const entries=getNotebookEntries();
+ entries.unshift({id:organizerId(),title:x.title||quickKindLabel(x.kind),type:x.kind==='knowledge'?'knowledge':'idea',subject:'',source:'Captura rápida · '+new Date(x.createdAt).toLocaleDateString('pt-BR'),content:x.text,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});saveNotebookEntries(entries);
+ saveQuickCaptures(a.filter(i=>String(i.id)!==String(id)));renderNotebook();renderQuickCaptures();renderMyDay();toast('Item guardado no caderno.');
+}
+function deleteQuickCapture(id){if(!confirm('Excluir este item da captura rápida?'))return;saveQuickCaptures(getQuickCaptures().filter(i=>String(i.id)!==String(id)));renderQuickCaptures();renderMyDay();toast('Item excluído.')}
+function notebookTypeLabel(t){return({knowledge:'Conhecimento',idea:'Ideia',quote:'Citação',journal:'Journal / reflexão',reading:'Nota de leitura'})[t]||'Anotação'}
+function saveNotebookEntry(){
+ const title=(document.getElementById('notebookEntryTitle')?.value||'').trim(),content=(document.getElementById('notebookEntryContent')?.value||'').trim();if(!title&&!content){alert('Escreva um título ou conteúdo para salvar.');return}
+ const entries=getNotebookEntries(),entry={title:title||'Anotação sem título',type:document.getElementById('notebookEntryType')?.value||'knowledge',subject:(document.getElementById('notebookEntrySubject')?.value||'').trim(),source:(document.getElementById('notebookEntrySource')?.value||'').trim(),content,updatedAt:new Date().toISOString()};
+ if(editingNotebookEntryId){const old=entries.find(e=>String(e.id)===String(editingNotebookEntryId));if(old)Object.assign(old,entry)}
+ else entries.unshift({...entry,id:organizerId(),createdAt:new Date().toISOString()});
+ saveNotebookEntries(entries);cancelNotebookEdit();renderNotebook();renderMyDay();toast('Registro salvo no caderno.');
+}
+function editNotebookEntry(id){
+ const e=getNotebookEntries().find(x=>String(x.id)===String(id));if(!e)return;editingNotebookEntryId=String(id);
+ document.getElementById('notebookEntryTitle').value=e.title||'';document.getElementById('notebookEntryType').value=e.type||'knowledge';document.getElementById('notebookEntrySubject').value=e.subject||'';document.getElementById('notebookEntrySource').value=e.source||'';document.getElementById('notebookEntryContent').value=e.content||'';
+ document.getElementById('notebookFormTitle').textContent='Editar registro';document.getElementById('notebookSaveBtn').textContent='Salvar alterações';document.getElementById('notebookCancelEdit').style.display='';window.scrollTo({top:0,behavior:'smooth'});
+}
+function cancelNotebookEdit(){
+ editingNotebookEntryId=null;['notebookEntryTitle','notebookEntrySubject','notebookEntrySource','notebookEntryContent'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
+ const type=document.getElementById('notebookEntryType');if(type)type.value='knowledge';const title=document.getElementById('notebookFormTitle');if(title)title.textContent='Nova anotação';const save=document.getElementById('notebookSaveBtn');if(save)save.textContent='Salvar no caderno';const cancel=document.getElementById('notebookCancelEdit');if(cancel)cancel.style.display='none';
+}
+function deleteNotebookEntry(id){if(!confirm('Excluir este registro do caderno?'))return;saveNotebookEntries(getNotebookEntries().filter(e=>String(e.id)!==String(id)));renderNotebook();renderMyDay();toast('Registro removido.')}
+function renderNotebook(){
+ const list=document.getElementById('notebookList');if(!list)return;const q=(document.getElementById('notebookSearch')?.value||'').trim().toLowerCase();
+ const entries=getNotebookEntries().filter(e=>!q||[e.title,e.subject,e.source,e.content,notebookTypeLabel(e.type)].some(v=>String(v||'').toLowerCase().includes(q)));
+ if(!entries.length){list.innerHTML='<div class="organizer-empty">Ainda não há registros. Comece com uma ideia, uma passagem de leitura ou uma reflexão curta.</div>';return}
+ list.innerHTML=entries.map(e=>'<article class="organizer-notebook-entry"><div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap"><div style="min-width:0;flex:1"><div class="organizer-item-title">'+escapeHtml(e.title||'Anotação sem título')+'</div><div class="organizer-item-meta">'+escapeHtml(notebookTypeLabel(e.type))+(e.subject?' · '+escapeHtml(e.subject):'')+(e.source?' · '+escapeHtml(e.source):'')+' · '+new Date(e.createdAt||e.updatedAt||Date.now()).toLocaleDateString('pt-BR')+'</div></div><div class="organizer-actions"><button class="small-btn" onclick="editNotebookEntry(\''+escapeHtml(String(e.id))+'\')">Editar</button><button class="small-btn" onclick="deleteNotebookEntry(\''+escapeHtml(String(e.id))+'\')">Excluir</button></div></div>'+(e.content?'<div class="organizer-notebook-content">'+escapeHtml(e.content)+'</div>':'')+'</article>').join('');
+}
+function addHabit(){
+ const input=document.getElementById('newHabitName'),name=(input?.value||'').trim();if(!name){input?.focus();return}
+ const a=getPersonalHabits();a.push({id:organizerId(),name,doneDates:[],createdAt:new Date().toISOString(),active:true});savePersonalHabits(a);if(input)input.value='';renderHabits();renderMyDay();toast('Hábito adicionado.');
+}
+function toggleHabit(id,date=organizerToday()){
+ const a=getPersonalHabits(),h=a.find(x=>String(x.id)===String(id));if(!h)return;const dates=new Set(h.doneDates||[]);if(dates.has(date))dates.delete(date);else dates.add(date);h.doneDates=Array.from(dates).sort();savePersonalHabits(a);renderHabits();renderMyDay();
+}
+function deleteHabit(id){if(!confirm('Excluir este hábito e o histórico dele?'))return;savePersonalHabits(getPersonalHabits().filter(h=>String(h.id)!==String(id)));renderHabits();renderMyDay();toast('Hábito removido.')}
+function renderHabits(){
+ const list=document.getElementById('habitList'),habits=getPersonalHabits().filter(h=>h.active!==false),today=organizerToday(),summary=document.getElementById('habitSummary');if(summary)summary.textContent=habits.length+' hábito'+(habits.length===1?'':'s');if(!list)return;
+ if(!habits.length){list.innerHTML='<div class="organizer-empty">Adicione dois ou três hábitos que realmente importam para você.</div>';return}
+ list.innerHTML=habits.map(h=>{
+  const days=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-(6-i));return localDateKey(d)}),dates=new Set(h.doneDates||[]);
+  const week=days.map(k=>'<div class="organizer-habit-day">'+new Date(k+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short'}).replace('.','')+'<div class="organizer-habit-dot '+(dates.has(k)?'done':'')+'">'+(dates.has(k)?'✓':'')+'</div></div>').join('');
+  return '<div class="organizer-item"><div class="organizer-item-main"><input type="checkbox" '+(dates.has(today)?'checked':'')+' onchange="toggleHabit(\''+escapeHtml(String(h.id))+'\')" aria-label="Marcar hábito de hoje"><div style="flex:1;min-width:0"><div class="organizer-item-title">'+escapeHtml(h.name)+'</div><div class="organizer-item-meta">'+dates.size+' dia(s) marcado(s) no histórico</div></div><button class="small-btn" onclick="deleteHabit(\''+escapeHtml(String(h.id))+'\')">Excluir</button></div><div class="organizer-habit-week">'+week+'</div></div>';
+ }).join('');
+}
+function saveDailyJournal(){
+ const el=document.getElementById('myDayJournalInput'),content=(el?.value||'').trim();if(!content){el?.focus();return}
+ const a=getNotebookEntries(),today=organizerToday(),old=a.find(e=>e.type==='journal'&&e.dayKey===today),entry={title:'Registro do dia · '+new Date().toLocaleDateString('pt-BR'),type:'journal',subject:'',source:'Meu dia',content,dayKey:today,updatedAt:new Date().toISOString()};
+ if(old)Object.assign(old,entry);else a.unshift({...entry,id:organizerId(),createdAt:new Date().toISOString()});saveNotebookEntries(a);renderNotebook();toast('Registro do dia salvo no caderno.');
+}
+function renderMyDay(){
+ const today=organizerToday(),dateEl=document.getElementById('myDayDate');if(dateEl)dateEl.textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+ const study=document.getElementById('myDayStudyTime'),oldStudy=document.getElementById('dashStudy');if(study)study.textContent=oldStudy?.textContent||'0h 00';
+ const tasks=getPersonalTasks(),openTasks=tasks.filter(t=>!t.done&&(t.dueDate===today||t.priority==='high'));const metric=document.getElementById('myDayOpenTasks');if(metric)metric.textContent=openTasks.length;
+ const tl=document.getElementById('myDayPriorityList');
+ if(tl){const rank={high:0,medium:1,low:2};const chosen=tasks.filter(t=>!t.done&&(t.dueDate===today||t.priority==='high')).sort((a,b)=>rank[a.priority]-rank[b.priority]||(a.dueDate||'9999-12-31').localeCompare(b.dueDate||'9999-12-31')).slice(0,3);
+ tl.innerHTML=chosen.length?chosen.map(t=>'<div class="organizer-item"><div class="organizer-item-main"><input type="checkbox" onchange="togglePersonalTask(\''+escapeHtml(String(t.id))+'\')" aria-label="Concluir tarefa"><div style="flex:1;min-width:0"><div class="organizer-item-title">'+escapeHtml(t.title)+'</div><div class="organizer-item-meta">'+escapeHtml(taskDateLabel(t.dueDate))+' · '+escapeHtml(taskPriorityLabel(t.priority))+'</div></div></div></div>').join(''):'<div class="organizer-empty">Nenhuma prioridade marcada para hoje. Aproveite para definir o que realmente importa.</div>'}
+ const events=getAgenda().filter(e=>e.date===today).sort((a,b)=>(a.start||'').localeCompare(b.start||'')).slice(0,5),al=document.getElementById('myDayAgendaList');
+ if(al)al.innerHTML=events.length?events.map(e=>'<div class="organizer-item"><div class="organizer-item-title">'+(e.start?escapeHtml(e.start)+' · ':'')+escapeHtml(e.title)+'</div><div class="organizer-item-meta">'+escapeHtml(agendaTypeLabel(e.type))+'</div></div>').join(''):'<div class="organizer-empty">Nenhum compromisso marcado para hoje.</div>';
+ const habits=getPersonalHabits().filter(h=>h.active!==false),done=habits.filter(h=>(h.doneDates||[]).includes(today)).length,hm=document.getElementById('myDayHabits');if(hm)hm.textContent=done+'/'+habits.length;
+ const hl=document.getElementById('myDayHabitList');if(hl)hl.innerHTML=habits.length?habits.slice(0,6).map(h=>'<div class="organizer-item"><div class="organizer-item-main"><input type="checkbox" '+((h.doneDates||[]).includes(today)?'checked':'')+' onchange="toggleHabit(\''+escapeHtml(String(h.id))+'\')" aria-label="Marcar hábito"><div class="organizer-item-title">'+escapeHtml(h.name)+'</div></div></div>').join(''):'<div class="organizer-empty">Cadastre os hábitos que deseja acompanhar.</div>';
+ const inbox=getQuickCaptures(),im=document.getElementById('myDayInbox');if(im)im.textContent=inbox.length;
+ const recent=document.getElementById('myDayRecentCapture');if(recent)recent.innerHTML=inbox.slice(0,2).map(x=>'<div class="organizer-item"><div class="organizer-item-title">'+escapeHtml(x.title||String(x.text||'').slice(0,75))+'</div><div class="organizer-item-meta">'+escapeHtml(quickKindLabel(x.kind))+'</div></div>').join('')||'<div class="organizer-item-meta">Nada na caixa de entrada.</div>';
+ const journal=document.getElementById('myDayJournalInput');if(journal){const e=getNotebookEntries().find(x=>x.type==='journal'&&x.dayKey===today);journal.value=e?.content||''}
+}
+
+function renderAll(){renderFlashcardSubjects();renderFlashcards();renderDashboard();renderSubjectsPage();renderTimerSubjects();renderFeynmanSubjects();renderPerformanceSubjects();renderPerformanceOverview();renderTimer();renderPlan();renderStats();renderAgenda();renderReadings();renderGamification();renderPersonalTasks();renderQuickCaptures();renderNotebook();renderHabits();renderMyDay();applyAppearance()}
 
 
 /* GAMIFICAÇÃO */
@@ -1233,7 +1483,11 @@ function showView(name,save=true){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.view===name));
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));
   const titles={
-    dashboard:['Bom dia, Thiago.','Vamos avançar um pouco mais hoje?'],
+    myday:['Meu dia','Organize suas prioridades, compromissos e hábitos sem perder o foco nos estudos.'],
+    tasks:['Tarefas','Registre pendências, defina prazos e acompanhe o que já concluiu.'],
+    capture:['Captura rápida','Tire ideias e lembretes da cabeça e organize depois.'],
+    habits:['Hábitos','Acompanhe suas rotinas com leveza e consistência.'],
+    dashboard:['Visão geral dos estudos','Acompanhe seu progresso acadêmico e acesse rapidamente uma sessão de estudo.'],
     subjects:['Matérias','Cadastre e organize o conteúdo que você precisa estudar.'],
     plan:['Meu plano','Organize suas sessões e metas.'],
     timer:['Cronômetro','Registre o tempo efetivamente estudado.'],
@@ -1241,9 +1495,9 @@ function showView(name,save=true){
     questions:['Questões','Controle seu desempenho por matéria e assunto.'],
     stats:['Estatísticas','Entenda onde e como você está estudando.'],
     gamification:['Conquistas','Veja sua progressão, constância e recompensas.'],
-    agenda:['Agenda','Organize seus compromissos de estudo e sua rotina.'],
-    reading:['Leituras','Acompanhe seus livros e o seu diário de leitura.'],
-    notes:['Anotações','Centralize suas notas de estudo.'],
+    agenda:['Agenda','Organize compromissos e prazos com data e horário.'],
+    reading:['Leituras','Acompanhe livros, progresso e diário de leitura.'],
+    notes:['Caderno','Guarde ideias, aprendizados, citações e reflexões.'],
     research:['Oráculo Jurídico','Pesquise legislação, jurisprudência e conceitos com rigor.'],
     settings:['Configurações','Personalize o visual e a experiência da plataforma.'],
     feynman:['Mentor','Estude com perguntas orientadas para identificar lacunas na sua compreensão.'],
@@ -1251,7 +1505,7 @@ function showView(name,save=true){
   };
   if(titles[name]){document.getElementById('pageTitle').textContent=titles[name][0];document.getElementById('pageSub').textContent=titles[name][1]}
 }
-document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>showView(n.dataset.view)));
+document.querySelectorAll('.nav-item[data-view]').forEach(n=>n.addEventListener('click',()=>showView(n.dataset.view)));
 
 let modalEditId=null;
 function openSubjectModal(id=null){
@@ -2697,7 +2951,8 @@ document.getElementById('dateChip').textContent=new Date().toLocaleDateString('p
 loadStudyDriveSettings();
 renderAll();
 loadStudyDriveMaterialsSettings();
-const savedView=localStorage.getItem(STUDY_CURRENT_VIEW_KEY)||'dashboard';
+let savedView=localStorage.getItem(STUDY_CURRENT_VIEW_KEY);
+if(!savedView||savedView==='dashboard'){savedView='myday';localStorage.setItem(STUDY_CURRENT_VIEW_KEY,savedView)}
 showView(savedView,false);
 </script>
 </body>
