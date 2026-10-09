@@ -1192,7 +1192,10 @@ function addReadingDiary(id){const r=getReadings().find(x=>x.id===id);if(!r)retu
 
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
 
-function showView(name){
+const STUDY_CURRENT_VIEW_KEY='study_current_view_v1';
+function showView(name,save=true){
+  if(!document.getElementById('view-'+name))name='dashboard';
+  if(save)localStorage.setItem(STUDY_CURRENT_VIEW_KEY,name);
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.view===name));
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));
   const titles={
@@ -2653,6 +2656,8 @@ document.getElementById('dateChip').textContent=new Date().toLocaleDateString('p
 loadStudyDriveSettings();
 renderAll();
 loadStudyDriveMaterialsSettings();
+const savedView=localStorage.getItem(STUDY_CURRENT_VIEW_KEY)||'dashboard';
+showView(savedView,false);
 </script>
 </body>
 </html>
