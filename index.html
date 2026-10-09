@@ -3148,13 +3148,28 @@ loadStudyMusicSettings();
 <script>
 const STUDY_MUSIC_KEY='study_music_playlists_v1';
 function musicEmbedUrl(raw,provider){
- try{const u=new URL(String(raw||'').trim());
+ try{
+  let input=String(raw||'').trim();
+  if(provider==='youtube'){
+   // Aceita URL normal, YouTube Music, youtu.be, URL de incorporação e código iframe.
+   const iframeSrc=input.match(/src=["']([^"']+)["']/i);if(iframeSrc)input=iframeSrc[1];
+   if(!/^https?:\/\//i.test(input)&&/^(www\.|music\.|m\.)?(youtube\.com|youtu\.be)\//i.test(input))input='https://'+input;
+   const u=new URL(input);
+   const host=u.hostname.toLowerCase();
+   const allowed=['youtube.com','www.youtube.com','m.youtube.com','music.youtube.com','youtu.be','www.youtube-nocookie.com','youtube-nocookie.com'];
+   if(!allowed.includes(host))return null;
+   let list=u.searchParams.get('list');
+   if(!list&&/\/embed\/videoseries/i.test(u.pathname))list=u.searchParams.get('list');
+   if(!list)return null;
+   return 'https://www.youtube.com/embed/videoseries?list='+encodeURIComponent(list);
+  }
+  const u=new URL(input);
   if(provider==='spotify'&&u.hostname==='open.spotify.com'){const m=u.pathname.match(/^\/(playlist|album|track|artist)\/([A-Za-z0-9]+)\/?$/);return m?'https://open.spotify.com/embed/'+m[1]+'/'+m[2]+'?utm_source=generator':null}
-  if(provider==='youtube'&&(u.hostname==='youtube.com'||u.hostname==='www.youtube.com'||u.hostname==='m.youtube.com'||u.hostname==='youtu.be')){const list=u.searchParams.get('list');return list?'https://www.youtube.com/embed/videoseries?list='+encodeURIComponent(list):null}
- }catch(e){}return null;
+ }catch(e){}
+ return null;
 }
 function loadStudyMusicSettings(){let saved={};try{saved=JSON.parse(localStorage.getItem(STUDY_MUSIC_KEY)||'{}')}catch(e){}const sp=document.getElementById('studySpotifyUrl'),yt=document.getElementById('studyYoutubeUrl');if(sp)sp.value=saved.spotify||'';if(yt)yt.value=saved.youtube||'';renderStudyMusicPlayers(saved)}
-function saveStudyMusicSettings(){const spotify=(document.getElementById('studySpotifyUrl')?.value||'').trim(),youtube=(document.getElementById('studyYoutubeUrl')?.value||'').trim(),data={spotify,youtube};localStorage.setItem(STUDY_MUSIC_KEY,JSON.stringify(data));renderStudyMusicPlayers(data);const invalid=(spotify&&!musicEmbedUrl(spotify,'spotify'))||(youtube&&!musicEmbedUrl(youtube,'youtube'));toast(invalid?'Playlist salva, mas confira o formato do link.':'Playlists salvas.')}
+function saveStudyMusicSettings(){const spotify=(document.getElementById('studySpotifyUrl')?.value||'').trim(),youtube=(document.getElementById('studyYoutubeUrl')?.value||'').trim(),data={spotify,youtube};localStorage.setItem(STUDY_MUSIC_KEY,JSON.stringify(data));renderStudyMusicPlayers(data);const invalid=(spotify&&!musicEmbedUrl(spotify,'spotify'))||(youtube&&!musicEmbedUrl(youtube,'youtube'));toast(invalid?'Link não reconhecido. Use o link da playlist (inclusive do YouTube Music) e salve novamente.':'Playlists salvas.')}
 function renderStudyMusicPlayers(data=null){if(!data){try{data=JSON.parse(localStorage.getItem(STUDY_MUSIC_KEY)||'{}')}catch(e){data={}}}const box=document.getElementById('studyMusicPlayers');if(!box)return;const players=[];[['spotify','Spotify','Playlist de foco'],['youtube','YouTube','Ruído marrom / estudo']].forEach(([key,label,subtitle])=>{const src=musicEmbedUrl(data[key],key);if(src)players.push('<div class="music-player"><div class="music-player-title">'+label+' · '+subtitle+'</div><iframe src="'+src+'" title="'+label+' playlist de estudo" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>')});box.innerHTML=players.join('')||'<div class="organizer-empty" style="grid-column:1/-1">Adicione um link válido de playlist do Spotify ou YouTube e clique em “Salvar playlists”.</div>'}
 function showTaskReminder(task){let panel=document.getElementById('studyTaskReminder');if(!panel){document.body.insertAdjacentHTML('beforeend','<div class="reminder-panel" id="studyTaskReminder" role="dialog" aria-live="assertive"></div>');panel=document.getElementById('studyTaskReminder')}panel.innerHTML='<div class="reminder-kicker">Lembrete de tarefa</div><div class="reminder-title">'+escapeHtml(task.title)+'</div><div class="organizer-item-meta">O horário chegou. Quer adiar ou concluir?</div><div class="reminder-actions"><button class="small-btn" onclick="snoozeTaskReminder(\''+escapeHtml(String(task.id))+'\',5)">Adiar 5 min</button><button class="small-btn" onclick="snoozeTaskReminder(\''+escapeHtml(String(task.id))+'\',10)">Adiar 10 min</button><button class="btn btn-primary" onclick="completeTaskFromReminder(\''+escapeHtml(String(task.id))+'\')">Concluir</button><button class="small-btn" onclick="dismissTaskReminder()">Fechar</button></div>'}
 function dismissTaskReminder(){document.getElementById('studyTaskReminder')?.remove()}
