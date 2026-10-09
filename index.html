@@ -2159,21 +2159,28 @@ function mixHex(lightHex,darkHex,t){
   return '#'+mix(a.r,b.r)+mix(a.g,b.g)+mix(a.b,b.b);
 }
 function setThemeColors(darkness){
-  const t=Math.max(0,Math.min(1,Number(darkness)/100));
   const root=document.documentElement;
+  const level=Number(darkness)||50;
   if(document.body.classList.contains('dark')){
-    root.style.setProperty('--bg',mixHex('#272e2b','#090b0a',t));
-    root.style.setProperty('--surface',mixHex('#303936','#101412',t));
-    root.style.setProperty('--surface2',mixHex('#37423e','#161b19',t));
-    root.style.setProperty('--line',mixHex('#46534d','#242b28',t));
-    root.style.setProperty('--accent',mixHex('#91c1b2','#5b8d7e',t));
-    root.style.setProperty('--accent-light',mixHex('#dbeee7','#20332d',t));
+    const palettes={
+      25:{bg:'#303936',surface:'#39433f',surface2:'#424e48',line:'#56635c',accent:'#a0d0bf',accentLight:'#354b42'},
+      50:{bg:'#202724',surface:'#191e1c',surface2:'#252d29',line:'#35403a',accent:'#8fc5b3',accentLight:'#263d33'},
+      75:{bg:'#101412',surface:'#171c19',surface2:'#1e2521',line:'#2b342e',accent:'#7eaf9f',accentLight:'#20332b'},
+      100:{bg:'#000000',surface:'#080a09',surface2:'#111412',line:'#252a27',accent:'#76a997',accentLight:'#172720'}
+    };
+    const p=palettes[level]||palettes[50];
+    root.style.setProperty('--bg',p.bg);
+    root.style.setProperty('--surface',p.surface);
+    root.style.setProperty('--surface2',p.surface2);
+    root.style.setProperty('--line',p.line);
+    root.style.setProperty('--accent',p.accent);
+    root.style.setProperty('--accent-light',p.accentLight);
   }else{
     root.style.setProperty('--bg','#f6f5f1');
     root.style.setProperty('--surface','#ffffff');
     root.style.setProperty('--surface2','#f9f9f6');
     root.style.setProperty('--line','#e7e7e1');
-    root.style.setProperty('--accent','#2f6254');
+    root.style.setProperty('--accent',appearance?.accent||'#2f6254');
     root.style.setProperty('--accent-light','#e8f1ed');
   }
 }
@@ -2189,12 +2196,14 @@ function applyTheme(theme){
   setThemeColors(Number(localStorage.getItem('study_darkness')||50));
 }
 function applyDarkness(value){
-  const v=Math.max(0,Math.min(100,Number(value)||0));
+  const allowed=[25,50,75,100];
+  const requested=Number(value)||50;
+  const v=allowed.includes(requested)?requested:50;
   localStorage.setItem('study_darkness',String(v));
   document.querySelectorAll('#darknessOptions .seg').forEach(btn=>{
     btn.classList.toggle('active',Number(btn.dataset.darkness)===v);
   });
-  if(document.body.classList.contains('dark')) setThemeColors(v);
+  setThemeColors(v);
 }
 
 function toggleTheme(){
