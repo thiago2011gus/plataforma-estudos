@@ -310,13 +310,14 @@ body.dark .agenda-item.task-priority-high .task-priority-badge{background:#41351
 
 .music-player-title{display:flex;align-items:center;justify-content:space-between;gap:10px}.music-delete{padding:5px 8px;font-size:11px;flex:none}.music-open-link{display:inline-block;margin:8px 12px 12px;color:var(--accent);font-size:12px;text-decoration:none}.music-open-link:hover{text-decoration:underline}
 .music-widget{scroll-margin-top:20px;padding:22px}.music-widget>.head{margin-bottom:16px}.music-widget .organizer-card-title{font-size:18px}.music-widget .organizer-card-sub{font-size:12px;line-height:1.5}.music-add-panel{padding:16px;border:1px solid var(--line);border-radius:13px;background:var(--surface2)}.music-add-heading{display:flex;align-items:center;gap:12px;margin-bottom:15px}.music-add-icon{display:grid;place-items:center;width:42px;height:42px;flex:none;border-radius:12px;background:var(--accent-light);color:var(--accent);font-size:25px;font-weight:700}.music-add-title{font-size:13px;font-weight:750}.music-add-subtitle{font-size:11px;color:var(--muted);margin-top:3px}.music-settings{display:grid;grid-template-columns:1fr 1fr;gap:14px}.music-add-field{display:grid;gap:7px;min-width:0}.music-add-field label{font-size:11px;font-weight:700;color:var(--text)}.music-add-field input{width:100%;min-width:0;margin:0;padding:11px 12px;font-size:12px}.music-add-field .btn{justify-self:start}.music-players{align-items:start}.music-player{background:var(--surface)}.music-player-title{min-height:43px}.music-player iframe{height:190px}.music-note{font-size:11px}.nav-item[role="button"]{cursor:pointer}@media(max-width:720px){.music-widget{padding:15px}.music-settings{grid-template-columns:1fr}.music-add-field .btn{width:100%}.music-player iframe{height:170px}}
+.brand-topline{display:flex;align-items:center;justify-content:space-between;gap:8px}.brand-mark{min-width:0;cursor:pointer}.brand-sidebar-toggle{width:32px;height:32px;font-size:15px;border-radius:9px}.mobile-sidebar-toggle{display:none}.app.sidebar-collapsed .brand-topline{flex-direction:column;gap:12px}.app.sidebar-collapsed .brand-sidebar-toggle{width:32px;height:32px}.app.sidebar-collapsed .brand-sub{display:none}.app.sidebar-collapsed .brand{padding-bottom:20px}@media(max-width:720px){.app.sidebar-collapsed .brand-topline{flex-direction:row;gap:8px}.app.sidebar-collapsed .brand-sub{display:block}.app.sidebar-collapsed .brand{padding-bottom:28px}.mobile-sidebar-toggle{display:inline-flex}.app:not(.sidebar-collapsed) .mobile-sidebar-toggle{display:none}}
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 <div class="app">
 <aside class="sidebar">
-  <div class="brand" role="link" tabindex="0" title="Ir para a página inicial" aria-label="Study. — página inicial" onclick="showView('home')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showView('home')}"><div class="brand-title">Study.</div><div class="brand-sub">Minha plataforma de estudos</div></div>
+  <div class="brand"><div class="brand-topline"><div class="brand-mark" role="link" tabindex="0" title="Ir para a página inicial" aria-label="Study. — página inicial" onclick="showView('home')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showView('home')}"><div class="brand-title">Study.</div></div><button type="button" class="sidebar-toggle brand-sidebar-toggle" id="sidebarToggle" aria-label="Recolher menu lateral" title="Recolher menu lateral">☰</button></div><div class="brand-sub">Minha plataforma de estudos</div></div>
   <div class="nav-group">
     <div class="nav-title">Principal</div>
     <div class="nav-item" data-view="home"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9v12h14V9M9 21v-7h6v7"/></svg></span>Início</div>
@@ -364,7 +365,7 @@ body.dark .agenda-item.task-priority-high .task-priority-badge{background:#41351
   <div class="topbar">
     <div>
       <div class="page-heading">
-        <button type="button" class="sidebar-toggle" id="sidebarToggle" aria-label="Recolher menu" title="Recolher menu">‹</button>
+        <button type="button" class="sidebar-toggle mobile-sidebar-toggle" id="mobileSidebarToggle" aria-label="Abrir menu" title="Abrir menu">☰</button>
         <h1 class="page-title" id="pageTitle">Bom dia, Thiago.</h1>
       </div>
       <p class="page-sub" id="pageSub">Vamos avançar um pouco mais hoje?</p>
@@ -2970,9 +2971,15 @@ function applySidebarState(collapsed){
   app.classList.toggle('sidebar-collapsed',!!collapsed);
   localStorage.setItem(SIDEBAR_KEY,collapsed?'1':'0');
   if(btn){
-    btn.textContent=collapsed?'›':'‹';
-    btn.setAttribute('aria-label',collapsed?'Abrir menu lateral':'Recolher menu lateral');
-    btn.setAttribute('title',collapsed?'Abrir menu lateral':'Recolher menu lateral');
+    btn.textContent='☰';
+    btn.setAttribute('aria-label',collapsed?'Expandir menu lateral':'Recolher menu lateral');
+    btn.setAttribute('title',collapsed?'Expandir menu lateral':'Recolher menu lateral');
+  }
+  const mobileBtn=document.getElementById('mobileSidebarToggle');
+  if(mobileBtn){
+    mobileBtn.textContent='☰';
+    mobileBtn.setAttribute('aria-label',collapsed?'Abrir menu lateral':'Fechar menu lateral');
+    mobileBtn.setAttribute('title',collapsed?'Abrir menu lateral':'Fechar menu lateral');
   }
 }
 function toggleSidebar(){
@@ -3120,6 +3127,7 @@ function initStudySidebarControls(){
   });
 }
 document.getElementById('sidebarToggle')?.addEventListener('click',toggleSidebar);
+document.getElementById('mobileSidebarToggle')?.addEventListener('click',toggleSidebar);
 // Botões principais da Agenda e Leituras
 document.getElementById('newAgendaBtn')?.addEventListener('click',function(e){e.preventDefault();openAgendaModal();});
 document.getElementById('newReadingBtn')?.addEventListener('click',function(e){e.preventDefault();openReadingModal();});
