@@ -379,6 +379,68 @@ body.dark .agenda-item.task-priority-high .task-priority-badge{background:#41351
 .sidebar .nav-section-toggle:focus-visible,
 .sidebar .nav-external-link:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .reading-card-dates{display:flex;gap:6px 12px;flex-wrap:wrap;margin-top:7px;font-size:10px;color:var(--muted);line-height:1.5}.reading-card-dates span:first-child{color:var(--accent)}#readingModal .reading-modal-grid label input[type="date"]{width:100%;min-width:0}
+
+/* Biblioteca de leituras — cartões compactos e mais visuais */
+.reading-library-toolbar{display:grid;grid-template-columns:minmax(220px,1.5fr) minmax(155px,.8fr) minmax(185px,.9fr) auto;align-items:end;gap:10px;margin:14px 0 18px}
+.reading-library-toolbar label{display:flex;flex-direction:column;gap:6px;min-width:0;font-size:10px;color:var(--muted);font-weight:700}
+.reading-library-toolbar input,.reading-library-toolbar select{width:100%;min-width:0;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--text);padding:10px 11px;font-size:12px}
+.reading-library-count{font-size:10px;color:var(--muted);padding:10px 0;white-space:nowrap;text-align:right}
+.reading-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:stretch}
+.compact-reading-card{padding:14px;min-width:0;transition:transform .18s,border-color .18s,box-shadow .18s}
+.compact-reading-card:hover{transform:translateY(-2px);border-color:var(--line);box-shadow:var(--shadow)}
+.reading-card-main{display:flex;gap:12px;align-items:flex-start;min-width:0}
+.reading-cover{width:66px;height:96px;flex:none;border-radius:6px;overflow:hidden;background:linear-gradient(145deg,#e8e9ee,#cfd4df);box-shadow:0 2px 7px rgba(0,0,0,.15);position:relative}
+.reading-cover img{width:100%;height:100%;object-fit:cover;display:block}
+.reading-cover-placeholder{display:grid;place-items:center;background:linear-gradient(145deg,#345d66,#18343e);color:#f4f6f7}
+.reading-cover-placeholder span{display:grid;place-items:center;width:34px;height:34px;border:1px solid rgba(255,255,255,.5);border-radius:50%;font-family:Georgia,serif;font-size:20px}
+.reading-card-info{min-width:0;flex:1}
+.reading-card-title-row{display:flex;gap:7px;align-items:flex-start;justify-content:space-between}
+.reading-card-title-row .reading-title{font-size:13px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.compact-reading-card .reading-badge{font-size:9px;white-space:normal;text-align:center;max-width:76px;flex:none}
+.compact-reading-card .reading-author{font-size:10px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.reading-author-empty{opacity:.72;font-style:italic}
+.reading-rating-line{display:flex;align-items:center;gap:5px;margin-top:6px}
+.reading-stars{display:inline-flex;gap:1px;letter-spacing:0;white-space:nowrap;color:#686a70}
+.reading-stars span{font-size:11px;line-height:1}
+.reading-stars span.filled{color:#f1b83b}
+.reading-rating-value{font-size:9px;color:var(--muted)}
+.reading-category-chip{display:inline-block;max-width:100%;margin-top:7px;padding:3px 7px;border-radius:6px;background:var(--surface2);color:var(--muted);font-size:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.compact-reading-card .reading-progress{height:5px;margin:12px 0 6px}
+.compact-reading-card .reading-progress-info{gap:8px;font-size:9px}
+.compact-reading-card .reading-progress-info span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
+.compact-reading-card .reading-card-actions{align-items:center;gap:5px;margin-top:11px;flex-wrap:wrap}
+.compact-reading-card .reading-card-actions>.small-btn{padding:6px 8px;font-size:9px}
+.reading-session-shortcut{border-color:var(--accent)!important;color:var(--accent)!important}
+.reading-card-details{position:relative}
+.reading-card-details>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;padding:6px 8px;border:1px solid var(--line);border-radius:7px;color:var(--muted);font-size:9px;white-space:nowrap}
+.reading-card-details>summary::-webkit-details-marker{display:none}
+.reading-card-details>summary::after{content:'⌄';margin-left:5px}
+.reading-card-details[open]>summary{background:var(--surface2);color:var(--text)}
+.reading-card-details[open]>summary::after{content:'⌃'}
+.reading-details-content{position:absolute;z-index:5;top:calc(100% + 6px);right:0;width:min(280px,78vw);padding:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);font-size:10px}
+.reading-detail-line{display:flex;gap:5px 12px;flex-wrap:wrap;color:var(--muted);line-height:1.55;margin-bottom:6px}
+.reading-detail-line b{color:var(--text);font-weight:650;margin-right:3px}
+.reading-detail-notes{white-space:pre-wrap;line-height:1.5;margin:8px 0;color:var(--muted)}
+.reading-detail-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px;padding-top:8px;border-top:1px solid var(--line)}
+.reading-category-field{min-width:0}
+.reading-category-select-row{display:flex;align-items:center;gap:7px;min-width:0}
+.reading-category-select-row select{flex:1;min-width:0}
+.reading-category-select-row .small-btn{flex:none;white-space:nowrap;padding:9px 10px}
+.reading-modal-grid .reading-category-field{display:flex;flex-direction:column;gap:7px;font-size:10px;font-weight:700;letter-spacing:.35px;text-transform:uppercase;color:var(--muted)}
+.reading-rating-field{display:flex;flex-direction:column;gap:7px;min-width:0}
+.reading-rating-field>label{font-size:10px;font-weight:700;letter-spacing:.35px;text-transform:uppercase;color:var(--muted)}
+.reading-rating-control{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.reading-rating-star{background:transparent;border:0;padding:2px 3px;color:var(--line);font-size:25px;line-height:1;cursor:pointer;transition:color .15s,transform .15s}
+.reading-rating-star:hover,.reading-rating-star.selected{color:#f1b83b}
+.reading-rating-star:hover{transform:translateY(-1px)}
+.reading-rating-label{margin-left:7px;color:var(--muted);font-size:10px;font-weight:500;letter-spacing:0;text-transform:none}
+body.dark .reading-cover-placeholder{background:linear-gradient(145deg,#526f9c,#29374d)}
+body.dark .reading-stars span{color:#777980}
+body.dark .reading-stars span.filled{color:#f1b83b}
+@media(max-width:1180px){.reading-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.reading-library-toolbar{grid-template-columns:1fr 1fr}.reading-library-count{text-align:left;padding:2px 0}}
+@media(max-width:760px){.reading-grid{grid-template-columns:1fr}.reading-library-toolbar{grid-template-columns:1fr 1fr}.reading-library-toolbar .reading-search-label{grid-column:1/-1}.reading-library-toolbar label:last-of-type{min-width:0}}
+@media(max-width:480px){.reading-library-toolbar{grid-template-columns:1fr}.reading-library-toolbar .reading-search-label{grid-column:auto}.reading-card-title-row .reading-title{font-size:14px}.reading-cover{width:62px;height:90px}}
+
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -712,6 +774,12 @@ body.dark .agenda-item.task-priority-high .task-priority-badge{background:#41351
       <button class="small-btn" data-reading-filter="want" onclick="setReadingFilter('want')">Quero ler</button>
       <button class="small-btn" data-reading-filter="done" onclick="setReadingFilter('done')">Concluídos</button>
       <button class="small-btn" data-reading-filter="paused" onclick="setReadingFilter('paused')">Pausados</button>
+    </div>
+    <div class="reading-library-toolbar">
+      <label class="reading-search-label"><span>Buscar na biblioteca</span><input id="readingSearch" type="search" placeholder="Título, autor, país..." oninput="renderReadings()"></label>
+      <label><span>Categoria</span><select id="readingCategoryFilter" onchange="renderReadings()"><option value="">Todas as categorias</option></select></label>
+      <label><span>Ordenar por</span><select id="readingSort" onchange="renderReadings()"><option value="added-desc">Adicionados recentemente</option><option value="title">Título (A–Z)</option><option value="rating-desc">Melhor avaliados</option><option value="start-desc">Data de início</option><option value="finish-desc">Data de término</option><option value="progress-desc">Progresso</option></select></label>
+      <div id="readingLibraryCount" class="reading-library-count"></div>
     </div>
     <div class="reading-grid" id="readingGrid"></div>
     <div class="card reading-history-panel"><div class="head"><div><div class="section-title">Histórico de leitura</div><div class="desc">Cada sessão salva fica registrada aqui, com duração e avanço no rastreador.</div></div><span class="status" id="readingSessionCount">0 sessões</span></div><div id="readingSessionHistory"></div></div>
@@ -1849,23 +1917,97 @@ function getReadings(){try{return JSON.parse(localStorage.getItem(READING_KEY)||
 function saveReadings(a){localStorage.setItem(READING_KEY,JSON.stringify(a))}
 function readingProgress(r){return r.progressMode==='pages'&&r.total?Math.min(100,(r.current||0)/r.total*100):Math.min(100,Number(r.progress)||0)}
 function setReadingFilter(f){readingFilter=f;document.querySelectorAll('[data-reading-filter]').forEach(b=>b.classList.toggle('active',b.dataset.readingFilter===f));renderReadings()}
+function getReadingCategories(){
+ const builtIn=['Literatura','Direito','Filosofia','Acadêmico','Desenvolvimento pessoal','Política','Contos','HQ / Quadrinhos','História','Biografia','Ciências','Fantasia','Ficção científica','Poesia','Romance','Suspense','Mistério','Autoajuda','Religião','Sociologia','Psicologia','Economia','Outro'];
+ let custom=[];try{const value=JSON.parse(localStorage.getItem('study_reading_categories_v1')||'[]');if(Array.isArray(value))custom=value.filter(x=>typeof x==='string')}catch(e){}
+ const existing=getReadings().map(x=>x.category).filter(Boolean);
+ return [...new Map([...builtIn,...custom,...existing].map(x=>[String(x).trim().toLocaleLowerCase('pt-BR'),String(x).trim()])).values()].filter(Boolean).sort((a,b)=>builtIn.includes(a)&&builtIn.includes(b)?builtIn.indexOf(a)-builtIn.indexOf(b):builtIn.includes(a)?-1:builtIn.includes(b)?1:a.localeCompare(b,'pt-BR'));
+}
+function populateReadingCategoryOptions(selected=''){
+ const select=document.getElementById('readingCategory');if(!select)return;
+ const choices=getReadingCategories();select.innerHTML=choices.map(x=>'<option value="'+escapeHtml(x)+'">'+escapeHtml(x)+'</option>').join('');
+ if(choices.includes(selected))select.value=selected;else if(!select.value&&choices.length)select.value=choices[0];
+}
+function populateReadingCategoryFilter(){
+ const select=document.getElementById('readingCategoryFilter');if(!select)return;
+ const previous=select.value;select.innerHTML='<option value="">Todas as categorias</option>'+getReadingCategories().map(x=>'<option value="'+escapeHtml(x)+'">'+escapeHtml(x)+'</option>').join('');
+ if([...select.options].some(o=>o.value===previous))select.value=previous;
+}
+function addReadingCategory(){
+ const input=prompt('Qual nome deseja dar à nova categoria?');if(!input)return;
+ const name=input.trim();if(!name){toast('Digite um nome para a categoria.');return}
+ const all=getReadingCategories(),existing=all.find(x=>x.toLocaleLowerCase('pt-BR')===name.toLocaleLowerCase('pt-BR'));
+ if(existing){populateReadingCategoryOptions(existing);toast('Essa categoria já existe.');return}
+ let custom=[];try{custom=JSON.parse(localStorage.getItem('study_reading_categories_v1')||'[]')}catch(e){custom=[]}
+ if(!Array.isArray(custom))custom=[];custom.push(name);localStorage.setItem('study_reading_categories_v1',JSON.stringify(custom));
+ populateReadingCategoryOptions(name);populateReadingCategoryFilter();const filter=document.getElementById('readingCategoryFilter');if(filter)filter.value='';
+ toast('Categoria "'+name+'" criada.');
+}
+function updateReadingAuthorCountry(){
+ const country=(document.getElementById('readingAuthorCountry')?.value||'').trim().toLocaleLowerCase('pt-BR');
+ const field=document.getElementById('readingAuthorStateField');
+ if(field)field.classList.toggle('reading-field-hidden',!['brasil','brazil'].includes(country));
+}
+function setReadingRating(value){
+ const input=document.getElementById('readingRating');if(!input)return;
+ input.value=String(Math.max(0,Math.min(5,Number(value)||0)));renderReadingRatingControl(Number(input.value));
+}
+function renderReadingRatingControl(value=0){
+ const selected=Math.max(0,Math.min(5,Number(value)||0)),control=document.getElementById('readingRatingControl');if(!control)return;
+ control.querySelectorAll('[data-rating]').forEach(button=>{const n=Number(button.dataset.rating);button.classList.toggle('selected',n<=selected);button.setAttribute('aria-pressed',String(n===selected))});
+ const label=document.getElementById('readingRatingLabel');if(label)label.textContent=selected?selected+' de 5 estrelas':'Sem avaliação';
+}
+function readingStarsHTML(value,extraClass=''){
+ const rating=Math.max(0,Math.min(5,Number(value)||0));
+ return '<span class="reading-stars '+extraClass+'" aria-label="'+(rating?rating+' de 5 estrelas':'Sem avaliação')+'">'+[1,2,3,4,5].map(n=>'<span class="'+(n<=rating?'filled':'')+'">★</span>').join('')+'</span>';
+}
+function readingCountryLabel(r){
+ const country=(r.authorCountry||'').trim();if(!country)return '';
+ return country+((country.toLocaleLowerCase('pt-BR')==='brasil'||country.toLocaleLowerCase('pt-BR')==='brazil')&&r.authorState?' · '+r.authorState:'');
+}
 function renderReadings(){
- const all=getReadings(),list=readingFilter==='all'?all:all.filter(r=>r.status===readingFilter),m=document.getElementById('readingMetrics'),g=document.getElementById('readingGrid');if(!g)return;
+ const all=getReadings(),m=document.getElementById('readingMetrics'),g=document.getElementById('readingGrid');if(!g)return;
  const active=all.filter(r=>r.status==='reading').length,done=all.filter(r=>r.status==='done').length,pages=all.reduce((n,r)=>n+(r.progressMode==='pages'?Number(r.current)||0:0),0);
  const readingSessions=getReadingSessions(),readingSeconds=readingSessions.reduce((n,x)=>n+Number(x.durationSeconds||0),0);
  if(m)m.innerHTML='<div class="reading-stat"><div class="reading-stat-label">Lendo agora</div><div class="reading-stat-value">'+active+'</div></div><div class="reading-stat"><div class="reading-stat-label">Concluídos</div><div class="reading-stat-value">'+done+'</div></div><div class="reading-stat"><div class="reading-stat-label">Páginas no rastreador</div><div class="reading-stat-value">'+pages+'</div></div><div class="reading-stat"><div class="reading-stat-label">Tempo de leitura</div><div class="reading-stat-value">'+readingDurationLabel(readingSeconds)+'</div></div><div class="reading-stat"><div class="reading-stat-label">Biblioteca</div><div class="reading-stat-value">'+all.length+'</div></div>';
- renderReadingSessionTimer();renderReadingSessionHistory();
- if(!list.length){g.innerHTML='<div class="card reading-empty">Nenhuma leitura aqui ainda.<br>Adicione um livro para começar.</div>';return}
- g.innerHTML=list.map(r=>{const p=readingProgress(r);return '<div class="card reading-card"><div class="reading-card-head"><div><div class="reading-title">'+escapeHtml(r.title)+'</div><div class="reading-author">'+escapeHtml(r.author||'')+'</div></div><span class="reading-badge">'+({want:'Quero ler',reading:'Lendo',paused:'Pausado',done:'Concluído'}[r.status]||'Lendo')+'</span></div><div class="reading-progress"><div style="width:'+p+'%"></div></div><div class="reading-progress-info"><span>'+p.toFixed(0)+'% lido</span><span>'+escapeHtml(r.format||'')+(r.progressMode==='pages'?' · '+(r.current||0)+' / '+(r.total||0)+' páginas':'')+(r.format==='Kindle'?(r.kindlePage?' · pág. Kindle '+r.kindlePage:'')+(r.position?' · posição '+r.position:''):'')+'</span></div><div class="reading-card-meta">'+escapeHtml(r.category||'Outro')+'</div>'+((r.startDate||r.completionDate)?'<div class="reading-card-dates">'+(r.startDate?'<span>Início: '+readingDateDisplay(r.startDate)+'</span>':'')+(r.completionDate?'<span>Concluído: '+readingDateDisplay(r.completionDate)+'</span>':'')+'</div>':'')+'<div class="reading-card-actions"><button class="small-btn" onclick="startReadingSessionForBook(\''+r.id+'\')">▶ Sessão</button><button class="small-btn" onclick="openReadingProgressModal(\''+r.id+'\')">Atualizar progresso</button><button class="small-btn" onclick="addReadingDiary(\''+r.id+'\')">+ Diário</button><button class="small-btn" onclick="openReadingModal(\''+r.id+'\')">Editar</button></div></div>'}).join('');
+ populateReadingCategoryFilter();renderReadingSessionTimer();renderReadingSessionHistory();
+ const query=(document.getElementById('readingSearch')?.value||'').trim().toLocaleLowerCase('pt-BR'),category=document.getElementById('readingCategoryFilter')?.value||'',sort=document.getElementById('readingSort')?.value||'added-desc';
+ let list=all.filter(r=>(readingFilter==='all'||r.status===readingFilter)&&(!category||r.category===category)&&(!query||[r.title,r.author,r.authorCountry,r.authorState,r.category].some(v=>String(v||'').toLocaleLowerCase('pt-BR').includes(query))));
+ list.sort((a,b)=>{
+  if(sort==='title')return String(a.title||'').localeCompare(String(b.title||''),'pt-BR');
+  if(sort==='rating-desc')return Number(b.rating||0)-Number(a.rating||0)||String(a.title||'').localeCompare(String(b.title||''),'pt-BR');
+  if(sort==='start-desc')return String(b.startDate||'').localeCompare(String(a.startDate||''))||String(a.title||'').localeCompare(String(b.title||''),'pt-BR');
+  if(sort==='finish-desc')return String(b.completionDate||'').localeCompare(String(a.completionDate||''))||String(a.title||'').localeCompare(String(b.title||''),'pt-BR');
+  if(sort==='progress-desc')return readingProgress(b)-readingProgress(a);
+  return String(b.createdAt||'').localeCompare(String(a.createdAt||''))||String(b.id||'').localeCompare(String(a.id||''));
+ });
+ const count=document.getElementById('readingLibraryCount');if(count)count.textContent=list.length+' de '+all.length+' livro'+(all.length===1?'':'s');
+ if(!list.length){g.innerHTML='<div class="card reading-empty">'+(all.length?'Nenhum livro corresponde à busca e aos filtros.':'Sua biblioteca está vazia. Adicione uma leitura para começar.')+'</div>';return}
+ g.innerHTML=list.map(r=>{
+  const p=readingProgress(r),id=escapeHtml(String(r.id)),cover=String(r.coverUrl||'').trim(),author=String(r.author||'').trim(),country=readingCountryLabel(r),rating=Number(r.rating)||0;
+  const coverMarkup=cover
+   ?'<div class="reading-cover"><img src="'+escapeHtml(cover)+'" alt="Capa de '+escapeHtml(r.title)+'" loading="lazy" onerror="this.style.display=\\'none\\';this.nextElementSibling.style.display=\\'grid\\'"><div class="reading-cover-placeholder" style="display:none"> <span>'+escapeHtml((r.title||'L').slice(0,1).toUpperCase())+'</span></div></div>'
+   :'<div class="reading-cover reading-cover-placeholder"><span>'+escapeHtml((r.title||'L').slice(0,1).toUpperCase())+'</span></div>';
+  const dates=(r.startDate||r.completionDate)?'<div class="reading-detail-line">'+(r.startDate?'<span><b>Início</b> '+readingDateDisplay(r.startDate)+'</span>':'')+(r.completionDate?'<span><b>Término</b> '+readingDateDisplay(r.completionDate)+'</span>':'')+'</div>':'';
+  const authorPlace=country?'<div class="reading-detail-line"><span><b>Origem do autor</b> '+escapeHtml(country)+'</span></div>':'';
+  const formatInfo='<div class="reading-detail-line"><span><b>Formato</b> '+escapeHtml(r.format||'Não informado')+'</span><span><b>Categoria</b> '+escapeHtml(r.category||'Outro')+'</span></div>';
+  const notes=r.notes?'<div class="reading-detail-notes">'+escapeHtml(r.notes)+'</div>':'';
+  return '<article class="card reading-card compact-reading-card"><div class="reading-card-main">'+coverMarkup+'<div class="reading-card-info"><div class="reading-card-title-row"><div class="reading-title" title="'+escapeHtml(r.title)+'">'+escapeHtml(r.title)+'</div><span class="reading-badge">'+({want:'Quero ler',reading:'Lendo',paused:'Pausado',done:'Concluído'}[r.status]||'Lendo')+'</span></div>'+(author?'<div class="reading-author">'+escapeHtml(author)+'</div>':'<div class="reading-author reading-author-empty">Autor não informado</div>')+'<div class="reading-rating-line">'+readingStarsHTML(rating)+'<span class="reading-rating-value">'+(rating?rating+'/5':'—')+'</span></div><div class="reading-category-chip">'+escapeHtml(r.category||'Outro')+'</div></div></div><div class="reading-progress"><div style="width:'+p+'%"></div></div><div class="reading-progress-info"><span>'+p.toFixed(0)+'% lido</span><span>'+(r.progressMode==='pages'?escapeHtml((r.current||0)+' / '+(r.total||0)+' páginas'):escapeHtml(r.format==='Kindle'?(r.kindlePage?'Pág. Kindle '+r.kindlePage:'Kindle'):(r.format||'Percentual')))+'</span></div><div class="reading-card-actions"><button class="small-btn reading-session-shortcut" type="button" onclick="startReadingSessionForBook(\\''+id+'\\')">▶ Sessão</button><button class="small-btn" type="button" onclick="openReadingModal(\\''+id+'\\')">Editar</button><details class="reading-card-details"><summary>Detalhes</summary><div class="reading-details-content">'+formatInfo+authorPlace+dates+notes+'<div class="reading-detail-actions"><button class="small-btn" type="button" onclick="openReadingProgressModal(\\''+id+'\\')">Atualizar progresso</button><button class="small-btn" type="button" onclick="addReadingDiary(\\''+id+'\\')">+ Diário</button></div></div></details></div></article>';
+ }).join('');
 }
 function openReadingModal(id=null){
  const r=id?getReadings().find(x=>x.id===id):null;
- document.body.insertAdjacentHTML('beforeend','<div class="modal-backdrop open" id="readingModal"><div class="modal"><h3>'+(r?'Editar leitura':'Nova leitura')+'</h3><p>Cadastre qualquer livro ou leitura.</p><div class="reading-modal-grid"><label>Título<input class="input" id="readingTitle" value="'+escapeHtml(r?.title||'')+'"></label><label>Autor<input class="input" id="readingAuthor" value="'+escapeHtml(r?.author||'')+'"></label><label>Categoria<select class="select" id="readingCategory"><option>Literatura</option><option>Direito</option><option>Filosofia</option><option>Acadêmico</option><option>Desenvolvimento pessoal</option><option>Outro</option></select></label><label class="reading-format-field">Formato<select class="select" id="readingFormat"><option>Kindle</option><option>Livro físico</option><option>PDF/e-book</option><option>Audiobook</option></select></label><label>Status<select class="select" id="readingStatus" onchange="updateReadingDateFields()"><option value="want">Quero ler</option><option value="reading">Lendo</option><option value="paused">Pausado</option><option value="done">Concluído</option></select></label><label>Data de início<input class="input" id="readingStartDate" type="date" value="'+escapeHtml(r?.startDate||'')+'"><span class="reading-helper">Quando você começou a leitura.</span></label><label>Data de conclusão<input class="input" id="readingCompletionDate" type="date" value="'+escapeHtml(r?.completionDate||'')+'"><span class="reading-helper">Preenchida ao concluir; você pode ajustar.</span></label><label>Acompanhamento<select class="select" id="readingMode"><option value="pages">Páginas</option><option value="percent">Percentual</option></select></label><label class="reading-pages-field" id="readingTotalField">Total de páginas<input class="input" id="readingTotal" type="number" value="'+(r?.total||'')+'"></label><label class="reading-pages-field" id="readingCurrentField">Página atual<input class="input" id="readingCurrent" type="number" value="'+(r?.current||'')+'"></label><label class="reading-percent-field reading-field-hidden" id="readingPercentField">Progresso atual<div class="reading-progress-input"><input class="input" id="readingPercent" type="number" min="0" max="100" step="1" value="'+(r?.progress||0)+'"><span class="reading-progress-unit">%</span></div></label><label class="reading-kindle-field reading-field-hidden" id="readingKindlePageField">Página no Kindle (quando exibida)<input class="input" id="readingKindlePage" type="number" min="0" value="'+(r?.kindlePage||'')+'"><span class="reading-helper">Registre o número de página que aparece no seu Kindle.</span></label><label class="reading-kindle-field reading-field-hidden" id="readingKindlePositionField">Posição atual<input class="input" id="readingPosition" type="number" min="0" value="'+(r?.position||'')+'"><span class="reading-helper">A posição do Kindle é um indicador separado do número da página.</span></label><label class="full">Observações<textarea class="input" id="readingNotes" rows="3">'+escapeHtml(r?.notes||'')+'</textarea></label></div><div class="modal-actions"><button class="btn btn-secondary" onclick="document.getElementById(\'readingModal\').remove()">Cancelar</button><button class="btn btn-primary" onclick="saveReadingModal(\''+(id||'')+'\')">Salvar</button></div></div></div>');
+ document.body.insertAdjacentHTML('beforeend','<div class="modal-backdrop open" id="readingModal"><div class="modal"><h3>'+(r?'Editar leitura':'Nova leitura')+'</h3><p>Cadastre qualquer livro ou leitura.</p><div class="reading-modal-grid"><label>Título<input class="input" id="readingTitle" value="'+escapeHtml(r?.title||'')+'"></label><label>Autor<input class="input" id="readingAuthor" value="'+escapeHtml(r?.author||'')+'"></label><label>País do autor<input class="input" id="readingAuthorCountry" value="'+escapeHtml(r?.authorCountry||'')+'" placeholder="Ex.: Brasil, Nigéria, Japão" oninput="updateReadingAuthorCountry()"></label><label id="readingAuthorStateField" class="reading-field-hidden">Estado (autor brasileiro)<select class="select" id="readingAuthorState"><option value="">Selecione o estado</option><option>Acre</option><option>Alagoas</option><option>Amapá</option><option>Amazonas</option><option>Bahia</option><option>Ceará</option><option>Distrito Federal</option><option>Espírito Santo</option><option>Goiás</option><option>Maranhão</option><option>Mato Grosso</option><option>Mato Grosso do Sul</option><option>Minas Gerais</option><option>Pará</option><option>Paraíba</option><option>Paraná</option><option>Pernambuco</option><option>Piauí</option><option>Rio de Janeiro</option><option>Rio Grande do Norte</option><option>Rio Grande do Sul</option><option>Rondônia</option><option>Roraima</option><option>Santa Catarina</option><option>São Paulo</option><option>Sergipe</option><option>Tocantins</option></select></label><label class="full">Capa do livro (opcional)<input class="input" id="readingCoverUrl" type="url" value="'+escapeHtml(r?.coverUrl||'')+'" placeholder="https://..."><span class="reading-helper">Cole um link direto para a imagem da capa. Sem link, o Study usa uma capa ilustrada.</span></label><div class="reading-rating-field full"><label>Avaliação pessoal</label><input id="readingRating" type="hidden" value="'+Number(r?.rating||0)+'"><div class="reading-rating-control" id="readingRatingControl" role="radiogroup" aria-label="Avaliação de uma a cinco estrelas">'+[1,2,3,4,5].map(n=>'<button type="button" class="reading-rating-star" data-rating="'+n+'" aria-label="Avaliar '+n+' de 5 estrelas" aria-pressed="false" onclick="setReadingRating('+n+')">★</button>').join('')+'<span id="readingRatingLabel" class="reading-rating-label">Sem avaliação</span></div></div><div class="reading-category-field"><label for="readingCategory">Categoria</label><div class="reading-category-select-row"><select class="select" id="readingCategory"></select><button class="small-btn" type="button" onclick="addReadingCategory()">+ Categoria</button></div></div><label class="reading-format-field">Formato<select class="select" id="readingFormat"><option>Kindle</option><option>Livro físico</option><option>PDF/e-book</option><option>Audiobook</option></select></label><label>Status<select class="select" id="readingStatus" onchange="updateReadingDateFields()"><option value="want">Quero ler</option><option value="reading">Lendo</option><option value="paused">Pausado</option><option value="done">Concluído</option></select></label><label>Data de início<input class="input" id="readingStartDate" type="date" value="'+escapeHtml(r?.startDate||'')+'"><span class="reading-helper">Quando você começou a leitura.</span></label><label>Data de término<input class="input" id="readingCompletionDate" type="date" value="'+escapeHtml(r?.completionDate||'')+'"><span class="reading-helper">Preenchida ao concluir; você pode ajustar.</span></label><label>Acompanhamento<select class="select" id="readingMode"><option value="pages">Páginas</option><option value="percent">Percentual</option></select></label><label class="reading-pages-field" id="readingTotalField">Total de páginas<input class="input" id="readingTotal" type="number" value="'+(r?.total||'')+'"></label><label class="reading-pages-field" id="readingCurrentField">Página atual<input class="input" id="readingCurrent" type="number" value="'+(r?.current||'')+'"></label><label class="reading-percent-field reading-field-hidden" id="readingPercentField">Progresso atual<div class="reading-progress-input"><input class="input" id="readingPercent" type="number" min="0" max="100" step="1" value="'+(r?.progress||0)+'"><span class="reading-progress-unit">%</span></div></label><label class="reading-kindle-field reading-field-hidden" id="readingKindlePageField">Página no Kindle (quando exibida)<input class="input" id="readingKindlePage" type="number" min="0" value="'+(r?.kindlePage||'')+'"><span class="reading-helper">Registre o número de página que aparece no seu Kindle.</span></label><label class="reading-kindle-field reading-field-hidden" id="readingKindlePositionField">Posição atual<input class="input" id="readingPosition" type="number" min="0" value="'+(r?.position||'')+'"><span class="reading-helper">A posição do Kindle é um indicador separado do número da página.</span></label><label class="full">Observações<textarea class="input" id="readingNotes" rows="3">'+escapeHtml(r?.notes||'')+'</textarea></label></div><div class="modal-actions"><button class="btn btn-secondary" onclick="document.getElementById(\'readingModal\').remove()">Cancelar</button><button class="btn btn-primary" onclick="saveReadingModal(\''+(id||'')+'\')">Salvar</button></div></div></div>');
  const formatEl=document.getElementById('readingFormat');
  const modeEl=document.getElementById('readingMode');
  const categoryEl=document.getElementById('readingCategory');
  const statusEl=document.getElementById('readingStatus');
+ populateReadingCategoryOptions(r?.category||'Literatura');
  if(r){
+   document.getElementById('readingAuthorCountry').value=r.authorCountry||'';
+   document.getElementById('readingAuthorState').value=r.authorState||'';
+   document.getElementById('readingCoverUrl').value=r.coverUrl||'';
+   document.getElementById('readingRating').value=Number(r.rating)||0;
    categoryEl.value=r.category||'Literatura';
    formatEl.value=r.format||'Kindle';
    statusEl.value=r.status||'reading';
@@ -1878,6 +2020,7 @@ function openReadingModal(id=null){
  formatEl.addEventListener('change',updateReadingModeUI);
  modeEl.addEventListener('change',updateReadingModeUI);
  updateReadingModeUI();
+ updateReadingAuthorCountry();renderReadingRatingControl(Number(document.getElementById('readingRating')?.value||0));
 }
 function updateReadingModeUI(){
  const mode=document.getElementById('readingMode')?.value||'pages';
@@ -1907,14 +2050,17 @@ function updateReadingDateFields(){
 function readingDateDisplay(value){if(!value)return '';const parts=String(value).split('-');return parts.length===3?parts[2]+'/'+parts[1]+'/'+parts[0]:value}
 function saveReadingModal(id){
  const title=document.getElementById('readingTitle').value.trim();if(!title){toast('Informe o título.');return}
- const a=getReadings(),old=a.find(x=>x.id===id),mode=document.getElementById('readingMode').value,total=Number(document.getElementById('readingTotal').value)||0,current=Number(document.getElementById('readingCurrent').value)||0,percent=Number(document.getElementById('readingPercent').value)||0,status=document.getElementById('readingStatus').value,today=localDateKey(new Date());
+ const a=getReadings(),old=a.find(x=>x.id===id),mode=document.getElementById('readingMode').value,total=Math.max(0,Number(document.getElementById('readingTotal').value)||0),current=Math.max(0,Number(document.getElementById('readingCurrent').value)||0),percent=Number(document.getElementById('readingPercent').value)||0,status=document.getElementById('readingStatus').value,today=localDateKey(new Date());
+ const coverUrl=(document.getElementById('readingCoverUrl').value||'').trim();
+ if(coverUrl){try{const parsed=new URL(coverUrl);if(!['http:','https:'].includes(parsed.protocol))throw new Error('protocol');}catch(e){toast('A capa deve usar um endereço de imagem http ou https válido.');return}}
  let startDate=document.getElementById('readingStartDate').value||'',completionDate=document.getElementById('readingCompletionDate').value||'';
  if(status==='reading'&&!startDate)startDate=today;
  if(status==='done'){if(!startDate)startDate=today;if(!completionDate)completionDate=today}
  const progress=mode==='pages'&&total?Math.min(100,current/total*100):Math.min(100,Math.max(0,percent));
- if(progress>=100&&status==='done'&&!completionDate)completionDate=today;
- const item={id:id||'r'+Date.now(),title,author:document.getElementById('readingAuthor').value.trim(),category:document.getElementById('readingCategory').value,format:document.getElementById('readingFormat').value,status,progressMode:mode,total,current,position:Number(document.getElementById('readingPosition').value)||0,kindlePage:Number(document.getElementById('readingKindlePage').value)||0,progress,startDate,completionDate,notes:document.getElementById('readingNotes').value.trim(),diary:old?.diary||[]};
- const i=a.findIndex(x=>x.id===item.id);if(i>=0)a[i]=item;else a.push(item);saveReadings(a);document.getElementById('readingModal')?.remove();renderReadings();toast('Leitura salva.')
+ const authorCountry=(document.getElementById('readingAuthorCountry').value||'').trim(),authorState=(document.getElementById('readingAuthorState').value||'').trim();
+ const item={id:id||'r'+Date.now(),title,author:document.getElementById('readingAuthor').value.trim(),authorCountry,authorState:authorCountry.toLocaleLowerCase('pt-BR')==='brasil'||authorCountry.toLocaleLowerCase('pt-BR')==='brazil'?authorState:'',coverUrl, rating:Math.max(0,Math.min(5,Number(document.getElementById('readingRating').value)||0)),category:document.getElementById('readingCategory').value,format:document.getElementById('readingFormat').value,status,progressMode:mode,total,current,position:Number(document.getElementById('readingPosition').value)||0,kindlePage:Number(document.getElementById('readingKindlePage').value)||0,progress,startDate,completionDate,createdAt:old?.createdAt||new Date().toISOString(),notes:document.getElementById('readingNotes').value.trim(),diary:old?.diary||[]};
+ const i=a.findIndex(x=>String(x.id)===String(item.id));if(i>=0)a[i]={...a[i],...item};else a.push(item);
+ saveReadings(a);document.getElementById('readingModal')?.remove();renderReadings();toast('Leitura salva.')
 }
 function openReadingProgressModal(id){const r=getReadings().find(x=>x.id===id);if(!r)return;document.body.insertAdjacentHTML('beforeend','<div class="modal-backdrop open" id="readingProgressModal"><div class="modal"><h3>Atualizar progresso</h3><p>'+escapeHtml(r.title)+'</p><div class="field"><label>'+(r.progressMode==='pages'?'Página atual':'Percentual')+'</label><input class="input" id="readingProgressInput" type="number" value="'+(r.progressMode==='pages'?r.current:r.progress)+'"></div><div class="modal-actions"><button class="btn btn-secondary" onclick="document.getElementById(\'readingProgressModal\').remove()">Cancelar</button><button class="btn btn-primary" onclick="saveReadingProgress(\''+id+'\')">Salvar</button></div></div></div>')}
 function saveReadingProgress(id){const a=getReadings(),r=a.find(x=>x.id===id),v=Number(document.getElementById('readingProgressInput').value)||0;if(!r)return;if(r.progressMode==='pages'){r.current=Math.min(r.total||v,v);r.progress=r.total?r.current/r.total*100:0}else r.progress=Math.min(100,v);const becameDone=r.progress>=100&&r.status!=='done',today=localDateKey(new Date());if(r.progress>=100){r.status='done';if(!r.completionDate)r.completionDate=today;if(!r.startDate)r.startDate=today}else if(r.status==='want'){r.status='reading';if(!r.startDate)r.startDate=today}saveReadings(a);if(becameDone){const awarded=gameAward(30,'leitura concluída','reading:'+id);if(awarded){const g=gameEnsure();g.readings++;saveGame(g)}}document.getElementById('readingProgressModal')?.remove();renderReadings()}
@@ -2070,7 +2216,7 @@ function setCollapsiblePanelState(panel,collapsed,persist=true){
 }
 function toggleCollapsiblePanel(panel){setCollapsiblePanelState(panel,!panel.classList.contains('panel-collapsed'))}
 function initCollapsiblePanels(root=document){
- const selector='.view .card:not(.metric):not(.reading-stat), .view .settings-group, .view .subject-card, .view .reading-card, .view .trail-current-card, .view .trail-toolbar';
+ const selector='.view .card:not(.metric):not(.reading-stat):not(.reading-card), .view .settings-group, .view .subject-card, .view .trail-current-card, .view .trail-toolbar';
  const panels=[];
  if(root.nodeType===1&&root.matches?.(selector))panels.push(root);
  if(root.querySelectorAll)panels.push(...root.querySelectorAll(selector));
