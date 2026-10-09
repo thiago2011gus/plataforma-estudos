@@ -375,8 +375,8 @@ body.dark .reading-card:hover{border-color:#3a4742}
           <div class="settings-row">
             <div><div class="settings-label">Cor principal</div><div class="settings-help">Usada em botões, progresso e destaques.</div></div>
             <div class="color-options" id="accentOptions">
-              <button class="swatch" data-accent="#2f6254" style="background:#2f6254" title="Verde"></button>
-              <button class="swatch" data-accent="#315f7a" style="background:#315f7a" title="Azul"></button>
+              <button class="swatch" data-accent="#2563eb" style="background:#2563eb" title="Azul vivo"></button>
+              <button class="swatch" data-accent="#0f766e" style="background:#0f766e" title="Verde-azulado"></button>
               <button class="swatch" data-accent="#765c8a" style="background:#765c8a" title="Uva"></button>
               <button class="swatch" data-accent="#8a6540" style="background:#8a6540" title="Caramelo"></button>
               <button class="swatch" data-accent="#8b4d5b" style="background:#8b4d5b" title="Vinho"></button>
@@ -1401,15 +1401,18 @@ function toast(msg){
 const APPEARANCE_KEY='study_appearance';
 
 const appearanceDefaults={
-  accent:'#2f6254',
+  accent:'#2563eb',
   fontScale:100,
   radius:'15px',
   density:'comfortable'
 };
 
 function loadAppearance(){
-  try{return {...appearanceDefaults,...JSON.parse(localStorage.getItem(APPEARANCE_KEY)||'{}')}}
-  catch(e){return {...appearanceDefaults}}
+  try{
+    const saved=JSON.parse(localStorage.getItem(APPEARANCE_KEY)||'{}');
+    if(saved.accent==='#2f6254') saved.accent='#2563eb';
+    return {...appearanceDefaults,...saved};
+  }catch(e){return {...appearanceDefaults}}
 }
 let appearance=loadAppearance();
 
@@ -2175,7 +2178,7 @@ function setThemeColors(darkness){
     root.style.setProperty('--surface',p.surface);
     root.style.setProperty('--surface2',p.surface2);
     root.style.setProperty('--line',p.line);
-    root.style.setProperty('--accent',p.accent);
+    root.style.setProperty('--accent',appearance?.accent||p.accent);
     root.style.setProperty('--accent-light',p.accentLight);
   }else{
     root.style.setProperty('--bg','#f6f5f1');
