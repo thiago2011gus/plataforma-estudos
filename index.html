@@ -2159,7 +2159,9 @@ function mixHex(lightHex,darkHex,t){
   return '#'+mix(a.r,b.r)+mix(a.g,b.g)+mix(a.b,b.b);
 }
 function setThemeColors(darkness){
-  const root=document.documentElement;
+  // No modo escuro, aplicar as variáveis diretamente ao body para que
+  // as declarações de body.dark não sobrescrevam a gradação escolhida.
+  const root=document.body.classList.contains('dark')?document.body:document.documentElement;
   const level=Number(darkness)||50;
   if(document.body.classList.contains('dark')){
     const palettes={
