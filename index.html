@@ -311,6 +311,8 @@ body.dark .agenda-item.task-priority-high .task-priority-badge{background:#41351
 .music-player-title{display:flex;align-items:center;justify-content:space-between;gap:10px}.music-delete{padding:5px 8px;font-size:11px;flex:none}.music-open-link{display:inline-block;margin:8px 12px 12px;color:var(--accent);font-size:12px;text-decoration:none}.music-open-link:hover{text-decoration:underline}
 .music-widget{scroll-margin-top:20px;padding:22px}.music-widget>.head{margin-bottom:16px}.music-widget .organizer-card-title{font-size:18px}.music-widget .organizer-card-sub{font-size:12px;line-height:1.5}.music-add-panel{padding:16px;border:1px solid var(--line);border-radius:13px;background:var(--surface2)}.music-add-heading{display:flex;align-items:center;gap:12px;margin-bottom:15px}.music-add-icon{display:grid;place-items:center;width:42px;height:42px;flex:none;border-radius:12px;background:var(--accent-light);color:var(--accent);font-size:25px;font-weight:700}.music-add-title{font-size:13px;font-weight:750}.music-add-subtitle{font-size:11px;color:var(--muted);margin-top:3px}.music-settings{display:grid;grid-template-columns:1fr 1fr;gap:14px}.music-add-field{display:grid;gap:7px;min-width:0}.music-add-field label{font-size:11px;font-weight:700;color:var(--text)}.music-add-field input{width:100%;min-width:0;margin:0;padding:11px 12px;font-size:12px}.music-add-field .btn{justify-self:start}.music-players{align-items:start}.music-player{background:var(--surface)}.music-player-title{min-height:43px}.music-player iframe{height:190px}.music-note{font-size:11px}.nav-item[role="button"]{cursor:pointer}@media(max-width:720px){.music-widget{padding:15px}.music-settings{grid-template-columns:1fr}.music-add-field .btn{width:100%}.music-player iframe{height:170px}}
 .brand-topline{display:flex;align-items:center;justify-content:space-between;gap:8px}.brand-mark{min-width:0;cursor:pointer}.brand-sidebar-toggle{width:32px;height:32px;font-size:15px;border-radius:9px}.mobile-sidebar-toggle{display:none}.app.sidebar-collapsed .brand-topline{flex-direction:column;gap:12px}.app.sidebar-collapsed .brand-sidebar-toggle{width:32px;height:32px}.app.sidebar-collapsed .brand-sub{display:none}.app.sidebar-collapsed .brand{padding-bottom:20px}@media(max-width:720px){.app.sidebar-collapsed .brand-topline{flex-direction:row;gap:8px}.app.sidebar-collapsed .brand-sub{display:block}.app.sidebar-collapsed .brand{padding-bottom:28px}.mobile-sidebar-toggle{display:inline-flex}.app:not(.sidebar-collapsed) .mobile-sidebar-toggle{display:none}}
+
+.home-smart-grid{margin-top:16px;margin-bottom:16px}.home-smart-content{min-height:55px;margin:12px 0;font-size:13px;line-height:1.55}.home-smart-value{font-size:22px;font-weight:760;letter-spacing:-.4px}.home-smart-muted{font-size:11px;color:var(--muted);margin-top:4px}.home-smart-track{height:6px;border-radius:8px;background:var(--surface2);overflow:hidden;margin-top:10px}.home-smart-track>div{height:100%;background:var(--accent);border-radius:8px}.wrong-question-card{border:1px solid var(--line);border-radius:11px;padding:14px;margin:9px 0;background:var(--surface)}.wrong-question-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}.wrong-question-title{font-size:13px;font-weight:750;line-height:1.45}.wrong-question-meta{font-size:11px;color:var(--muted);line-height:1.55;margin-top:5px}.wrong-question-notes{font-size:12px;line-height:1.55;white-space:pre-wrap;margin-top:8px}.wrong-question-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:11px}.review-rating-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.review-due-label{display:inline-block;padding:4px 7px;border-radius:7px;background:var(--accent-light);color:var(--accent);font-size:10px;font-weight:750}.review-due-label.overdue{background:#f7e8e8;color:var(--danger)}.learning-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.learning-summary-item{padding:12px;border:1px solid var(--line);border-radius:10px}.learning-summary-label{font-size:10px;color:var(--muted)}.learning-summary-value{font-size:20px;font-weight:750;margin-top:5px}.learning-summary-note{font-size:10px;color:var(--muted);margin-top:4px}@media(max-width:720px){.home-smart-grid,.learning-summary-grid{grid-template-columns:1fr}.wrong-question-actions .small-btn{flex:1}}
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -382,6 +384,11 @@ body.dark .agenda-item.task-priority-high .task-priority-badge{background:#41351
       <h2 class="organizer-home-title">Um lugar para estudar, organizar e registrar.</h2>
       <div class="organizer-home-copy">Mantenha os estudos como prioridade. Quando surgir uma pendência, uma ideia ou um compromisso, registre aqui e volte ao que estava fazendo.</div>
       <div class="organizer-home-actions"><button class="btn btn-primary" onclick="showView('myday')">Organizar meu dia</button><button class="btn btn-secondary" onclick="showView('timer')">Começar uma sessão de estudo</button></div>
+    </div>
+    <div class="organizer-grid three home-smart-grid">
+      <div class="card organizer-card"><div class="organizer-card-title">Próxima prioridade</div><div class="organizer-card-sub">A tarefa que merece sua atenção primeiro.</div><div id="homeNextAction" class="home-smart-content"></div><button class="organizer-inline-link" type="button" onclick="showView('tasks')">Abrir tarefas →</button></div>
+      <div class="card organizer-card"><div class="organizer-card-title">Revisões de hoje</div><div class="organizer-card-sub">Questões erradas e flashcards no momento certo.</div><div id="homeDueReviews" class="home-smart-content"></div><button class="organizer-inline-link" type="button" onclick="showView('reviews')">Abrir revisões →</button></div>
+      <div class="card organizer-card"><div class="organizer-card-title">Meta de estudo</div><div class="organizer-card-sub">Acompanhe seu ritmo diário de 3 horas.</div><div id="homeGoalSummary" class="home-smart-content"></div><button class="organizer-inline-link" type="button" onclick="showView('stats')">Ver evolução →</button></div>
     </div>
     <div class="organizer-grid three">
       <div class="card organizer-home-shortcut"><div class="organizer-home-shortcut-icon">◷</div><div class="organizer-home-shortcut-title">Estudos</div><div class="organizer-home-shortcut-copy">Acesse matérias, cronograma e progresso sem perder o fio do que está estudando.</div><button class="organizer-inline-link" onclick="showView('dashboard')">Ver visão geral →</button></div>
@@ -550,6 +557,7 @@ body.dark .agenda-item.task-priority-high .task-priority-badge{background:#41351
       <span class="ai-badge">▥ Seu histórico de estudo</span>
     </div>
     <div class="metrics" id="statsMetrics"></div>
+    <div class="card section-card" style="margin-bottom:18px"><div class="head"><div><div class="section-title">Indicadores de aprendizagem</div><div class="desc">Consistência de estudo, desempenho em questões e pontos que ainda precisam de revisão.</div></div></div><div id="statsLearningSummary"></div></div>
     <div class="stats-grid">
       <div class="card section-card">
         <div class="head"><div class="section-title">Horas estudadas — últimos 14 dias</div></div>
@@ -572,7 +580,7 @@ body.dark .agenda-item.task-priority-high .task-priority-badge{background:#41351
     </div>
   </section>
   <section class="view" id="view-tasks">
-    <div class="page-head"><div><div class="section-title" style="font-size:23px">Tarefas</div><div class="desc">Pendências com prazo e prioridade, separadas do estudo em si.</div></div><button class="btn btn-secondary" onclick="showView('capture')">Captura rápida ↗</button></div>
+    <div class="page-head"><div><div class="section-title" style="font-size:23px">Tarefas</div><div class="desc">Pendências com prazo e prioridade, separadas do estudo em si. Tarefas com prazo aparecem automaticamente na Agenda.</div></div><button class="btn btn-secondary" onclick="showView('capture')">Captura rápida ↗</button></div>
     <div class="card organizer-card" style="margin-bottom:16px"><div class="organizer-card-title" id="taskFormTitle">Nova tarefa</div>
       <div class="organizer-form">
         <div class="field wide"><label for="personalTaskTitle">Tarefa</label><input id="personalTaskTitle" placeholder="O que precisa ser feito?"></div>
@@ -635,7 +643,12 @@ body.dark .agenda-item.task-priority-high .task-priority-badge{background:#41351
     </div>
     <div class="reading-grid" id="readingGrid"></div>
   </section>
-  <section class="view" id="view-reviews"><div class="card section-card"><div class="section-title">Revisões</div><div class="empty">A estrutura está preparada. Vamos transformar esta tela em revisão espaçada na próxima etapa.</div></div></section>
+  <section class="view" id="view-reviews">
+    <div class="page-head"><div><div class="section-title" style="font-size:23px">Revisões</div><div class="desc">Uma fila única para retomar questões erradas e flashcards vencidos, sem depender da memória.</div></div><button class="btn btn-secondary" type="button" onclick="showView('questions')">Abrir banco de questões →</button></div>
+    <div id="reviewMetrics" class="metrics"></div>
+    <div class="card section-card" style="margin-bottom:16px"><div class="head"><div><div class="section-title">Questões erradas para revisar</div><div class="desc">Ao revisar, registre seu resultado e a próxima data será calculada automaticamente.</div></div></div><div id="reviewWrongQuestions"></div></div>
+    <div class="card section-card"><div class="head"><div><div class="section-title">Flashcards vencidos</div><div class="desc">Os cartões mantêm seu próprio algoritmo de repetição espaçada.</div></div><button class="btn btn-primary" type="button" onclick="showView('flashcards');startFlashcardReview()">Revisar flashcards</button></div><div id="reviewFlashcards"></div></div>
+  </section>
   <section class="view" id="view-flashcards">
   <div class="card section-card">
     <div class="head"><div><div class="section-title">Flashcards e revisão espaçada</div><div class="desc">Crie cartões manualmente e revise no momento certo, conforme seu desempenho.</div></div><span class="status" id="flashcardDueCount">0 para hoje</span></div>
@@ -675,6 +688,22 @@ body.dark .agenda-item.task-priority-high .task-priority-badge{background:#41351
       </div>
       <div class="toolbar" style="margin-top:14px"><button class="btn btn-primary" onclick="saveTopicPerformance()">Salvar desempenho</button><button class="btn btn-secondary" onclick="clearPerformanceForm()">Limpar campos</button></div>
       <div id="performanceMessage" class="desc" style="margin-top:10px"></div>
+    </div>
+    <div class="card section-card" style="margin-bottom:18px"><div class="section-title">Banco de questões erradas</div><div class="desc" style="margin-bottom:14px">Guarde o link da questão que você errou, classifique a causa e programe a revisão. As questões vencidas aparecem em Revisões e na sua página inicial.</div>
+      <div class="form-grid">
+        <div class="field"><label for="wrongQuestionTitle">Identificação da questão</label><input id="wrongQuestionTitle" placeholder="Ex.: Poder de polícia — questão 12"></div>
+        <div class="field"><label for="wrongQuestionUrl">Link da questão</label><input id="wrongQuestionUrl" type="url" placeholder="https://..." required></div>
+        <div class="field"><label for="wrongQuestionSubject">Matéria</label><select id="wrongQuestionSubject" class="select" onchange="updateWrongQuestionTopics()"></select></div>
+        <div class="field"><label for="wrongQuestionTopic">Assunto / tópico</label><select id="wrongQuestionTopic" class="select"></select></div>
+        <div class="field"><label for="wrongQuestionReason">Por que errei?</label><select id="wrongQuestionReason" class="select"><option value="content">Não sabia o conteúdo</option><option value="interpretation">Interpretação do enunciado</option><option value="attention">Falta de atenção</option><option value="confusion">Confundi conceitos</option><option value="law">Não lembrava a lei / precedente</option><option value="guess">Chute / insegurança</option><option value="time">Falta de tempo</option><option value="other">Outro motivo</option></select></div>
+        <div class="field"><label for="wrongQuestionDue">Revisar a partir de</label><input id="wrongQuestionDue" type="date"></div>
+        <div class="field" style="grid-column:1/-1"><label for="wrongQuestionNotes">O que preciso corrigir?</label><textarea id="wrongQuestionNotes" rows="2" placeholder="Registre o fundamento correto, a pegadinha ou a lacuna que levou ao erro."></textarea></div>
+      </div>
+      <div class="toolbar" style="margin-top:12px"><button class="btn btn-primary" id="wrongQuestionSaveBtn" type="button" onclick="saveWrongQuestion()">Guardar questão errada</button><button class="btn btn-secondary" id="wrongQuestionCancelBtn" type="button" onclick="cancelWrongQuestionEdit()" style="display:none">Cancelar edição</button></div>
+      <div class="divider" style="border-top:1px solid var(--line);margin:20px 0"></div>
+      <div class="head"><div><div class="section-title">Questões salvas</div><div class="desc">Filtre e revise seu histórico de erros.</div></div><span class="status" id="wrongQuestionCount">0 questões</span></div>
+      <div class="form-grid" style="margin:12px 0"><div class="field"><label for="wrongQuestionFilterSubject">Filtrar por matéria</label><select id="wrongQuestionFilterSubject" class="select" onchange="updateWrongQuestionFilterTopics()"><option value="">Todas as matérias</option></select></div><div class="field"><label for="wrongQuestionFilterTopic">Filtrar por tópico</label><select id="wrongQuestionFilterTopic" class="select" onchange="renderWrongQuestionBank()"><option value="">Todos os tópicos</option></select></div><div class="field"><label for="wrongQuestionSearch">Buscar</label><input id="wrongQuestionSearch" class="search" style="width:100%" placeholder="Questão, assunto, motivo..." oninput="renderWrongQuestionBank()"></div></div>
+      <div id="wrongQuestionList"></div>
     </div>
     <div class="card section-card"><div class="section-title">Desempenho por assunto</div><div id="performanceOverview"></div></div>
   </section>
@@ -717,7 +746,8 @@ body.dark .agenda-item.task-priority-high .task-priority-badge{background:#41351
       <div class="organizer-form">
         <div class="field"><label for="notebookEntryTitle">Título</label><input id="notebookEntryTitle" placeholder="Qual é a ideia central?"></div>
         <div class="field"><label for="notebookEntryType">Tipo de registro</label><select id="notebookEntryType" class="select"><option value="knowledge">Conhecimento</option><option value="idea">Ideia</option><option value="quote">Citação</option><option value="journal">Journal / reflexão</option><option value="reading">Nota de leitura</option></select></div>
-        <div class="field"><label for="notebookEntrySubject">Matéria / assunto (opcional)</label><input id="notebookEntrySubject" placeholder="Ex.: Direito Administrativo"></div>
+        <div class="field"><label for="notebookEntrySubject">Matéria (opcional)</label><select id="notebookEntrySubject" class="select" onchange="updateNotebookTopics()"><option value="">Sem matéria vinculada</option></select></div>
+        <div class="field"><label for="notebookEntryTopic">Assunto / tópico (opcional)</label><select id="notebookEntryTopic" class="select"><option value="">Sem tópico vinculado</option></select></div>
         <div class="field"><label for="notebookEntrySource">Fonte / página (opcional)</label><input id="notebookEntrySource" placeholder="Ex.: livro, autor, p. 42"></div>
         <div class="field wide"><label for="notebookEntryContent">Sua anotação</label><textarea id="notebookEntryContent" placeholder="Registre com suas palavras o que vale guardar..."></textarea></div>
       </div>
@@ -734,7 +764,7 @@ body.dark .agenda-item.task-priority-high .task-priority-badge{background:#41351
 
     <div class="card settings-group" style="margin-bottom:18px">
   <div class="section-title">Backup e segurança dos dados</div>
-  <div class="desc" style="margin-bottom:14px">Guarde uma cópia dos seus estudos e restaure-a quando precisar. O arquivo fica sob seu controle.</div>
+  <div class="desc" style="margin-bottom:14px">O backup inclui os dados locais do Study — matérias, sessões, tarefas, agenda, caderno, flashcards, questões erradas, revisões, playlists e preferências. Exporte regularmente e guarde uma cópia fora deste navegador; os dados locais não sincronizam sozinhos entre dispositivos.</div>
   <div class="settings-row"><div><div class="settings-label">Abrir Google Drive</div><div class="settings-help">Acesse seu Drive para localizar o arquivo Study-backup.json e conferir seus backups.</div></div><a class="btn btn-secondary" href="https://drive.google.com/drive/u/0/" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none">Abrir Google Drive ↗</a><span></span></div>
   <div class="settings-row">
     <div><div class="settings-label">Exportar backup</div><div class="settings-help">Baixa um arquivo JSON com matérias, progresso, histórico, agenda, leituras e preferências.</div></div>
@@ -1033,7 +1063,8 @@ function renderDashboard(){
   renderGamification();
   const st=totalStats();
   document.getElementById('dashProgress').textContent=st.pct+'%';
-  document.getElementById('dashReviews').textContent='0';
+  const dueReviewTotal=getWrongQuestions().filter(q=>!q.dueDate||q.dueDate<=localDateKey(new Date())).length+getFlashcards().filter(c=>!c.dueDate||c.dueDate<=localDateKey(new Date())).length;
+  document.getElementById('dashReviews').textContent=String(dueReviewTotal);
   const ds=document.getElementById('dashboardSubjects');
   ds.innerHTML=subjects.length?subjects.map(s=>{
     const x=subjectStats(s);
@@ -1045,7 +1076,7 @@ function renderDashboard(){
   }).join(''):`<div class="empty">Nenhuma matéria cadastrada.</div>`;
 
   const rev=document.getElementById('dashboardReviews');
-  rev.innerHTML=`<div class="review"><span class="badge">Em breve</span><div class="review-title">Revisão espaçada</div><div class="review-sub">Na próxima etapa, o sistema poderá gerar revisões automaticamente.</div></div>`;
+  rev.innerHTML='<div class="review"><span class="badge">'+dueReviewTotal+' pendente'+(dueReviewTotal===1?'':'s')+'</span><div class="review-title">Revisões de hoje</div><div class="review-sub">'+(dueReviewTotal?'Questões erradas e flashcards aguardam revisão.':'Nenhuma revisão vencida no momento.')+'</div><button class="link-btn" type="button" onclick="showView(\'reviews\')">Abrir fila de revisões →</button></div>';
 }
 
 function renderSubjectsPage(){
@@ -1175,6 +1206,85 @@ function renderPerformanceOverview(){
 }
 
 /* FLASHCARDS — criação manual e repetição espaçada */
+const WRONG_QUESTIONS_KEY='study_wrong_questions_v1';
+let editingWrongQuestionId=null;
+function getWrongQuestions(){try{const x=JSON.parse(localStorage.getItem(WRONG_QUESTIONS_KEY)||'[]');return Array.isArray(x)?x:[]}catch(e){return[]}}
+function saveWrongQuestions(items){localStorage.setItem(WRONG_QUESTIONS_KEY,JSON.stringify(items))}
+function wrongQuestionToday(){return localDateKey(new Date())}
+function wrongQuestionReasonLabel(reason){return({content:'Conteúdo não dominado',interpretation:'Interpretação do enunciado',attention:'Falta de atenção',confusion:'Confusão entre conceitos',law:'Lei ou precedente',guess:'Chute / insegurança',time:'Falta de tempo',other:'Outro motivo'})[reason]||'Outro motivo'}
+function fillSubjectOptions(id,allLabel){
+ const el=document.getElementById(id);if(!el)return;const prev=el.value;
+ el.innerHTML=(allLabel?'<option value="">'+escapeHtml(allLabel)+'</option>':'<option value="">Sem matéria vinculada</option>')+subjects.map(x=>'<option value="'+escapeHtml(String(x.id))+'">'+escapeHtml(x.name)+'</option>').join('');
+ if([...el.options].some(o=>o.value===prev))el.value=prev;
+}
+function fillTopicOptions(id,subjectId,firstLabel,selected=''){
+ const el=document.getElementById(id);if(!el)return;const sub=subjects.find(x=>String(x.id)===String(subjectId));
+ el.innerHTML='<option value="">'+escapeHtml(firstLabel)+'</option>'+(sub?.topics||[]).map(t=>'<option value="'+escapeHtml(t.name)+'">'+escapeHtml(t.name)+'</option>').join('');
+ if([...el.options].some(o=>o.value===selected))el.value=selected;
+}
+function renderWrongQuestionOptions(){
+ const oldSubject=document.getElementById('wrongQuestionSubject')?.value||'';
+ fillSubjectOptions('wrongQuestionSubject','Selecione uma matéria (opcional)');fillSubjectOptions('wrongQuestionFilterSubject','Todas as matérias');
+ if(subjects.some(x=>String(x.id)===String(oldSubject)))document.getElementById('wrongQuestionSubject').value=oldSubject;
+ updateWrongQuestionTopics();updateWrongQuestionFilterTopics();const due=document.getElementById('wrongQuestionDue');if(due&&!due.value)due.value=wrongQuestionToday();
+}
+function updateWrongQuestionTopics(){const sid=document.getElementById('wrongQuestionSubject')?.value||'';fillTopicOptions('wrongQuestionTopic',sid,'Sem tópico vinculado',document.getElementById('wrongQuestionTopic')?.value||'')}
+function updateWrongQuestionFilterTopics(){const sid=document.getElementById('wrongQuestionFilterSubject')?.value||'';fillTopicOptions('wrongQuestionFilterTopic',sid,'Todos os tópicos',document.getElementById('wrongQuestionFilterTopic')?.value||'');renderWrongQuestionBank()}
+function saveWrongQuestion(){
+ const url=(document.getElementById('wrongQuestionUrl')?.value||'').trim();let parsed;try{parsed=new URL(url)}catch(e){toast('Cole um link válido da questão.');document.getElementById('wrongQuestionUrl')?.focus();return}
+ if(!['http:','https:'].includes(parsed.protocol)){toast('O link deve começar com http:// ou https://.');return}
+ const subjectId=document.getElementById('wrongQuestionSubject')?.value||'',subject=subjects.find(x=>String(x.id)===String(subjectId));
+ const title=(document.getElementById('wrongQuestionTitle')?.value||'').trim()||'Questão em '+parsed.hostname,topicName=document.getElementById('wrongQuestionTopic')?.value||'';
+ const data={title,url,subjectId,subjectName:subject?.name||'',topicName,reason:document.getElementById('wrongQuestionReason')?.value||'other',notes:(document.getElementById('wrongQuestionNotes')?.value||'').trim(),dueDate:document.getElementById('wrongQuestionDue')?.value||wrongQuestionToday(),updatedAt:new Date().toISOString()};
+ const items=getWrongQuestions(),wasEditing=!!editingWrongQuestionId;
+ if(wasEditing){const q=items.find(x=>String(x.id)===String(editingWrongQuestionId));if(q)Object.assign(q,data)}
+ else items.unshift({id:uid(),...data,createdAt:new Date().toISOString(),interval:0,repetitions:0,lapses:0,lastReviewed:null,history:[]});
+ saveWrongQuestions(items);cancelWrongQuestionEdit();renderWrongQuestionBank();renderReviews();renderDashboard();renderHome();renderStats();toast(wasEditing?'Questão atualizada.':'Questão adicionada ao banco de erros.');
+}
+function editWrongQuestion(id){
+ const q=getWrongQuestions().find(x=>String(x.id)===String(id));if(!q)return;editingWrongQuestionId=String(id);
+ const set=(id,value)=>{const el=document.getElementById(id);if(el)el.value=value||''};
+ set('wrongQuestionTitle',q.title);set('wrongQuestionUrl',q.url);set('wrongQuestionSubject',q.subjectId);updateWrongQuestionTopics();set('wrongQuestionTopic',q.topicName);set('wrongQuestionReason',q.reason);set('wrongQuestionDue',q.dueDate);set('wrongQuestionNotes',q.notes);
+ document.getElementById('wrongQuestionSaveBtn').textContent='Salvar alterações';document.getElementById('wrongQuestionCancelBtn').style.display='';document.getElementById('wrongQuestionTitle')?.focus();
+}
+function cancelWrongQuestionEdit(){
+ editingWrongQuestionId=null;['wrongQuestionTitle','wrongQuestionUrl','wrongQuestionNotes'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
+ const reason=document.getElementById('wrongQuestionReason');if(reason)reason.value='content';const due=document.getElementById('wrongQuestionDue');if(due)due.value=wrongQuestionToday();
+ const subject=document.getElementById('wrongQuestionSubject');if(subject)subject.value='';updateWrongQuestionTopics();
+ const save=document.getElementById('wrongQuestionSaveBtn');if(save)save.textContent='Guardar questão errada';const cancel=document.getElementById('wrongQuestionCancelBtn');if(cancel)cancel.style.display='none';
+}
+function deleteWrongQuestion(id){if(!confirm('Excluir esta questão do banco de erros?'))return;saveWrongQuestions(getWrongQuestions().filter(q=>String(q.id)!==String(id)));renderWrongQuestionBank();renderReviews();renderDashboard();renderHome();renderStats();toast('Questão removida do banco.')}
+function gradeWrongQuestion(id,rating){
+ const items=getWrongQuestions(),q=items.find(x=>String(x.id)===String(id));if(!q)return;
+ const days=rating===0?1:rating===1?3:rating===2?7:14,next=new Date();next.setDate(next.getDate()+days);q.dueDate=localDateKey(next);q.interval=days;q.lastReviewed=wrongQuestionToday();
+ q.repetitions=Number(q.repetitions||0)+(rating===0?0:1);if(rating===0)q.lapses=Number(q.lapses||0)+1;
+ q.lastRating=rating;q.history=Array.isArray(q.history)?q.history:[];q.history.push({date:wrongQuestionToday(),rating,days});q.updatedAt=new Date().toISOString();
+ saveWrongQuestions(items);renderWrongQuestionBank();renderReviews();renderDashboard();renderHome();renderStats();toast(rating===0?'Registrado: revisar novamente amanhã.':'Próxima revisão programada para '+next.toLocaleDateString('pt-BR')+'.');
+}
+function dueWrongQuestions(){const today=wrongQuestionToday();return getWrongQuestions().filter(q=>!q.dueDate||q.dueDate<=today).sort((a,b)=>(a.dueDate||'').localeCompare(b.dueDate||''))}
+function renderWrongQuestionBank(){
+ const list=document.getElementById('wrongQuestionList');if(!list)return;
+ const all=getWrongQuestions(),fs=document.getElementById('wrongQuestionFilterSubject')?.value||'',ft=document.getElementById('wrongQuestionFilterTopic')?.value||'',search=(document.getElementById('wrongQuestionSearch')?.value||'').trim().toLowerCase();
+ const count=document.getElementById('wrongQuestionCount');if(count)count.textContent=all.length+' questão'+(all.length===1?'':'ões');
+ const items=all.filter(q=>(!fs||String(q.subjectId)===String(fs))&&(!ft||q.topicName===ft)&&(!search||[q.title,q.url,q.subjectName,q.topicName,q.notes,wrongQuestionReasonLabel(q.reason)].some(v=>String(v||'').toLowerCase().includes(search)))).sort((a,b)=>(a.dueDate||'9999-12-31').localeCompare(b.dueDate||'9999-12-31'));
+ if(!items.length){list.innerHTML='<div class="organizer-empty">'+(all.length?'Nenhuma questão corresponde a esses filtros.':'Seu banco ainda está vazio. Adicione o link de uma questão que você errou para programar a revisão.')+'</div>';return}
+ list.innerHTML=items.map(q=>{
+  const due=!q.dueDate||q.dueDate<=wrongQuestionToday(),date=q.dueDate?new Date(q.dueDate+'T12:00:00').toLocaleDateString('pt-BR'):'Hoje';
+  return '<article class="wrong-question-card"><div class="wrong-question-head"><div style="min-width:0;flex:1"><div class="wrong-question-title">'+escapeHtml(q.title||'Questão sem título')+'</div><div class="wrong-question-meta">'+escapeHtml(q.subjectName||'Sem matéria')+(q.topicName?' · '+escapeHtml(q.topicName):'')+' · '+escapeHtml(wrongQuestionReasonLabel(q.reason))+'</div></div><span class="review-due-label '+(due?'overdue':'')+'">'+(due?'Revisar agora':'Revisar em '+date)+'</span></div>'+(q.notes?'<div class="wrong-question-notes">'+escapeHtml(q.notes)+'</div>':'')+'<div class="wrong-question-actions"><a class="small-btn" href="'+escapeHtml(q.url)+'" target="_blank" rel="noopener noreferrer">Abrir questão ↗</a><button class="small-btn" type="button" onclick="editWrongQuestion(\''+escapeHtml(String(q.id))+'\')">Editar</button><button class="small-btn" type="button" onclick="deleteWrongQuestion(\''+escapeHtml(String(q.id))+'\')">Excluir</button></div></article>';
+ }).join('');
+}
+function showWrongQuestionsForTopic(subjectId,encodedTopic){const topic=JSON.parse(decodeURIComponent(encodedTopic));showView('questions');const f=document.getElementById('wrongQuestionFilterSubject');if(f)f.value=String(subjectId);updateWrongQuestionFilterTopics();const t=document.getElementById('wrongQuestionFilterTopic');if(t)t.value=topic;renderWrongQuestionBank()}
+function showNotebookForTopic(subjectId,encodedTopic){const topic=JSON.parse(decodeURIComponent(encodedTopic));showView('notes');const search=document.getElementById('notebookSearch');if(search)search.value=topic;renderNotebook();toast('Busca do caderno filtrada pelo tópico selecionado.')}
+function renderReviews(){
+ const summary=document.getElementById('reviewMetrics');if(!summary)return;
+ const today=wrongQuestionToday(),dueCards=typeof getFlashcards==='function'?getFlashcards().filter(c=>!c.dueDate||c.dueDate<=today).length:0,dueQuestions=dueWrongQuestions().length,totalQuestions=getWrongQuestions().length,total=dueCards+dueQuestions;
+ summary.innerHTML='<div class="card metric"><div class="metric-label">Revisões pendentes</div><div class="metric-value">'+total+'</div><div class="metric-detail">Flashcards e questões erradas</div></div><div class="card metric"><div class="metric-label">Questões para hoje</div><div class="metric-value">'+dueQuestions+'</div><div class="metric-detail">'+totalQuestions+' cadastradas no banco</div></div><div class="card metric"><div class="metric-label">Flashcards para hoje</div><div class="metric-value">'+dueCards+'</div><div class="metric-detail">Repetição espaçada</div></div><div class="card metric"><div class="metric-label">Status</div><div class="metric-value">'+(total?'Pendente':'Em dia')+'</div><div class="metric-detail">'+(total?'Há conteúdo aguardando revisão':'Nenhuma revisão vencida')+'</div></div>';
+ const qList=document.getElementById('reviewWrongQuestions'),due=dueWrongQuestions();
+ if(qList)qList.innerHTML=due.length?due.map(q=>'<article class="wrong-question-card"><div class="wrong-question-title">'+escapeHtml(q.title||'Questão sem título')+'</div><div class="wrong-question-meta">'+escapeHtml(q.subjectName||'Sem matéria')+(q.topicName?' · '+escapeHtml(q.topicName):'')+' · '+escapeHtml(wrongQuestionReasonLabel(q.reason))+'</div>'+(q.notes?'<div class="wrong-question-notes">'+escapeHtml(q.notes)+'</div>':'')+'<div class="wrong-question-actions"><a class="small-btn" href="'+escapeHtml(q.url)+'" target="_blank" rel="noopener noreferrer">Abrir questão ↗</a><button class="small-btn" onclick="gradeWrongQuestion(\''+escapeHtml(String(q.id))+'\',0)">Errei novamente · 1 dia</button><button class="small-btn" onclick="gradeWrongQuestion(\''+escapeHtml(String(q.id))+'\',1)">Difícil · 3 dias</button><button class="small-btn" onclick="gradeWrongQuestion(\''+escapeHtml(String(q.id))+'\',2)">Acertei · 7 dias</button><button class="small-btn" onclick="gradeWrongQuestion(\''+escapeHtml(String(q.id))+'\',3)">Fácil · 14 dias</button></div></article>').join(''):'<div class="organizer-empty">Nenhuma questão errada vencida. As questões salvas reaparecerão aqui na data programada.</div>';
+ const fList=document.getElementById('reviewFlashcards');if(fList)fList.innerHTML=dueCards?'<div class="organizer-item"><div class="organizer-item-title">'+dueCards+' flashcard'+(dueCards===1?'':'s')+' aguardando revisão.</div><div class="organizer-item-meta">Abra a sessão para responder e registrar como foi a lembrança.</div></div>':'<div class="organizer-empty">Nenhum flashcard vencido para hoje.</div>';
+}
+function renderNotebookSubjects(){fillSubjectOptions('notebookEntrySubject','Sem matéria vinculada');updateNotebookTopics()}
+function updateNotebookTopics(selected=''){const sid=document.getElementById('notebookEntrySubject')?.value||'';fillTopicOptions('notebookEntryTopic',sid,'Sem tópico vinculado',selected||document.getElementById('notebookEntryTopic')?.value||'')}
 const FLASHCARDS_KEY='study_flashcards_v1';
 let flashcardEditingId=null, flashcardReviewQueue=[], flashcardReviewIndex=0, flashcardRevealed=false;
 function getFlashcards(){try{const v=JSON.parse(localStorage.getItem(FLASHCARDS_KEY)||'[]');return Array.isArray(v)?v:[]}catch(e){return[]}}
@@ -1369,26 +1479,29 @@ function deleteQuickCapture(id){if(!confirm('Excluir este item da captura rápid
 function notebookTypeLabel(t){return({knowledge:'Conhecimento',idea:'Ideia',quote:'Citação',journal:'Journal / reflexão',reading:'Nota de leitura'})[t]||'Anotação'}
 function saveNotebookEntry(){
  const title=(document.getElementById('notebookEntryTitle')?.value||'').trim(),content=(document.getElementById('notebookEntryContent')?.value||'').trim();if(!title&&!content){alert('Escreva um título ou conteúdo para salvar.');return}
- const entries=getNotebookEntries(),entry={title:title||'Anotação sem título',type:document.getElementById('notebookEntryType')?.value||'knowledge',subject:(document.getElementById('notebookEntrySubject')?.value||'').trim(),source:(document.getElementById('notebookEntrySource')?.value||'').trim(),content,updatedAt:new Date().toISOString()};
+ const subjectId=document.getElementById('notebookEntrySubject')?.value||'',subjectObj=subjects.find(x=>String(x.id)===String(subjectId)),topicName=document.getElementById('notebookEntryTopic')?.value||'';
+ const entries=getNotebookEntries(),entry={title:title||'Anotação sem título',type:document.getElementById('notebookEntryType')?.value||'knowledge',subjectId,subject:subjectObj?.name||'',topicName,source:(document.getElementById('notebookEntrySource')?.value||'').trim(),content,updatedAt:new Date().toISOString()};
  if(editingNotebookEntryId){const old=entries.find(e=>String(e.id)===String(editingNotebookEntryId));if(old)Object.assign(old,entry)}
  else entries.unshift({...entry,id:organizerId(),createdAt:new Date().toISOString()});
  saveNotebookEntries(entries);cancelNotebookEdit();renderNotebook();renderMyDay();toast('Registro salvo no caderno.');
 }
 function editNotebookEntry(id){
  const e=getNotebookEntries().find(x=>String(x.id)===String(id));if(!e)return;editingNotebookEntryId=String(id);
- document.getElementById('notebookEntryTitle').value=e.title||'';document.getElementById('notebookEntryType').value=e.type||'knowledge';document.getElementById('notebookEntrySubject').value=e.subject||'';document.getElementById('notebookEntrySource').value=e.source||'';document.getElementById('notebookEntryContent').value=e.content||'';
+ document.getElementById('notebookEntryTitle').value=e.title||'';document.getElementById('notebookEntryType').value=e.type||'knowledge';
+ const sub=document.getElementById('notebookEntrySubject');if(sub){const id=e.subjectId||subjects.find(x=>x.name===e.subject)?.id||'';sub.value=String(id);updateNotebookTopics(e.topicName||'')}
+ document.getElementById('notebookEntrySource').value=e.source||'';document.getElementById('notebookEntryContent').value=e.content||'';
  document.getElementById('notebookFormTitle').textContent='Editar registro';document.getElementById('notebookSaveBtn').textContent='Salvar alterações';document.getElementById('notebookCancelEdit').style.display='';window.scrollTo({top:0,behavior:'smooth'});
 }
 function cancelNotebookEdit(){
- editingNotebookEntryId=null;['notebookEntryTitle','notebookEntrySubject','notebookEntrySource','notebookEntryContent'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
+ editingNotebookEntryId=null;['notebookEntryTitle','notebookEntrySubject','notebookEntryTopic','notebookEntrySource','notebookEntryContent'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});updateNotebookTopics();
  const type=document.getElementById('notebookEntryType');if(type)type.value='knowledge';const title=document.getElementById('notebookFormTitle');if(title)title.textContent='Nova anotação';const save=document.getElementById('notebookSaveBtn');if(save)save.textContent='Salvar no caderno';const cancel=document.getElementById('notebookCancelEdit');if(cancel)cancel.style.display='none';
 }
 function deleteNotebookEntry(id){if(!confirm('Excluir este registro do caderno?'))return;saveNotebookEntries(getNotebookEntries().filter(e=>String(e.id)!==String(id)));renderNotebook();renderMyDay();toast('Registro removido.')}
 function renderNotebook(){
  const list=document.getElementById('notebookList');if(!list)return;const q=(document.getElementById('notebookSearch')?.value||'').trim().toLowerCase();
- const entries=getNotebookEntries().filter(e=>!q||[e.title,e.subject,e.source,e.content,notebookTypeLabel(e.type)].some(v=>String(v||'').toLowerCase().includes(q)));
+ const entries=getNotebookEntries().filter(e=>!q||[e.title,e.subject,e.topicName,e.source,e.content,notebookTypeLabel(e.type)].some(v=>String(v||'').toLowerCase().includes(q)));
  if(!entries.length){list.innerHTML='<div class="organizer-empty">Ainda não há registros. Comece com uma ideia, uma passagem de leitura ou uma reflexão curta.</div>';return}
- list.innerHTML=entries.map(e=>'<article class="organizer-notebook-entry"><div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap"><div style="min-width:0;flex:1"><div class="organizer-item-title">'+escapeHtml(e.title||'Anotação sem título')+'</div><div class="organizer-item-meta">'+escapeHtml(notebookTypeLabel(e.type))+(e.subject?' · '+escapeHtml(e.subject):'')+(e.source?' · '+escapeHtml(e.source):'')+' · '+new Date(e.createdAt||e.updatedAt||Date.now()).toLocaleDateString('pt-BR')+'</div></div><div class="organizer-actions"><button class="small-btn" onclick="editNotebookEntry(\''+escapeHtml(String(e.id))+'\')">Editar</button><button class="small-btn" onclick="deleteNotebookEntry(\''+escapeHtml(String(e.id))+'\')">Excluir</button></div></div>'+(e.content?'<div class="organizer-notebook-content">'+escapeHtml(e.content)+'</div>':'')+'</article>').join('');
+ list.innerHTML=entries.map(e=>'<article class="organizer-notebook-entry"><div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap"><div style="min-width:0;flex:1"><div class="organizer-item-title">'+escapeHtml(e.title||'Anotação sem título')+'</div><div class="organizer-item-meta">'+escapeHtml(notebookTypeLabel(e.type))+(e.subject?' · '+escapeHtml(e.subject):'')+(e.topicName?' · '+escapeHtml(e.topicName):'')+(e.source?' · '+escapeHtml(e.source):'')+' · '+new Date(e.createdAt||e.updatedAt||Date.now()).toLocaleDateString('pt-BR')+'</div></div><div class="organizer-actions"><button class="small-btn" onclick="editNotebookEntry(\''+escapeHtml(String(e.id))+'\')">Editar</button><button class="small-btn" onclick="deleteNotebookEntry(\''+escapeHtml(String(e.id))+'\')">Excluir</button></div></div>'+(e.content?'<div class="organizer-notebook-content">'+escapeHtml(e.content)+'</div>':'')+'</article>').join('');
 }
 function addHabit(){
  const input=document.getElementById('newHabitName'),name=(input?.value||'').trim();if(!name){input?.focus();return}
@@ -1434,14 +1547,18 @@ function renderHomeQuickCaptures(){
  list.innerHTML=items.length?'<div class="organizer-list">'+items.map(x=>'<div class="organizer-item"><div class="organizer-item-title">'+escapeHtml(x.title||String(x.text||'').slice(0,75))+'</div><div class="organizer-item-meta">'+escapeHtml(quickKindLabel(x.kind))+' · '+new Date(x.createdAt).toLocaleDateString('pt-BR')+'</div><div class="organizer-actions"><select class="select" aria-label="Classificar captura" onchange="changeQuickCaptureKind(\''+escapeHtml(String(x.id))+'\',this.value)">'+quickCaptureTypeOptions(x.kind)+'</select><button class="small-btn" onclick="organizeQuickCapture(\''+escapeHtml(String(x.id))+'\')">Organizar</button></div></div>').join('')+'</div>':'<div class="organizer-empty">Suas capturas recentes aparecerão aqui para você classificá-las depois.</div>';
 }
 function renderHome(){
- const date=document.getElementById('homeDate');if(date)date.textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
+ const today=organizerToday(),date=document.getElementById('homeDate');if(date)date.textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
  const study=document.getElementById('homeStudyTime'),dash=document.getElementById('dashStudy');if(study)study.textContent=dash?.textContent||'0h 00';
- const tasks=document.getElementById('homeTaskCount');if(tasks)tasks.textContent=getPersonalTasks().filter(t=>!t.done).length;
+ const tasks=getPersonalTasks(),todayTasks=tasks.filter(t=>!taskDoneOn(t,today)&&(taskOccursOn(t,today)||(t.dueDate&&t.dueDate<today))).sort((a,b)=>({high:0,medium:1,low:2}[a.priority]??1)-({high:0,medium:1,low:2}[b.priority]??1)||(a.dueDate||'9999').localeCompare(b.dueDate||'9999')||(a.time||'').localeCompare(b.time||''));
+ const taskCount=document.getElementById('homeTaskCount');if(taskCount)taskCount.textContent=tasks.filter(t=>!t.done).length;
  const captures=document.getElementById('homeCaptureCount');if(captures)captures.textContent=getQuickCaptures().length;
- renderHomeQuickCaptures();
+ const next=document.getElementById('homeNextAction');if(next){const t=todayTasks[0];next.innerHTML=t?'<div class="home-smart-value">'+escapeHtml(t.title)+'</div><div class="home-smart-muted">'+(t.dueDate&&t.dueDate<today?'Atrasada · ':'')+escapeHtml(t.dueDate?taskDateLabel(t.dueDate):'Sem prazo')+(t.time?' · '+escapeHtml(t.time):'')+' · '+escapeHtml(taskPriorityLabel(t.priority))+'</div>':'<div class="home-smart-value">Tudo em dia</div><div class="home-smart-muted">Nenhuma tarefa pendente para hoje.</div>'}
+ const dueFlashcards=getFlashcards().filter(c=>!c.dueDate||c.dueDate<=today).length,dueQuestions=dueWrongQuestions().length,dueTotal=dueFlashcards+dueQuestions,reviewHome=document.getElementById('homeDueReviews');if(reviewHome)reviewHome.innerHTML='<div class="home-smart-value">'+dueTotal+' pendente'+(dueTotal===1?'':'s')+'</div><div class="home-smart-muted">'+dueQuestions+' questão(ões) errada(s) · '+dueFlashcards+' flashcard(s)</div>';
+ const log=getStudyLog(),todaySeconds=log.filter(x=>x.date===today).reduce((sum,x)=>sum+Number(x.seconds||0),0),goal=10800,pct=Math.min(100,Math.round(todaySeconds/goal*100)),goalEl=document.getElementById('homeGoalSummary');if(goalEl)goalEl.innerHTML='<div class="home-smart-value">'+formatHours(todaySeconds)+' / 3h</div><div class="home-smart-track"><div style="width:'+pct+'%"></div></div><div class="home-smart-muted">'+pct+'% da meta diária concluída</div>';
+ renderHomeQuickCaptures();renderReviews();
  const due=document.getElementById('personalTaskDue');if(due&&!due.value)due.value=organizerToday();
 }
-function renderAll(){renderFlashcardSubjects();renderFlashcards();renderDashboard();renderSubjectsPage();renderTimerSubjects();renderFeynmanSubjects();renderPerformanceSubjects();renderPerformanceOverview();renderTimer();renderPlan();renderStats();renderAgenda();renderReadings();renderGamification();renderPersonalTasks();renderQuickCaptures();renderNotebook();renderHabits();renderMyDay();renderHome();applyAppearance()}
+function renderAll(){renderFlashcardSubjects();renderFlashcards();renderWrongQuestionOptions();renderWrongQuestionBank();renderReviews();renderDashboard();renderSubjectsPage();renderTimerSubjects();renderFeynmanSubjects();renderPerformanceSubjects();renderPerformanceOverview();renderTimer();renderPlan();renderStats();renderAgenda();renderReadings();renderGamification();renderPersonalTasks();renderQuickCaptures();renderNotebookSubjects();renderNotebook();renderHabits();renderMyDay();renderHome();applyAppearance()}
 
 
 /* GAMIFICAÇÃO */
@@ -1522,6 +1639,7 @@ function renderStats(){
   renderRows(topicRows,'statsTopicChart');
   const history=document.getElementById('statsHistory');
   if(history)history.innerHTML=log.length?'<div class="stats-empty">Sessões registradas: <strong>'+log.length+'</strong><br>Dias com estudo: <strong>'+activeDays+'</strong><br>Tempo médio por sessão: <strong>'+formatShort(log.length?totalSec/log.length:0)+'</strong></div>':'<div class="stats-empty">Comece uma sessão no cronômetro para construir seu histórico.</div>';
+  const learning=document.getElementById('statsLearningSummary');if(learning){const perf=Object.values(getTopicPerformance()),qAll=getWrongQuestions(),qDue=dueWrongQuestions().length,totalQuestions=perf.reduce((n,x)=>n+Number(x.total||0),0),correctQuestions=perf.reduce((n,x)=>n+Number(x.correct||0),0),accuracy=totalQuestions?Math.round(correctQuestions/totalQuestions*100):null;learning.innerHTML='<div class="learning-summary-grid"><div class="learning-summary-item"><div class="learning-summary-label">Taxa de acerto registrada</div><div class="learning-summary-value">'+(accuracy===null?'—':accuracy+'%')+'</div><div class="learning-summary-note">'+totalQuestions+' questão(ões) contabilizadas</div></div><div class="learning-summary-item"><div class="learning-summary-label">Banco de erros</div><div class="learning-summary-value">'+qAll.length+'</div><div class="learning-summary-note">Questões erradas salvas</div></div><div class="learning-summary-item"><div class="learning-summary-label">Revisões vencidas</div><div class="learning-summary-value">'+(qDue+getFlashcards().filter(c=>!c.dueDate||c.dueDate<=today).length)+'</div><div class="learning-summary-note">Questões e flashcards</div></div><div class="learning-summary-item"><div class="learning-summary-label">Meta diária</div><div class="learning-summary-value">'+Math.min(100,Math.round(todaySec/10800*100))+'%</div><div class="learning-summary-note">'+formatHours(todaySec)+' de 3h registradas hoje</div></div></div>'}
 }
 
 
