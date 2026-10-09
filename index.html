@@ -381,7 +381,24 @@ body.dark .reading-card:hover{border-color:#3a4742}
       <button class="btn btn-secondary" onclick="resetAppearance()">Restaurar padrão</button>
     </div>
 
-    <div class="settings-shell">
+    <div class="card settings-group" style="margin-bottom:18px">
+  <div class="section-title">Backup e segurança dos dados</div>
+  <div class="desc" style="margin-bottom:14px">Guarde uma cópia dos seus estudos e restaure-a quando precisar. O arquivo fica sob seu controle.</div>
+  <div class="settings-row">
+    <div><div class="settings-label">Exportar backup</div><div class="settings-help">Baixa um arquivo JSON com matérias, progresso, histórico, agenda, leituras e preferências.</div></div>
+    <button class="btn btn-primary" type="button" onclick="exportStudyBackup()">Baixar backup</button><span></span>
+  </div>
+  <div class="settings-row">
+    <div><div class="settings-label">Restaurar backup</div><div class="settings-help">Selecione um arquivo de backup do Study. A restauração substitui os dados atuais do Study neste navegador.</div></div>
+    <div><input id="studyBackupFile" type="file" accept=".json,application/json" style="display:none" onchange="importStudyBackup(event)"><button class="btn btn-secondary" type="button" onclick="document.getElementById('studyBackupFile').click()">Selecionar arquivo</button></div><span></span>
+  </div>
+  <div class="settings-row">
+    <div><div class="settings-label">Google Drive</div><div class="settings-help">O salvamento automático no Drive exige autorizar sua conta Google. Por enquanto, baixe o backup e envie-o manualmente ao Drive.</div></div>
+    <button class="btn btn-secondary" type="button" onclick="exportStudyBackup()">Preparar arquivo</button><span></span>
+  </div>
+</div>
+
+<div class="settings-shell">
       <div>
         <div class="card settings-group">
           <div class="section-title">Aparência</div>
@@ -1411,6 +1428,52 @@ function resetTimer(){
 function toast(msg){
   const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');
   clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove('show'),2200);
+}
+
+const STUDY_BACKUP_VERSION=1;
+function exportStudyBackup(){
+  const data={app:'Study.',format:'study-backup',version:STUDY_BACKUP_VERSION,createdAt:new Date().toISOString(),data:{}};
+  for(let i=0;i<localStorage.length;i++){
+    const key=localStorage.key(i);
+    if(key&&key.startsWith('study_'))data.data[key]=localStorage.getItem(key);
+  }
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;
+  a.download='backup-study-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+  toast('Backup baixado. Guarde uma cópia segura.');
+}
+async function importStudyBackup(event){
+  const input=event.target, file=input.files&&input.files[0];
+  if(!file)return;
+  try{
+    const raw=await file.text(), backup=JSON.parse(raw);
+    if(backup?.format!=='study-backup'||backup?.app!=='Study.'||!backup.data||typeof backup.data!=='object'||Array.isArray(backup.data)){
+      throw new Error('Esse arquivo não parece ser um backup válido do Study.');
+    }
+    const entries=Object.entries(backup.data);
+    if(!entries.length||entries.some(([key,value])=>!key.startsWith('study_')||typeof value!=='string')){
+      throw new Error('O arquivo de backup está incompleto ou contém dados inválidos.');
+    }
+    const date=backup.createdAt?new Date(backup.createdAt).toLocaleString('pt-BR'):'data desconhecida';
+    if(!confirm('Restaurar o backup criado em '+date+'? Os dados atuais do Study neste navegador serão substituídos. Recomendamos baixar um backup atual antes de continuar.'))return;
+    const current={app:'Study.',format:'study-backup',version:STUDY_BACKUP_VERSION,createdAt:new Date().toISOString(),data:{}};
+    for(let i=0;i<localStorage.length;i++){
+      const key=localStorage.key(i);
+      if(key&&key.startsWith('study_'))current.data[key]=localStorage.getItem(key);
+    }
+    const blob=new Blob([JSON.stringify(current,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob),a=document.createElement('a');
+    a.href=url;a.download='backup-study-antes-restauracao-'+new Date().toISOString().slice(0,10)+'.json';
+    document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+    Object.keys(localStorage).filter(key=>key.startsWith('study_')).forEach(key=>localStorage.removeItem(key));
+    entries.forEach(([key,value])=>localStorage.setItem(key,value));
+    alert('Backup restaurado. A página será recarregada para aplicar os dados.');
+    location.reload();
+  }catch(error){
+    alert(error?.message||'Não foi possível ler o arquivo de backup.');
+  }finally{input.value='';}
 }
 
 const APPEARANCE_KEY='study_appearance';
