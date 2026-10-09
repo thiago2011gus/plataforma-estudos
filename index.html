@@ -364,6 +364,7 @@ body.dark .priority-tag{background:#41351d!important;color:#f0cc78!important}
     </div>
     <div class="card organizer-card"><div class="organizer-card-title">Anotar sem interromper o ritmo</div><div class="organizer-card-sub">Escolha uma categoria agora ou ajuste depois na caixa de entrada.</div>
       <div class="organizer-capture-box"><select id="homeQuickCaptureKind" class="select" aria-label="Categoria da captura"><option value="task">Tarefa / pendência</option><option value="idea">Ideia</option><option value="reminder">Lembrete / compromisso</option><option value="knowledge">Conhecimento / leitura</option></select><textarea id="homeQuickCaptureText" placeholder="O que você precisa registrar?"></textarea><button class="btn btn-primary" onclick="saveHomeQuickCapture()">Guardar</button></div>
+      <div class="organizer-card-sub" style="margin-top:14px">Últimas capturas · altere a categoria e clique em Organizar para transformar em tarefa, anotação ou compromisso.</div><div id="homeQuickCaptureList"></div>
     </div>
   </section>
 
@@ -1380,11 +1381,17 @@ function renderMyDay(){
  const journal=document.getElementById('myDayJournalInput');if(journal){const e=getNotebookEntries().find(x=>x.type==='journal'&&x.dayKey===today);journal.value=e?.content||''}
 }
 
+function renderHomeQuickCaptures(){
+ const list=document.getElementById('homeQuickCaptureList');if(!list)return;
+ const items=getQuickCaptures().slice(0,3);
+ list.innerHTML=items.length?'<div class="organizer-list">'+items.map(x=>'<div class="organizer-item"><div class="organizer-item-title">'+escapeHtml(x.title||String(x.text||'').slice(0,75))+'</div><div class="organizer-item-meta">'+escapeHtml(quickKindLabel(x.kind))+' · '+new Date(x.createdAt).toLocaleDateString('pt-BR')+'</div><div class="organizer-actions"><select class="select" aria-label="Classificar captura" onchange="changeQuickCaptureKind(\''+escapeHtml(String(x.id))+'\',this.value)">'+quickCaptureTypeOptions(x.kind)+'</select><button class="small-btn" onclick="organizeQuickCapture(\''+escapeHtml(String(x.id))+'\')">Organizar</button></div></div>').join('')+'</div>':'<div class="organizer-empty">Suas capturas recentes aparecerão aqui para você classificá-las depois.</div>';
+}
 function renderHome(){
  const date=document.getElementById('homeDate');if(date)date.textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
  const study=document.getElementById('homeStudyTime'),dash=document.getElementById('dashStudy');if(study)study.textContent=dash?.textContent||'0h 00';
  const tasks=document.getElementById('homeTaskCount');if(tasks)tasks.textContent=getPersonalTasks().filter(t=>!t.done).length;
  const captures=document.getElementById('homeCaptureCount');if(captures)captures.textContent=getQuickCaptures().length;
+ renderHomeQuickCaptures();
  const due=document.getElementById('personalTaskDue');if(due&&!due.value)due.value=organizerToday();
 }
 function renderAll(){renderFlashcardSubjects();renderFlashcards();renderDashboard();renderSubjectsPage();renderTimerSubjects();renderFeynmanSubjects();renderPerformanceSubjects();renderPerformanceOverview();renderTimer();renderPlan();renderStats();renderAgenda();renderReadings();renderGamification();renderPersonalTasks();renderQuickCaptures();renderNotebook();renderHabits();renderMyDay();renderHome();applyAppearance()}
