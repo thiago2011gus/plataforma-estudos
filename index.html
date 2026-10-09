@@ -176,6 +176,10 @@ body.dark .reading-card:hover{border-color:#3a4742}
 .mentor-hero h2{font-size:30px;letter-spacing:-1px;margin:7px 0}.mentor-hero p{max-width:620px;margin:0;color:var(--muted);font-size:13px;line-height:1.6}.mentor-eyebrow{font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--accent)}.mentor-hero-mark{font-size:70px;color:var(--accent);opacity:.22;padding:0 14px}.mentor-layout{display:grid;grid-template-columns:minmax(260px,.82fr) minmax(0,1.35fr);gap:18px;align-items:start}.mentor-setup,.mentor-workspace{padding:22px;min-width:0}.mentor-section-heading{display:flex;gap:12px;align-items:flex-start;margin-bottom:22px}.mentor-section-heading h3{margin:1px 0 5px;font-size:16px}.mentor-section-heading p{margin:0;color:var(--muted);font-size:11px;line-height:1.5}.mentor-step{display:grid;place-items:center;flex:none;width:34px;height:34px;border-radius:11px;background:var(--accent-light);color:var(--accent);font-size:11px;font-weight:800}.mentor-setup .field{margin-bottom:17px}.mentor-setup .field label,.mentor-focus-field label{font-size:11px;font-weight:700;color:var(--text)}.mentor-setup .select,.mentor-setup textarea,.mentor-focus-field input{width:100%;margin-top:7px;min-height:42px;background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px 12px}.mentor-setup textarea{min-height:96px;resize:vertical}.mentor-help{font-size:10px;color:var(--muted);line-height:1.5;margin-top:7px}.mentor-optional{font-weight:400;color:var(--muted)}.mentor-source-note{display:flex;gap:10px;padding:13px;border-radius:12px;background:var(--surface2);font-size:10px;line-height:1.6;color:var(--muted)}.mentor-source-note strong{color:var(--text)}.mentor-modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:20px}.mentor-mode{display:flex;gap:10px;align-items:center;text-align:left;padding:13px 11px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text);transition:border-color .15s,background .15s,transform .15s;min-width:0}.mentor-mode:hover{transform:translateY(-1px);border-color:var(--accent)}.mentor-mode.active{border-color:var(--accent);background:var(--accent-light);box-shadow:inset 0 0 0 1px var(--accent)}.mentor-mode-icon{display:grid;place-items:center;flex:none;width:34px;height:34px;border-radius:10px;background:var(--surface2);color:var(--accent);font-size:18px}.mentor-mode strong,.mentor-mode small{display:block}.mentor-mode strong{font-size:12px}.mentor-mode small{font-size:9px;color:var(--muted);margin-top:4px;line-height:1.4}.mentor-focus-field{margin-bottom:16px}.mentor-focus-field input{box-sizing:border-box}.mentor-prepare-btn{width:100%;display:flex;justify-content:space-between;align-items:center;padding:13px 15px}.mentor-status{font-size:11px;color:var(--muted);margin:12px 0}.mentor-result{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}.mentor-empty{display:flex;flex-direction:column;align-items:center;text-align:center;padding:22px 12px;color:var(--muted)}.mentor-empty>span{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;background:var(--accent-light);color:var(--accent);font-size:21px;margin-bottom:12px}.mentor-empty strong{font-size:13px;color:var(--text)}.mentor-empty p{max-width:340px;font-size:11px;line-height:1.6}.mentor-prompt-preview{white-space:pre-wrap;overflow-wrap:anywhere;max-height:260px;overflow:auto;background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:10px;line-height:1.6}.mentor-actions{display:flex;gap:9px;margin-top:14px;flex-wrap:wrap}.mentor-footnote{font-size:10px;line-height:1.5;color:var(--muted);margin:12px 0 0}
 @media(max-width:1050px){.mentor-layout{grid-template-columns:1fr}.mentor-hero{padding:23px}.mentor-modes{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.mentor-modes{grid-template-columns:1fr}.mentor-hero-mark{font-size:45px;padding:0}.mentor-setup,.mentor-workspace{padding:16px}}
+
+.topic-materials{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.topic-material-link{display:inline-flex;align-items:center;gap:5px;max-width:100%;padding:5px 8px;border:1px solid var(--line);border-radius:8px;color:var(--accent);font-size:11px;line-height:1.35;text-decoration:none;background:var(--surface,transparent);overflow-wrap:anywhere}
+.topic-material-link:hover{border-color:var(--accent);text-decoration:underline}
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -429,9 +433,18 @@ body.dark .reading-card:hover{border-color:#3a4742}
       <div id="studyMaterialsStatus" class="desc" style="margin-top:12px">Configure o Client ID do Google em Configurações antes da primeira sincronização.</div>
     </div>
     <div class="card section-card">
-      <div class="head"><div><div class="section-title">PDFs encontrados</div><div class="desc">Associe cada arquivo à matéria e ao assunto para preparar o uso na Revisão Ativa.</div></div><span class="status" id="studyMaterialsCount">0 arquivos</span></div>
+      <div class="head"><div><div class="section-title">PDFs encontrados</div><div class="desc">Pesquise, filtre e organize seus PDFs por matéria e assunto. Associe cada arquivo para encontrá-lo diretamente na área de Matérias e no Mentor.</div></div><span class="status" id="studyMaterialsCount">0 arquivos</span></div>
+      <div class="form-grid" style="margin:16px 0 12px">
+        <div class="field"><label for="studyMaterialSearch">Buscar PDF</label><input id="studyMaterialSearch" type="search" placeholder="Nome do arquivo..." oninput="studyMaterialsPage=1;renderStudyDriveMaterials()"></div>
+        <div class="field"><label for="studyMaterialSubjectFilter">Matéria</label><select id="studyMaterialSubjectFilter" class="select" onchange="studyMaterialsPage=1;updateStudyMaterialTopicFilter();renderStudyDriveMaterials()"><option value="">Todas as matérias</option></select></div>
+        <div class="field"><label for="studyMaterialTopicFilter">Assunto</label><select id="studyMaterialTopicFilter" class="select" onchange="studyMaterialsPage=1;renderStudyDriveMaterials()"><option value="">Todos os assuntos</option></select></div>
+      </div>
       <div id="studyDriveMaterialsList"><div class="empty">Nenhuma sincronização realizada ainda.</div></div>
-      <div class="ai-placeholder" style="margin-top:16px">Nesta primeira etapa, o Study lista os PDFs da pasta e salva suas associações neste navegador. A leitura do conteúdo dos PDFs e o uso desse conteúdo pela IA serão a próxima etapa. Os arquivos continuam privados no seu Drive; não compartilhe a pasta publicamente.</div>
+      <div class="toolbar" style="margin-top:12px;justify-content:space-between;align-items:center">
+        <span class="desc" id="studyMaterialsPageInfo">0 arquivos</span>
+        <div style="display:flex;gap:8px"><button class="small-btn" id="studyMaterialsPrev" onclick="changeStudyMaterialsPage(-1)" disabled>← Anterior</button><button class="small-btn" id="studyMaterialsNext" onclick="changeStudyMaterialsPage(1)" disabled>Próxima →</button></div>
+      </div>
+      <div class="ai-placeholder" style="margin-top:16px">As associações ficam salvas neste navegador. O link abre o arquivo no Google Drive; se você tiver uma versão anotada, poderá anexá-la manualmente no ChatGPT. Os arquivos continuam privados no seu Drive; não compartilhe a pasta publicamente.</div>
     </div>
   </section>
   <section class="view" id="view-notes"><div class="card section-card"><div class="section-title">Anotações</div><div class="empty">Na próxima etapa: notas vinculadas a matérias e tópicos.</div></div></section>
@@ -762,6 +775,7 @@ function renderSubjectsPage(){
   const list=subjects.filter(s=>s.name.toLowerCase().includes(q));
   const el=document.getElementById('subjectsList');
   if(!list.length){el.innerHTML=`<div class="card empty">Nenhuma matéria encontrada.</div>`;return}
+  const materials=getStudyDriveMaterials();
   el.innerHTML=list.map(s=>{
     const st=subjectStats(s);
     return `<div class="card subject-detail" draggable="true" data-subject-id="${s.id}" ondragstart="startSubjectDrag(event)" ondragover="overSubjectDrag(event)" ondrop="dropSubjectDrag(event)" ondragend="endSubjectDrag(event)">
@@ -771,19 +785,22 @@ function renderSubjectsPage(){
       </div>
       <div class="bar"><div class="fill" style="width:${st.pct}%"></div></div>
       <div class="topics">
-        ${s.topics.length?s.topics.map((t,i)=>`<div class="topic ${t.done?'done':''}" draggable="true" data-topic-index="${i}" data-subject-id="${s.id}" ondragstart="startTopicDrag(event)" ondragover="overTopicDrag(event)" ondrop="dropTopicDrag(event)" ondragend="endTopicDrag(event)">
-          <div class="topic-drag" title="Arraste para reorganizar">⋮⋮</div>
-          <input type="checkbox" ${t.done?'checked':''} onchange="toggleTopic('${s.id}',${i})">
-          <div class="topic-name">${escapeHtml(t.name)}</div>
-          <div class="topic-actions"><button class="small-btn" onclick="openTopicPerformance('${s.id}',${i})">Desempenho</button><button class="small-btn" onclick="renameTopic('${s.id}',${i})">Editar</button><button class="small-btn" onclick="deleteTopic('${s.id}',${i})">×</button></div>
-          ${renderTopicPerformanceSummary(s.id,i)}
-        </div>`).join(''):`<div class="empty">Ainda não há tópicos.</div>`}
+        ${s.topics.length?s.topics.map((t,i)=>{
+          const linked=materials.filter(f=>String(f.subjectId)===String(s.id)&&f.topicName===t.name);
+          const materialLinks=linked.length?`<div class="topic-materials">${linked.map(f=>{const url=f.webViewLink||('https://drive.google.com/file/d/'+encodeURIComponent(f.id)+'/view');return `<a class="topic-material-link" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" title="Abrir ${escapeHtml(f.name)} no Google Drive"><span aria-hidden="true">📄</span> ${escapeHtml(f.name)} <span aria-hidden="true">↗</span></a>`}).join('')}</div>`:'';
+          return `<div class="topic ${t.done?'done':''}" draggable="true" data-topic-index="${i}" data-subject-id="${s.id}" ondragstart="startTopicDrag(event)" ondragover="overTopicDrag(event)" ondrop="dropTopicDrag(event)" ondragend="endTopicDrag(event)">
+            <div class="topic-drag" title="Arraste para reorganizar">⋮⋮</div>
+            <input type="checkbox" ${t.done?'checked':''} onchange="toggleTopic('${s.id}',${i})">
+            <div class="topic-name">${escapeHtml(t.name)}${materialLinks}</div>
+            <div class="topic-actions"><button class="small-btn" onclick="openTopicPerformance('${s.id}',${i})">Desempenho</button><button class="small-btn" onclick="renameTopic('${s.id}',${i})">Editar</button><button class="small-btn" onclick="deleteTopic('${s.id}',${i})">×</button></div>
+            ${renderTopicPerformanceSummary(s.id,i)}
+          </div>`;
+        }).join(''):`<div class="empty">Ainda não há tópicos.</div>`}
       </div>
       <div class="topic-add"><input id="newTopic-${s.id}" placeholder="Adicionar tópico..." onkeydown="if(event.key==='Enter')addTopic('${s.id}')"><button class="small-btn" onclick="addTopic('${s.id}')">Adicionar</button></div>
     </div>`;
   }).join('');
 }
-
 function renderTimerSubjects(){
   ['timerSubject','timerSubject2','researchSubject','feynmanSubject'].forEach(id=>{
     const el=document.getElementById(id); if(!el)return;
@@ -1465,19 +1482,66 @@ function prepareMentorSession(){
   if(message)message.textContent='Sessão preparada. O próximo passo é abrir o ChatGPT, colar o prompt e anexar o PDF.';
 }
 
+let studyMaterialsPage=1;
+const STUDY_MATERIALS_PAGE_SIZE=12;
+function updateStudyMaterialTopicFilter(){
+  const subjectId=document.getElementById('studyMaterialSubjectFilter')?.value||'';
+  const topicEl=document.getElementById('studyMaterialTopicFilter');if(!topicEl)return;
+  const previous=topicEl.value;
+  const names=Array.from(new Set(getStudyDriveMaterials().filter(f=>!subjectId||String(f.subjectId||'')===String(subjectId)).map(f=>f.topicName).filter(Boolean))).sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  topicEl.innerHTML='<option value="">Todos os assuntos</option>'+names.map(name=>'<option value="'+escapeHtml(name)+'">'+escapeHtml(name)+'</option>').join('');
+  if(names.includes(previous))topicEl.value=previous;
+}
+function renderStudyMaterialFilters(){
+  const subjectEl=document.getElementById('studyMaterialSubjectFilter');if(!subjectEl)return;
+  const previous=subjectEl.value;
+  subjectEl.innerHTML='<option value="">Todas as matérias</option>'+subjects.map(s=>'<option value="'+escapeHtml(String(s.id))+'">'+escapeHtml(s.name)+'</option>').join('');
+  if(subjects.some(s=>String(s.id)===previous))subjectEl.value=previous;
+  updateStudyMaterialTopicFilter();
+}
+function changeStudyMaterialsPage(delta){studyMaterialsPage=Math.max(1,studyMaterialsPage+delta);renderStudyDriveMaterials()}
 function renderStudyDriveMaterials(){
   const list=document.getElementById('studyDriveMaterialsList');if(!list)return;
-  const items=getStudyDriveMaterials();
-  const count=document.getElementById('studyMaterialsCount');if(count)count.textContent=items.length+' arquivo'+(items.length===1?'':'s');
-  if(!items.length){list.innerHTML='<div class="empty">Nenhum PDF catalogado. Informe o ID da pasta e clique em “Buscar PDFs na pasta”.</div>';return;}
-  list.innerHTML=items.map((file,index)=>{
-    const subjectOptions='<option value="">Selecione a matéria</option>'+subjects.map(s=>'<option value="'+escapeHtml(String(s.id))+'" '+(String(file.subjectId||'')===String(s.id)?'selected':'')+'>'+escapeHtml(s.name)+'</option>').join('');
-    const selectedSubject=subjects.find(s=>String(s.id)===String(file.subjectId));
-    const topicOptions='<option value="">Selecione o assunto</option>'+((selectedSubject?.topics)||[]).map(t=>'<option value="'+escapeHtml(t.name)+'" '+(file.topicName===t.name?'selected':'')+'>'+escapeHtml(t.name)+'</option>').join('');
-    const size=file.size?formatStudyFileSize(Number(file.size)):'Tamanho indisponível';
-    const modified=file.modifiedTime?'Atualizado em '+new Date(file.modifiedTime).toLocaleDateString('pt-BR'):'';
-    return '<div class="card" style="padding:14px;margin-bottom:10px;box-shadow:none"><div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap"><div style="flex:1;min-width:200px"><div style="font-size:13px;font-weight:700;overflow-wrap:anywhere">'+escapeHtml(file.name)+'</div><div class="desc">'+escapeHtml(size)+' · '+escapeHtml(modified)+'</div></div><a class="small-btn" style="text-decoration:none" href="'+escapeHtml(file.webViewLink||('https://drive.google.com/file/d/'+encodeURIComponent(file.id)+'/view'))+'" target="_blank" rel="noopener noreferrer">Abrir PDF ↗</a></div><div class="form-grid" style="margin-top:12px"><div class="field"><label>Matéria</label><select class="select" id="materialSubject_'+index+'" onchange="updateStudyMaterialTopicOptions('+index+')">'+subjectOptions+'</select></div><div class="field"><label>Assunto</label><select class="select" id="materialTopic_'+index+'">'+topicOptions+'</select></div></div><div class="toolbar" style="margin-top:10px;flex-direction:row;flex-wrap:wrap"><button class="small-btn" onclick="saveStudyMaterialAssociation('+index+')">Salvar associação</button>'+(file.subjectId&&file.topicName?'<span class="status done">Associado à matéria</span>':'<span class="status">Pendente de associação</span>')+'</div></div>';
-  }).join('');
+  const all=getStudyDriveMaterials();
+  const count=document.getElementById('studyMaterialsCount');if(count)count.textContent=all.length+' arquivo'+(all.length===1?'':'s');
+  renderStudyMaterialFilters();
+  const q=(document.getElementById('studyMaterialSearch')?.value||'').toLowerCase().trim();
+  const subjectId=document.getElementById('studyMaterialSubjectFilter')?.value||'';
+  const topicName=document.getElementById('studyMaterialTopicFilter')?.value||'';
+  const filtered=all.filter(f=>{
+    const subject=subjects.find(s=>String(s.id)===String(f.subjectId));
+    const matchesText=!q||[f.name,f.subjectName,subject?.name,f.topicName].some(x=>String(x||'').toLowerCase().includes(q));
+    return matchesText&&(!subjectId||String(f.subjectId||'')===String(subjectId))&&(!topicName||f.topicName===topicName);
+  }).sort((a,b)=>{
+    const sa=subjects.find(s=>String(s.id)===String(a.subjectId))?.name||'Sem matéria';
+    const sb=subjects.find(s=>String(s.id)===String(b.subjectId))?.name||'Sem matéria';
+    return sa.localeCompare(sb,'pt-BR')||(a.topicName||'').localeCompare(b.topicName||'','pt-BR')||a.name.localeCompare(b.name,'pt-BR');
+  });
+  const pages=Math.max(1,Math.ceil(filtered.length/STUDY_MATERIALS_PAGE_SIZE));
+  studyMaterialsPage=Math.min(studyMaterialsPage,pages);
+  const pageItems=filtered.slice((studyMaterialsPage-1)*STUDY_MATERIALS_PAGE_SIZE,studyMaterialsPage*STUDY_MATERIALS_PAGE_SIZE);
+  if(!all.length){list.innerHTML='<div class="empty">Nenhum PDF catalogado. Informe o ID da pasta e clique em “Buscar PDFs na pasta”.</div>';}
+  else if(!filtered.length){list.innerHTML='<div class="empty">Nenhum PDF corresponde à busca ou aos filtros selecionados.</div>';}
+  else{
+    let lastGroup='';
+    list.innerHTML=pageItems.map(file=>{
+      const index=all.findIndex(x=>x.id===file.id);
+      const subject=subjects.find(s=>String(s.id)===String(file.subjectId));
+      const group=(subject?.name||'Sem matéria associada')+' · '+(file.topicName||'Sem assunto');
+      const groupHeading=group!==lastGroup?'<div class="desc" style="margin:14px 0 8px;font-weight:700">'+escapeHtml(group)+'</div>':'';
+      lastGroup=group;
+      const subjectOptions='<option value="">Selecione a matéria</option>'+subjects.map(s=>'<option value="'+escapeHtml(String(s.id))+'" '+(String(file.subjectId||'')===String(s.id)?'selected':'')+'>'+escapeHtml(s.name)+'</option>').join('');
+      const selectedSubject=subjects.find(s=>String(s.id)===String(file.subjectId));
+      const topicOptions='<option value="">Selecione o assunto</option>'+((selectedSubject?.topics)||[]).map(t=>'<option value="'+escapeHtml(t.name)+'" '+(file.topicName===t.name?'selected':'')+'>'+escapeHtml(t.name)+'</option>').join('');
+      const size=file.size?formatStudyFileSize(Number(file.size)):'Tamanho indisponível';
+      const modified=file.modifiedTime?'Atualizado em '+new Date(file.modifiedTime).toLocaleDateString('pt-BR'):'';
+      const url=file.webViewLink||('https://drive.google.com/file/d/'+encodeURIComponent(file.id)+'/view');
+      return groupHeading+'<div class="card" style="padding:14px;margin-bottom:10px;box-shadow:none"><div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap"><div style="flex:1;min-width:200px"><div style="font-size:13px;font-weight:700;overflow-wrap:anywhere">'+escapeHtml(file.name)+'</div><div class="desc">'+escapeHtml(size)+' · '+escapeHtml(modified)+'</div></div><a class="small-btn" style="text-decoration:none" href="'+escapeHtml(url)+'" target="_blank" rel="noopener noreferrer">Abrir PDF ↗</a></div><div class="form-grid" style="margin-top:12px"><div class="field"><label>Matéria</label><select class="select" id="materialSubject_'+index+'" onchange="updateStudyMaterialTopicOptions('+index+')">'+subjectOptions+'</select></div><div class="field"><label>Assunto</label><select class="select" id="materialTopic_'+index+'">'+topicOptions+'</select></div></div><div class="toolbar" style="margin-top:10px;flex-direction:row;flex-wrap:wrap"><button class="small-btn" onclick="saveStudyMaterialAssociation('+index+')">Salvar associação</button>'+(file.subjectId&&file.topicName?'<span class="status done">Associado</span>':'<span class="status">Pendente de associação</span>')+'</div></div>';
+    }).join('');
+  }
+  const info=document.getElementById('studyMaterialsPageInfo');if(info)info.textContent=filtered.length?('Exibindo '+((studyMaterialsPage-1)*STUDY_MATERIALS_PAGE_SIZE+1)+'–'+Math.min(studyMaterialsPage*STUDY_MATERIALS_PAGE_SIZE,filtered.length)+' de '+filtered.length+' PDFs'):'0 PDFs';
+  const prev=document.getElementById('studyMaterialsPrev');if(prev)prev.disabled=studyMaterialsPage<=1;
+  const next=document.getElementById('studyMaterialsNext');if(next)next.disabled=studyMaterialsPage>=pages;
 }
 function formatStudyFileSize(bytes){if(!Number.isFinite(bytes)||bytes<0)return'Tamanho indisponível';if(bytes<1024)return bytes+' B';if(bytes<1048576)return(Math.round(bytes/102.4)/10)+' KB';return(Math.round(bytes/104857.6)/10)+' MB'}
 function updateStudyMaterialTopicOptions(index){
@@ -1495,19 +1559,24 @@ async function syncStudyDriveMaterials(){
   if(!/^[a-zA-Z0-9_-]{10,}$/.test(folderId)){if(status)status.textContent='O ID parece inválido. Copie apenas o identificador da URL da pasta.';return}
   try{
     localStorage.setItem(STUDY_DRIVE_FOLDER_KEY,folderId);
-    if(status)status.textContent='Conectando ao Google Drive e procurando PDFs…';
+    if(status)status.textContent='Conectando ao Google Drive e procurando todos os PDFs da pasta…';
     const token=await getStudyDriveToken();
     const q=encodeURIComponent("'"+folderId+"' in parents and mimeType='application/pdf' and trashed=false");
-    const url='https://www.googleapis.com/drive/v3/files?q='+q+'&pageSize=100&orderBy=name&fields=files(id,name,mimeType,modifiedTime,size,webViewLink,parents),nextPageToken';
-    const response=await fetch(url,{headers:{Authorization:'Bearer '+token}});
-    if(!response.ok){let message='';try{message=(await response.json()).error?.message||''}catch(e){}throw new Error(message||'Consulta ao Drive falhou ('+response.status+').')}
-    const data=await response.json();
+    let pageToken='',found=[],page=0;
+    do{
+      const tokenPart=pageToken?'&pageToken='+encodeURIComponent(pageToken):'';
+      const url='https://www.googleapis.com/drive/v3/files?q='+q+'&pageSize=100&orderBy=name&fields=files(id,name,mimeType,modifiedTime,size,webViewLink,parents),nextPageToken'+tokenPart;
+      const response=await fetch(url,{headers:{Authorization:'Bearer '+token}});
+      if(!response.ok){let message='';try{message=(await response.json()).error?.message||''}catch(e){}throw new Error(message||'Consulta ao Drive falhou ('+response.status+').')}
+      const data=await response.json();found.push(...(data.files||[]));pageToken=data.nextPageToken||'';page++;
+      if(status)status.textContent='Buscando PDFs… '+found.length+' encontrado(s).';
+    }while(pageToken);
     const existing=getStudyDriveMaterials();
     const byId=new Map(existing.map(item=>[item.id,item]));
-    (data.files||[]).forEach(file=>{const old=byId.get(file.id)||{};byId.set(file.id,{...old,...file,folderId,discoveredAt:old.discoveredAt||new Date().toISOString()})});
+    found.forEach(file=>{const old=byId.get(file.id)||{};byId.set(file.id,{...old,...file,folderId,discoveredAt:old.discoveredAt||new Date().toISOString()})});
     const items=Array.from(byId.values()).filter(item=>item.folderId===folderId||item.parents?.includes(folderId)).sort((a,b)=>a.name.localeCompare(b.name,'pt-BR'));
     saveStudyDriveMaterials(items);
-    if(status)status.textContent=(data.files||[]).length+' PDF(s) encontrado(s) nesta pasta. Arquivos já associados foram preservados.';
+    if(status)status.textContent=found.length+' PDF(s) encontrado(s) nesta pasta. '+(items.length>found.length?'Associações de outros arquivos foram preservadas.':'');
     toast('Biblioteca sincronizada.');
   }catch(e){if(status)status.textContent='Não foi possível sincronizar: '+e.message;if(e.message!=='Client ID não configurado.')alert('Falha ao buscar PDFs no Google Drive: '+e.message)}
 }
@@ -1519,7 +1588,7 @@ function saveStudyMaterialAssociation(index){
   if(!subject||!topicName){alert('Selecione uma matéria e um assunto cadastrado em Matérias.');return}
   if(!(subject.topics||[]).some(t=>t.name===topicName)){alert('Esse assunto não pertence à matéria selecionada. Atualize a seleção.');return}
   file.subjectId=subject.id;file.subjectName=subject.name;file.topicName=topicName;file.associatedAt=new Date().toISOString();
-  localStorage.setItem(STUDY_MATERIALS_KEY,JSON.stringify(items));renderStudyDriveMaterials();toast('Associação do material salva.');
+  localStorage.setItem(STUDY_MATERIALS_KEY,JSON.stringify(items));renderStudyDriveMaterials();renderSubjectsPage();toast('Associação do material salva.');
 }
 function loadStudyDriveMaterialsSettings(){
   const input=document.getElementById('studyDriveFolderId');if(input)input.value=localStorage.getItem(STUDY_DRIVE_FOLDER_KEY)||'';
