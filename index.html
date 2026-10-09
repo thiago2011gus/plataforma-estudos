@@ -1978,7 +1978,14 @@ function collapsiblePanelTitle(panel,header){
 }
 function findCollapsiblePanelHeader(panel){
  const direct=[...panel.children];
- const header=direct.find(el=>el.matches('.head,.reading-card-head,.subject-top,.reading-session-heading,.organizer-item-main,.panel-collapse-heading'));
+ if(panel.matches('.trail-current-card')){
+  const group=direct.slice(0,2);
+  return group.length?{element:group[0],wrap:true,group}:null;
+ }
+ if(panel.matches('.trail-toolbar')){
+  const first=direct[0];return first?{element:first,wrap:true}:null;
+ }
+ const header=direct.find(el=>el.matches('.head,.reading-card-head,.subject-top,.reading-session-heading,.organizer-item-main,.panel-collapse-heading,.ai-top,.schedule-day-head,.timer-mode-switch'));
  if(header)return{element:header,wrap:false};
  const first=panel.firstElementChild;
  if(first&&first.matches('.organizer-card-title,.section-title,.reading-title,.subject-name,.preview-title,h2,h3,h4'))return{element:first,wrap:true};
@@ -1993,7 +2000,7 @@ function setCollapsiblePanelState(panel,collapsed,persist=true){
 }
 function toggleCollapsiblePanel(panel){setCollapsiblePanelState(panel,!panel.classList.contains('panel-collapsed'))}
 function initCollapsiblePanels(root=document){
- const selector='.view .card:not(.metric):not(.reading-stat), .view .settings-group, .view .subject-card, .view .reading-card';
+ const selector='.view .card:not(.metric):not(.reading-stat), .view .settings-group, .view .subject-card, .view .reading-card, .view .trail-current-card, .view .trail-toolbar';
  const panels=[];
  if(root.nodeType===1&&root.matches?.(selector))panels.push(root);
  if(root.querySelectorAll)panels.push(...root.querySelectorAll(selector));
@@ -2011,7 +2018,10 @@ function initCollapsiblePanels(root=document){
   panel.dataset.collapsibleReady='1';panel.dataset.collapseKey=key;panel.dataset.collapseTitle=title;
   if(found.wrap){
    const wrapper=document.createElement('div');wrapper.className='panel-collapse-heading';
-   panel.insertBefore(wrapper,header);wrapper.appendChild(header);header=wrapper;
+   panel.insertBefore(wrapper,header);
+   if(found.group){found.group.forEach(el=>wrapper.appendChild(el))}
+   else wrapper.appendChild(header);
+   header=wrapper;
   }
   const button=document.createElement('button');button.type='button';button.className='panel-collapse-toggle';button.textContent='▾';button.setAttribute('aria-expanded','true');button.setAttribute('aria-label','Recolher '+title);button.title='Recolher bloco';
   button.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();toggleCollapsiblePanel(panel)});
