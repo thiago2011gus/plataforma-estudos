@@ -2323,6 +2323,7 @@ document.querySelectorAll('#darknessOptions .seg').forEach(btn=>{
 applyDarkness(Number(localStorage.getItem('study_darkness')||50));
 document.getElementById('themeToggle').addEventListener('click',toggleTheme);
 document.getElementById('dateChip').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
+loadStudyDriveSettings();
 renderAll();
 </script>
 </body>
