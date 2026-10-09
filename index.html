@@ -1101,7 +1101,7 @@ function renderSubjectsPage(){
             <div class="topic-drag" title="Arraste para reorganizar">⋮⋮</div>
             <input type="checkbox" ${t.done?'checked':''} onchange="toggleTopic('${s.id}',${i})">
             <div class="topic-name">${escapeHtml(t.name)}${materialLinks}</div>
-            <div class="topic-actions"><button class="small-btn" onclick="openTopicPerformance('${s.id}',${i})">Desempenho</button><button class="small-btn" onclick="renameTopic('${s.id}',${i})">Editar</button><button class="small-btn" onclick="deleteTopic('${s.id}',${i})">×</button></div>
+            <div class="topic-actions"><button class="small-btn" onclick="openTopicPerformance('${s.id}',${i})">Desempenho</button><button class="small-btn" onclick="showWrongQuestionsForTopic('${s.id}','${encodeURIComponent(JSON.stringify(t.name))}')">Erros (${getWrongQuestions().filter(q=>String(q.subjectId)===String(s.id)&&q.topicName===t.name).length})</button><button class="small-btn" onclick="showNotebookForTopic('${s.id}','${encodeURIComponent(JSON.stringify(t.name))}')">Caderno</button><button class="small-btn" onclick="renameTopic('${s.id}',${i})">Editar</button><button class="small-btn" onclick="deleteTopic('${s.id}',${i})">×</button></div>
             ${renderTopicPerformanceSummary(s.id,i)}
           </div>`;
         }).join(''):`<div class="empty">Ainda não há tópicos.</div>`}
