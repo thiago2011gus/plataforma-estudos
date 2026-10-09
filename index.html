@@ -253,15 +253,37 @@ body.dark .reading-card:hover{border-color:#3a4742}
 @media(max-width:1000px){.organizer-grid.three{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:720px){.organizer-grid,.organizer-grid.three{grid-template-columns:1fr}.organizer-form{grid-template-columns:1fr}.organizer-form .wide{grid-column:auto}.organizer-capture-box{flex-direction:column}.organizer-habit-week{gap:2px}}
 
+
+/* Navegação e página inicial */
+.brand[role="link"]{cursor:pointer;outline-offset:4px}
+.brand[role="link"]:focus-visible{outline:2px solid var(--accent);border-radius:8px}
+.personal-nav-group.is-collapsed .personal-nav-items{display:none}
+.personal-nav-group.is-collapsed .nav-section-chevron{transform:rotate(-90deg)}
+.organizer-home-hero{padding:clamp(22px,3vw,38px);margin-bottom:16px;background:linear-gradient(125deg,var(--surface),var(--surface2))}
+.organizer-home-kicker{font-size:10px;letter-spacing:1.3px;text-transform:uppercase;color:var(--accent);font-weight:800}
+.organizer-home-title{font-size:clamp(25px,3vw,38px);line-height:1.15;letter-spacing:-1px;max-width:780px;margin:9px 0}
+.organizer-home-copy{font-size:14px;color:var(--muted);line-height:1.65;max-width:690px}
+.organizer-home-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.organizer-home-shortcut{padding:18px;display:flex;flex-direction:column;gap:10px;min-height:148px}
+.organizer-home-shortcut-icon{width:36px;height:36px;display:grid;place-items:center;border-radius:10px;background:var(--accent-light);color:var(--accent);font-size:18px}
+.organizer-home-shortcut-title{font-size:14px;font-weight:750}
+.organizer-home-shortcut-copy{font-size:12px;color:var(--muted);line-height:1.5;flex:1}
+.organizer-home-shortcut button{align-self:flex-start}
+.organizer-item.priority-high{padding:12px;border:1px solid #e4c17e;border-left:4px solid #c28b28;background:#fff9ed;border-radius:10px;margin:5px 0}
+.priority-tag{background:#f8e9c8!important;color:#815815!important}
+.organizer-priority-list .organizer-item.priority-high{margin:6px 0}
+body.dark .organizer-item.priority-high{background:#2b281f;border-color:#66542e;border-left-color:#d6a84e}
+body.dark .priority-tag{background:#41351d!important;color:#f0cc78!important}
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 <div class="app">
 <aside class="sidebar">
-  <div class="brand"><div class="brand-title">Study.</div><div class="brand-sub">Minha plataforma de estudos</div></div>
+  <div class="brand" role="link" tabindex="0" title="Ir para a página inicial" aria-label="Study. — página inicial" onclick="showView('home')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showView('home')}"><div class="brand-title">Study.</div><div class="brand-sub">Minha plataforma de estudos</div></div>
   <div class="nav-group">
     <div class="nav-title">Principal</div>
+    <div class="nav-item" data-view="home"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9v12h14V9M9 21v-7h6v7"/></svg></span>Início</div>
     <div class="nav-item active" data-view="myday"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/></svg></span>Meu dia</div>
     <div class="nav-item" data-view="settings"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/><path d="m19.4 15 .1.1 1.1.9-1.5 2.6-1.4-.6a8 8 0 0 1-1.6.9l-.2 1.5h-3l-.3-1.5a8 8 0 0 1-1.6-.9l-1.4.6-1.5-2.6 1.1-.9a7 7 0 0 1 0-1.9l-1.1-.9 1.5-2.6 1.4.6a8 8 0 0 1 1.6-.9l.3-1.5h3l.2 1.5a8 8 0 0 1 1.6.9l1.4-.6 1.5 2.6-1.1.9a7 7 0 0 1-.1 1.8Z" transform="translate(-1 -1) scale(1.08)"/></svg></span>Configurações</div>
   </div>
@@ -282,14 +304,16 @@ body.dark .reading-card:hover{border-color:#3a4742}
     <div class="nav-item" data-view="flashcards"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="14" height="16" rx="2"/><path d="M4 7v14h13M11 8h6M11 12h6"/></svg></span>Flashcards</div>
     </div>
   </div>
-  <div class="nav-group">
-    <div class="nav-title">Organização pessoal</div>
+  <div class="nav-group personal-nav-group" id="personalNavGroup">
+    <button type="button" class="nav-title nav-section-toggle" id="personalSectionToggle" aria-expanded="true" aria-controls="personalNavItems"><span>Organização pessoal</span><span class="nav-section-chevron" aria-hidden="true">⌄</span></button>
+    <div class="personal-nav-items" id="personalNavItems">
     <div class="nav-item" data-view="tasks"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="17" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></span>Tarefas</div>
     <div class="nav-item" data-view="capture"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>Captura rápida</div>
     <div class="nav-item" data-view="notes"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h10l4 4v14H5z"/><path d="M14 3v5h5M8 12h8M8 16h8"/></svg></span>Caderno</div>
     <div class="nav-item" data-view="agenda"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg></span>Agenda</div>
     <div class="nav-item" data-view="reading"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v14M12 7C9 4 5 4 3 5v14c3-1 6-1 9 2M12 7c3-3 7-3 9-2v14c-3-1-6-1-9 2"/></svg></span>Leituras</div>
     <div class="nav-item" data-view="habits"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.5-3"/></svg></span>Hábitos</div>
+    </div>
   </div>
   <div class="nav-group">
     <div class="nav-title">Acessos rápidos</div>
@@ -313,6 +337,35 @@ body.dark .reading-card:hover{border-color:#3a4742}
       <div class="date-chip" id="dateChip"></div>
     </div>
   </div>
+
+  <section class="view" id="view-home">
+    <div class="card organizer-home-hero">
+      <div class="organizer-home-kicker">Study. · seu espaço pessoal</div>
+      <h2 class="organizer-home-title">Um lugar para estudar, organizar e registrar.</h2>
+      <div class="organizer-home-copy">Mantenha os estudos como prioridade. Quando surgir uma pendência, uma ideia ou um compromisso, registre aqui e volte ao que estava fazendo.</div>
+      <div class="organizer-home-actions"><button class="btn btn-primary" onclick="showView('myday')">Organizar meu dia</button><button class="btn btn-secondary" onclick="showView('timer')">Começar uma sessão de estudo</button></div>
+    </div>
+    <div class="organizer-grid three">
+      <div class="card organizer-home-shortcut"><div class="organizer-home-shortcut-icon">◷</div><div class="organizer-home-shortcut-title">Estudos</div><div class="organizer-home-shortcut-copy">Acesse matérias, cronograma e progresso sem perder o fio do que está estudando.</div><button class="organizer-inline-link" onclick="showView('dashboard')">Ver visão geral →</button></div>
+      <div class="card organizer-home-shortcut"><div class="organizer-home-shortcut-icon">☀</div><div class="organizer-home-shortcut-title">Meu dia</div><div class="organizer-home-shortcut-copy">Veja prioridades, compromissos e hábitos que merecem sua atenção hoje.</div><button class="organizer-inline-link" onclick="showView('myday')">Abrir meu dia →</button></div>
+      <div class="card organizer-home-shortcut"><div class="organizer-home-shortcut-icon">▤</div><div class="organizer-home-shortcut-title">Caderno</div><div class="organizer-home-shortcut-copy">Guarde aprendizados, citações, ideias e anotações para revisitar depois.</div><button class="organizer-inline-link" onclick="showView('notes')">Abrir caderno →</button></div>
+    </div>
+    <div class="organizer-grid">
+      <div class="card organizer-card"><div class="organizer-card-title">Acessos rápidos</div><div class="organizer-card-sub">Vá direto ao ponto e continue sua rotina.</div>
+        <div class="organizer-actions" style="margin-top:14px"><button class="small-btn" onclick="showView('tasks')">Tarefas</button><button class="small-btn" onclick="showView('capture')">Caixa de entrada</button><button class="small-btn" onclick="showView('agenda')">Agenda</button><button class="small-btn" onclick="showView('reading')">Leituras</button><button class="small-btn" onclick="showView('habits')">Hábitos</button></div>
+      </div>
+      <div class="card organizer-card"><div class="head"><div><div class="organizer-card-title">Resumo de hoje</div><div class="organizer-card-sub" id="homeDate"></div></div></div>
+        <div class="organizer-grid three" style="margin-bottom:0;gap:8px">
+          <div><div class="metric-label">Tempo de estudo</div><div class="metric-value" style="font-size:21px" id="homeStudyTime">0h 00</div></div>
+          <div><div class="metric-label">Tarefas abertas</div><div class="metric-value" style="font-size:21px" id="homeTaskCount">0</div></div>
+          <div><div class="metric-label">Na captura</div><div class="metric-value" style="font-size:21px" id="homeCaptureCount">0</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card organizer-card"><div class="organizer-card-title">Anotar sem interromper o ritmo</div><div class="organizer-card-sub">Escolha uma categoria agora ou ajuste depois na caixa de entrada.</div>
+      <div class="organizer-capture-box"><select id="homeQuickCaptureKind" class="select" aria-label="Categoria da captura"><option value="task">Tarefa / pendência</option><option value="idea">Ideia</option><option value="reminder">Lembrete / compromisso</option><option value="knowledge">Conhecimento / leitura</option></select><textarea id="homeQuickCaptureText" placeholder="O que você precisa registrar?"></textarea><button class="btn btn-primary" onclick="saveHomeQuickCapture()">Guardar</button></div>
+    </div>
+  </section>
 
   <section class="view" id="view-myday">
     <div class="organizer-today-top">
@@ -1483,6 +1536,7 @@ function showView(name,save=true){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.view===name));
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));
   const titles={
+    home:['Início','Seu ponto de partida para estudar, organizar e registrar ideias.'],
     myday:['Meu dia','Organize suas prioridades, compromissos e hábitos sem perder o foco nos estudos.'],
     tasks:['Tarefas','Registre pendências, defina prazos e acompanhe o que já concluiu.'],
     capture:['Captura rápida','Tire ideias e lembretes da cabeça e organize depois.'],
@@ -2882,6 +2936,13 @@ function toggleTheme(){
 
 const STUDY_NAV_ORDER_KEY='study_sidebar_study_order_v1';
 const STUDY_NAV_COLLAPSED_KEY='study_sidebar_study_collapsed_v1';
+function initPersonalSidebarControls(){
+ const group=document.getElementById('personalNavGroup'),toggle=document.getElementById('personalSectionToggle');
+ if(!group||!toggle)return;
+ const key='study_sidebar_personal_collapsed_v1',collapsed=localStorage.getItem(key)==='1';
+ group.classList.toggle('is-collapsed',collapsed);toggle.setAttribute('aria-expanded',String(!collapsed));toggle.title=collapsed?'Expandir Organização pessoal':'Recolher Organização pessoal';
+ toggle.addEventListener('click',()=>{const value=group.classList.toggle('is-collapsed');localStorage.setItem(key,value?'1':'0');toggle.setAttribute('aria-expanded',String(!value));toggle.title=value?'Expandir Organização pessoal':'Recolher Organização pessoal'});
+}
 function initStudySidebarControls(){
   const group=document.getElementById('studyNavGroup');
   const items=document.getElementById('studyNavItems');
@@ -2940,6 +3001,7 @@ document.getElementById('newAgendaBtn')?.addEventListener('click',function(e){e.
 document.getElementById('newReadingBtn')?.addEventListener('click',function(e){e.preventDefault();openReadingModal();});
 
 initStudySidebarControls();
+initPersonalSidebarControls();
 applySidebarState(localStorage.getItem(SIDEBAR_KEY)==='1');
 applyTheme(localStorage.getItem(THEME_KEY)||'light');
 document.querySelectorAll('#darknessOptions .seg').forEach(btn=>{
