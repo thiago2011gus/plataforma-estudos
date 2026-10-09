@@ -308,6 +308,7 @@ body.dark .agenda-event.task-priority-high{background:#41351d;color:#f0cc78;bord
 body.dark .agenda-item.task-priority-high{background:#2b281f;border-color:#66542e;border-left-color:#d6a84e}
 body.dark .agenda-item.task-priority-high .task-priority-badge{background:#41351d;color:#f0cc78}
 
+.music-player-title{display:flex;align-items:center;justify-content:space-between;gap:10px}.music-delete{padding:5px 8px;font-size:11px;flex:none}.music-open-link{display:inline-block;margin:8px 12px 12px;color:var(--accent);font-size:12px;text-decoration:none}.music-open-link:hover{text-decoration:underline}
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -421,7 +422,7 @@ body.dark .agenda-item.task-priority-high .task-priority-badge{background:#41351
       <div class="card organizer-card"><div class="head"><div><div class="organizer-card-title">Hábitos</div><div class="organizer-card-sub">Marque o que fizer hoje.</div></div><button class="organizer-inline-link" onclick="showView('habits')">Gerenciar →</button></div><div id="myDayHabitList" class="organizer-list"></div></div>
       <div class="card organizer-card"><div class="head"><div><div class="organizer-card-title">Captura rápida</div><div class="organizer-card-sub">Registre agora; organize depois.</div></div><button class="organizer-inline-link" onclick="showView('capture')">Abrir caixa de entrada →</button></div><div class="organizer-capture-box"><textarea id="myDayQuickText" placeholder="Uma ideia, tarefa ou lembrete..."></textarea><button class="btn btn-primary" type="button" onclick="saveMyDayQuickCapture()">Salvar</button></div><div id="myDayRecentCapture" class="organizer-list"></div></div>
     </div>
-    <div class="card organizer-card music-widget"><div class="head"><div><div class="organizer-card-title">Som para estudar</div><div class="organizer-card-sub">Suas playlists de ruído marrom ou música de foco, sem sair do Study.</div></div></div><div class="music-settings"><label>Spotify · link da playlist<input id="studySpotifyUrl" type="url" placeholder="https://open.spotify.com/playlist/..."></label><label>YouTube · link da playlist<input id="studyYoutubeUrl" type="url" placeholder="https://www.youtube.com/playlist?list=..."></label><button class="btn btn-secondary" type="button" onclick="saveStudyMusicSettings()">Salvar playlists</button></div><div id="studyMusicPlayers" class="music-players"><div class="organizer-empty">Adicione o link de uma playlist sua para exibir o player aqui.</div></div><div class="music-note">A reprodução depende das regras do Spotify/YouTube e pode exigir login. O Study não inicia o áudio automaticamente.</div></div>
+    <div class="card organizer-card music-widget"><div class="head"><div><div class="organizer-card-title">Som para estudar</div><div class="organizer-card-sub">Suas playlists de ruído marrom ou música de foco, sem sair do Study.</div></div></div><div class="music-settings"><label>Adicionar playlist do Spotify<input id="studySpotifyUrl" type="url" placeholder="https://open.spotify.com/playlist/..."></label><button class="btn btn-secondary" type="button" onclick="addStudyMusicPlaylist('spotify')">Adicionar Spotify</button><label>Adicionar playlist do YouTube<input id="studyYoutubeUrl" type="url" placeholder="https://www.youtube.com/playlist?list=..."></label><button class="btn btn-secondary" type="button" onclick="addStudyMusicPlaylist('youtube')">Adicionar YouTube</button></div><div id="studyMusicPlayers" class="music-players"><div class="organizer-empty">Adicione uma playlist para exibir o player aqui.</div></div><div class="music-note">A reprodução depende das regras do Spotify/YouTube e pode exigir login. O Study não inicia o áudio automaticamente.</div></div>
     <div class="card organizer-card"><div class="head"><div><div class="organizer-card-title">Fechamento do dia</div><div class="organizer-card-sub">Opcional: o que avançou, o que ficou pendente e o próximo passo.</div></div><button class="organizer-inline-link" onclick="showView('notes')">Abrir caderno →</button></div><textarea id="myDayJournalInput" rows="3" placeholder="Um registro breve do dia..." style="width:100%;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--surface);color:var(--text);resize:vertical"></textarea><div class="toolbar" style="margin-top:9px"><button class="btn btn-secondary" onclick="saveDailyJournal()">Salvar no caderno</button></div></div>
   </section>
 
@@ -3150,27 +3151,56 @@ const STUDY_MUSIC_KEY='study_music_playlists_v1';
 function musicEmbedUrl(raw,provider){
  try{
   let input=String(raw||'').trim();
+  const iframeSrc=input.match(/src=["']([^"']+)["']/i);if(iframeSrc)input=iframeSrc[1];
+  if(!input.startsWith('http://')&&!input.startsWith('https://')&&/^(www\.|music\.|m\.)?(youtube\.com|youtu\.be)\//i.test(input))input='https://'+input;
+  const u=new URL(input);
   if(provider==='youtube'){
-   // Aceita URL normal, YouTube Music, youtu.be, URL de incorporação e código iframe.
-   const iframeSrc=input.match(/src=["']([^"']+)["']/i);if(iframeSrc)input=iframeSrc[1];
-   if(!/^https?:\/\//i.test(input)&&/^(www\.|music\.|m\.)?(youtube\.com|youtu\.be)\//i.test(input))input='https://'+input;
-   const u=new URL(input);
-   const host=u.hostname.toLowerCase();
-   const allowed=['youtube.com','www.youtube.com','m.youtube.com','music.youtube.com','youtu.be','www.youtube-nocookie.com','youtube-nocookie.com'];
-   if(!allowed.includes(host))return null;
-   let list=u.searchParams.get('list');
-   if(!list&&/\/embed\/videoseries/i.test(u.pathname))list=u.searchParams.get('list');
-   if(!list)return null;
+   if(!['youtube.com','www.youtube.com','m.youtube.com','music.youtube.com','youtu.be','www.youtube-nocookie.com','youtube-nocookie.com'].includes(u.hostname.toLowerCase()))return null;
+   const list=u.searchParams.get('list');if(!list)return null;
    return 'https://www.youtube.com/embed/videoseries?list='+encodeURIComponent(list);
   }
-  const u=new URL(input);
-  if(provider==='spotify'&&u.hostname==='open.spotify.com'){const m=u.pathname.match(/^\/(playlist|album|track|artist)\/([A-Za-z0-9]+)\/?$/);return m?'https://open.spotify.com/embed/'+m[1]+'/'+m[2]+'?utm_source=generator':null}
+  if(provider==='spotify'&&u.hostname.toLowerCase()==='open.spotify.com'){
+   const m=u.pathname.match(/^\/(playlist|album|track|artist)\/([A-Za-z0-9]+)\/?$/);
+   return m?'https://open.spotify.com/embed/'+m[1]+'/'+m[2]+'?utm_source=generator':null;
+  }
  }catch(e){}
  return null;
 }
-function loadStudyMusicSettings(){let saved={};try{saved=JSON.parse(localStorage.getItem(STUDY_MUSIC_KEY)||'{}')}catch(e){}const sp=document.getElementById('studySpotifyUrl'),yt=document.getElementById('studyYoutubeUrl');if(sp)sp.value=saved.spotify||'';if(yt)yt.value=saved.youtube||'';renderStudyMusicPlayers(saved)}
-function saveStudyMusicSettings(){const spotify=(document.getElementById('studySpotifyUrl')?.value||'').trim(),youtube=(document.getElementById('studyYoutubeUrl')?.value||'').trim(),data={spotify,youtube};localStorage.setItem(STUDY_MUSIC_KEY,JSON.stringify(data));renderStudyMusicPlayers(data);const invalid=(spotify&&!musicEmbedUrl(spotify,'spotify'))||(youtube&&!musicEmbedUrl(youtube,'youtube'));toast(invalid?'Link não reconhecido. Use o link da playlist (inclusive do YouTube Music) e salve novamente.':'Playlists salvas.')}
-function renderStudyMusicPlayers(data=null){if(!data){try{data=JSON.parse(localStorage.getItem(STUDY_MUSIC_KEY)||'{}')}catch(e){data={}}}const box=document.getElementById('studyMusicPlayers');if(!box)return;const players=[];[['spotify','Spotify','Playlist de foco'],['youtube','YouTube','Ruído marrom / estudo']].forEach(([key,label,subtitle])=>{const src=musicEmbedUrl(data[key],key);if(src)players.push('<div class="music-player"><div class="music-player-title">'+label+' · '+subtitle+'</div><iframe src="'+src+'" title="'+label+' playlist de estudo" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>')});box.innerHTML=players.join('')||'<div class="organizer-empty" style="grid-column:1/-1">Adicione um link válido de playlist do Spotify ou YouTube e clique em “Salvar playlists”.</div>'}
+function getStudyMusicPlaylists(){
+ let saved;try{saved=JSON.parse(localStorage.getItem(STUDY_MUSIC_KEY)||'{}')}catch(e){saved={}}
+ if(Array.isArray(saved))return saved;
+ if(Array.isArray(saved.playlists))return saved.playlists;
+ const migrated=[];
+ ['spotify','youtube'].forEach(provider=>{if(saved[provider])migrated.push({id:'legacy-'+provider,provider,url:saved[provider],title:provider==='spotify'?'Playlist do Spotify':'Playlist do YouTube'})});
+ if(migrated.length)localStorage.setItem(STUDY_MUSIC_KEY,JSON.stringify({playlists:migrated}));
+ return migrated;
+}
+function loadStudyMusicSettings(){const sp=document.getElementById('studySpotifyUrl'),yt=document.getElementById('studyYoutubeUrl');if(sp)sp.value='';if(yt)yt.value='';renderStudyMusicPlayers()}
+function addStudyMusicPlaylist(provider){
+ const input=document.getElementById(provider==='spotify'?'studySpotifyUrl':'studyYoutubeUrl'),url=(input?.value||'').trim();
+ if(!url){toast('Cole o link da playlist antes de adicionar.');return}
+ if(!musicEmbedUrl(url,provider)){toast('Não reconheci esse link. Copie o link de compartilhamento da playlist.');return}
+ const playlists=getStudyMusicPlaylists();
+ if(playlists.some(p=>p.provider===provider&&p.url===url)){toast('Essa playlist já foi adicionada.');return}
+ playlists.push({id:'music-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),provider,url,title:provider==='spotify'?'Playlist do Spotify':'Playlist do YouTube'});
+ localStorage.setItem(STUDY_MUSIC_KEY,JSON.stringify({playlists}));if(input)input.value='';
+ renderStudyMusicPlayers();toast('Playlist adicionada e salva neste navegador.');
+}
+function deleteStudyMusicPlaylist(id){
+ const playlists=getStudyMusicPlaylists().filter(p=>p.id!==id);
+ localStorage.setItem(STUDY_MUSIC_KEY,JSON.stringify({playlists}));renderStudyMusicPlayers();toast('Playlist excluída.');
+}
+function renderStudyMusicPlayers(){
+ const box=document.getElementById('studyMusicPlayers');if(!box)return;
+ const playlists=getStudyMusicPlaylists();
+ if(!playlists.length){box.innerHTML='<div class="organizer-empty" style="grid-column:1/-1">Nenhuma playlist adicionada. Elas ficarão salvas até você excluí-las.</div>';return}
+ box.innerHTML=playlists.map(p=>{
+  const src=musicEmbedUrl(p.url,p.provider);if(!src)return '';
+  const label=p.provider==='spotify'?'Spotify':'YouTube';
+  const safeId=String(p.id).replace(/[^a-zA-Z0-9_-]/g,'');
+  return '<div class="music-player"><div class="music-player-title">'+label+' · '+escapeHtml(p.title||'Playlist')+'<button class="btn btn-danger music-delete" type="button" onclick="deleteStudyMusicPlaylist(\''+safeId+'\')">Excluir</button></div><iframe src="'+src+'" title="'+label+' playlist de estudo" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe><a class="music-open-link" href="'+escapeHtml(p.url)+'" target="_blank" rel="noopener noreferrer">Abrir no '+label+' ↗</a></div>';
+ }).join('')||'<div class="organizer-empty" style="grid-column:1/-1">Não foi possível montar os players. Exclua e adicione novamente os links.</div>';
+}
 function showTaskReminder(task){let panel=document.getElementById('studyTaskReminder');if(!panel){document.body.insertAdjacentHTML('beforeend','<div class="reminder-panel" id="studyTaskReminder" role="dialog" aria-live="assertive"></div>');panel=document.getElementById('studyTaskReminder')}panel.innerHTML='<div class="reminder-kicker">Lembrete de tarefa</div><div class="reminder-title">'+escapeHtml(task.title)+'</div><div class="organizer-item-meta">O horário chegou. Quer adiar ou concluir?</div><div class="reminder-actions"><button class="small-btn" onclick="snoozeTaskReminder(\''+escapeHtml(String(task.id))+'\',5)">Adiar 5 min</button><button class="small-btn" onclick="snoozeTaskReminder(\''+escapeHtml(String(task.id))+'\',10)">Adiar 10 min</button><button class="btn btn-primary" onclick="completeTaskFromReminder(\''+escapeHtml(String(task.id))+'\')">Concluir</button><button class="small-btn" onclick="dismissTaskReminder()">Fechar</button></div>'}
 function dismissTaskReminder(){document.getElementById('studyTaskReminder')?.remove()}
 function snoozeTaskReminder(id,minutes){const tasks=getPersonalTasks(),task=tasks.find(t=>String(t.id)===String(id));if(!task)return;task.snoozedUntil=new Date(Date.now()+minutes*60000).toISOString();task.snoozeDate=organizerToday();savePersonalTasks(tasks);dismissTaskReminder();toast('Lembrete adiado por '+minutes+' minutos.')}
