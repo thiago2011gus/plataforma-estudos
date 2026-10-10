@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Study. — Plataforma de Estudos</title>
+<title>Study. — Céu de algodão</title>
 <style>
 :root{
-  --bg:#f6f5f1;--surface:#fff;--surface2:#f9f9f6;--text:#202825;--muted:#78807c;
-  --dark-bg:#181c1a;--dark-surface:#1f2623;--dark-surface2:#242c29;--dark-line:#303934;
-  --line:#e7e7e1;--accent:#2f6254;--accent-light:#e8f1ed;--danger:#a95757;
-  --shadow:0 8px 30px rgba(32,40,37,.05)
+  --bg:#f4f8fc;--surface:#fff;--surface2:#eef5fb;--text:#34445a;--muted:#78899b;
+  --dark-bg:#202b39;--dark-surface:#263547;--dark-surface2:#304257;--dark-line:#40546a;
+  --line:#dce7f0;--accent:#6f96bc;--accent-light:#e4eef7;--danger:#c8757a;
+  --shadow:0 8px 30px rgba(72,105,137,.08)
 }
 body.dark{
-  --bg:#242426;--surface:#2b2b2e;--surface2:#333337;--text:#f4f4f5;--muted:#b2b2b8;
-  --line:#46464b;--accent:#9abcf7;--accent-light:#303744;--danger:#f2a1a1;
-  --shadow:0 12px 34px rgba(0,0,0,.22);
+  --bg:#202a38;--surface:#273447;--surface2:#304057;--text:#f0f5fb;--muted:#b5c6d8;
+  --line:#40536a;--accent:#a8c9e8;--accent-light:#354a61;--danger:#f0a5aa;
+  --shadow:0 12px 34px rgba(9,22,38,.28);
   color-scheme:dark
 }
 *{box-sizing:border-box}
@@ -990,12 +990,12 @@ body.dark .reading-stars span.filled{color:#f1b83b}
           <div class="settings-row">
             <div><div class="settings-label">Cor principal</div><div class="settings-help">Usada em botões, progresso e destaques.</div></div>
             <div class="color-options" id="accentOptions">
-              <button class="swatch" data-accent="#2563eb" style="background:#2563eb" title="Azul vivo"></button>
-              <button class="swatch" data-accent="#475569" style="background:#475569" title="Grafite azulado"></button>
-              <button class="swatch" data-accent="#765c8a" style="background:#765c8a" title="Uva"></button>
-              <button class="swatch" data-accent="#8a6540" style="background:#8a6540" title="Caramelo"></button>
-              <button class="swatch" data-accent="#8b4d5b" style="background:#8b4d5b" title="Vinho"></button>
-              <button class="swatch" data-accent="#334155" style="background:#334155" title="Azul ardósia"></button>
+              <button class="swatch" data-accent="#6f96bc" style="background:#6f96bc" title="Azul-bebê"></button>
+              <button class="swatch" data-accent="#8eafd0" style="background:#8eafd0" title="Azul suave"></button>
+              <button class="swatch" data-accent="#d6b957" style="background:#d6b957" title="Amarelo-manteiga"></button>
+              <button class="swatch" data-accent="#d99da2" style="background:#d99da2" title="Rosa blush"></button>
+              <button class="swatch" data-accent="#a8a4d4" style="background:#a8a4d4" title="Lavanda"></button>
+              <button class="swatch" data-accent="#789a91" style="background:#789a91" title="Verde-água"></button>
             </div>
             <span></span>
           </div>
@@ -3084,7 +3084,7 @@ async function importStudyBackup(event){
 const APPEARANCE_KEY='study_appearance';
 
 const appearanceDefaults={
-  accent:'#2563eb',
+  accent:'#6f96bc',
   fontScale:100,
   radius:'15px',
   density:'comfortable'
@@ -3093,7 +3093,7 @@ const appearanceDefaults={
 function loadAppearance(){
   try{
     const saved=JSON.parse(localStorage.getItem(APPEARANCE_KEY)||'{}');
-    if(saved.accent==='#2f6254') saved.accent='#2563eb';
+    if(saved.accent==='#2f6254'||saved.accent==='#2563eb') saved.accent='#6f96bc';
     return {...appearanceDefaults,...saved};
   }catch(e){return {...appearanceDefaults}}
 }
@@ -3856,10 +3856,10 @@ function setThemeColors(darkness){
   if(dark){
     // Paletas neutras de grafite: a intensidade muda a luminosidade, não o matiz.
     const palettes={
-      25:{bg:'#333336',surface:'#3c3c40',surface2:'#47474c',line:'#5c5c63'},
-      50:{bg:'#242426',surface:'#2b2b2e',surface2:'#333337',line:'#46464b'},
-      75:{bg:'#1b1b1d',surface:'#222225',surface2:'#2b2b2f',line:'#3c3c42'},
-      100:{bg:'#151516',surface:'#1d1d1f',surface2:'#27272a',line:'#38383d'}
+      25:{bg:'#354457',surface:'#40536a',surface2:'#4a6078',line:'#63788f'},
+      50:{bg:'#202a38',surface:'#273447',surface2:'#304057',line:'#40536a'},
+      75:{bg:'#192330',surface:'#202d3e',surface2:'#29394d',line:'#384c63'},
+      100:{bg:'#121c28',surface:'#1b2939',surface2:'#243449',line:'#34485f'}
     };
     const p=palettes[level]||palettes[50],root=document.body,chosen=appearance?.accent||'#2563eb';
     // Preserva a cor escolhida, clareando-a para legibilidade; as superfícies continuam neutras.
