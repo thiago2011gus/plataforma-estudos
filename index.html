@@ -2471,7 +2471,7 @@ function applyStudyFeatureVisibility(){
  const diaryNav=document.getElementById('musicDiaryNavItem');
  if(diaryNav)diaryNav.style.display=state.musicDiary===false?'none':'';
  const musicShortcut=document.getElementById('studyMusicShortcut');
- if(musicShortcut)musicShortcut.style.display=state.musicPlaylists===false?'none':'';
+ if(musicShortcut)musicShortcut.style.display=(state.musicPlaylists===false||state.myday===false)?'none':'';
  const musicWidget=document.getElementById('studyMusicWidget');
  if(musicWidget){
   const playlistTab=document.getElementById('musicTabPlaylists'),playlistPanel=document.getElementById('musicPanelPlaylists');
