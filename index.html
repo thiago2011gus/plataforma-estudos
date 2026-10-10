@@ -475,7 +475,7 @@ body.dark .reading-stars span.filled{color:#f1b83b}
     <div class="nav-item" data-view="agenda"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg></span>Agenda</div>
     <div class="nav-item" data-view="reading"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v14M12 7C9 4 5 4 3 5v14c3-1 6-1 9 2M12 7c3-3 7-3 9-2v14c-3-1-6-1-9 2"/></svg></span>Leituras</div>
     <div class="nav-item" data-view="habits"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.5-3"/></svg></span>Hábitos</div>
-    <div class="nav-item" id="musicDiaryNavItem" role="button" tabindex="0" onclick="openStudyMusicDiary()" onkeydown="if(event.key==='Enter'){openStudyMusicDiary()}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>Diário musical</div>
+    <div class="nav-item" id="musicDiaryNavItem" data-view="musicDiary" onclick="openStudyMusicDiary()"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>Diário musical</div>
     </div>
   </div>
   <div class="nav-group">
@@ -534,6 +534,11 @@ body.dark .reading-stars span.filled{color:#f1b83b}
       <div class="organizer-capture-box"><select id="homeQuickCaptureKind" class="select" aria-label="Categoria da captura"><option value="task">Tarefa / pendência</option><option value="idea">Ideia</option><option value="reminder">Lembrete / compromisso</option><option value="knowledge">Conhecimento / leitura</option></select><textarea id="homeQuickCaptureText" placeholder="O que você precisa registrar?"></textarea><button class="btn btn-primary" onclick="saveHomeQuickCapture()">Guardar</button></div>
       <div class="organizer-card-sub" style="margin-top:14px">Últimas capturas · altere a categoria e clique em Organizar para transformar em tarefa, anotação ou compromisso.</div><div id="homeQuickCaptureList"></div>
     </div>
+  </section>
+
+  <section class="view" id="view-musicDiary">
+    <div class="section-heading"><div><div class="section-title">Diário musical</div><div class="desc">Seus álbuns ouvidos, avaliações e novas descobertas.</div></div><button class="btn btn-secondary" type="button" onclick="showView('myday')">Voltar para Som para estudar</button></div>
+    <div id="musicDiaryMount"></div>
   </section>
 
   <section class="view" id="view-myday">
@@ -2408,6 +2413,17 @@ function startCollapsiblePanelObserver(){
 const STUDY_CURRENT_VIEW_KEY='study_current_view_v1';
 function showView(name,save=true){
   if(!document.getElementById('view-'+name))name='dashboard';
+  const musicPanel=document.getElementById('musicPanelAlbums'),musicWidget=document.getElementById('studyMusicWidget'),musicMount=document.getElementById('musicDiaryMount');
+  if(name!=='musicDiary'&&musicPanel&&musicWidget&&musicMount&&musicMount.contains(musicPanel)){
+    const playlistPanel=document.getElementById('musicPanelPlaylists');
+    if(playlistPanel&&playlistPanel.parentElement===musicWidget)playlistPanel.insertAdjacentElement('afterend',musicPanel);
+    else musicWidget.appendChild(musicPanel);
+    const albumsTab=document.getElementById('musicTabAlbums'),playlistsTab=document.getElementById('musicTabPlaylists');
+    const albumsActive=albumsTab?.classList.contains('active');
+    musicPanel.hidden=!albumsActive;
+    if(albumsTab)albumsTab.setAttribute('aria-selected',String(!!albumsActive));
+    if(playlistsTab)playlistsTab.setAttribute('aria-selected',String(!albumsActive));
+  }
   if(save)localStorage.setItem(STUDY_CURRENT_VIEW_KEY,name);
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.view===name));
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));
@@ -4024,7 +4040,13 @@ async function loadStudyMusicCover(target,title,artist){
 function studyMusicToday(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function getStudyMusicAlbums(){try{const data=JSON.parse(localStorage.getItem(STUDY_MUSIC_ALBUMS_KEY)||'[]');return Array.isArray(data)?data:[]}catch(e){return []}}
 function saveStudyMusicAlbums(items){localStorage.setItem(STUDY_MUSIC_ALBUMS_KEY,JSON.stringify(items))}
-function openStudyMusicDiary(){showView('myday');document.getElementById('musicDiaryNavItem')?.classList.add('active');switchStudyMusicTab('albums');requestAnimationFrame(()=>document.getElementById('studyMusicWidget')?.scrollIntoView({behavior:'smooth',block:'start'}))}
+function openStudyMusicDiary(){
+ const panel=document.getElementById('musicPanelAlbums'),mount=document.getElementById('musicDiaryMount');
+ if(panel&&mount){mount.appendChild(panel);panel.hidden=false}
+ showView('musicDiary');
+ const item=document.getElementById('musicDiaryNavItem');if(item)item.classList.add('active');
+ requestAnimationFrame(()=>mount?.scrollIntoView({behavior:'smooth',block:'start'}));
+}
 function switchStudyMusicTab(tab){
  const albums=tab==='albums',pp=document.getElementById('musicPanelPlaylists'),ap=document.getElementById('musicPanelAlbums'),pt=document.getElementById('musicTabPlaylists'),at=document.getElementById('musicTabAlbums');
  if(!pp||!ap)return;
