@@ -948,6 +948,13 @@ body.dark .reading-stars span.filled{color:#f1b83b}
   </section>
 
   <section class="view" id="view-settings">
+    <div class="card settings-group" id="studyFeatureSettings" style="margin-bottom:18px">
+      <div class="section-title">Personalização do Study</div>
+      <div class="desc" style="margin-bottom:14px">Escolha quais áreas deseja manter visíveis. Desativar uma função apenas a oculta: seus dados continuam salvos e voltam quando você a reativar.</div>
+      <div id="studyFeatureControls"></div>
+      <div class="settings-row" style="margin-top:12px"><div><div class="settings-label">Restaurar funções padrão</div><div class="settings-help">Reativa todas as áreas e subseções do Study.</div></div><button class="btn btn-secondary" type="button" onclick="resetStudyFeatureVisibility()">Restaurar funções</button><span></span></div>
+    </div>
+
     <div class="page-head">
       <div><div class="section-title" style="font-size:23px">Configurações</div><div class="desc">Personalize visualmente a plataforma sem editar código.</div></div>
       <button class="btn btn-secondary" onclick="resetAppearance()">Restaurar padrão</button>
@@ -2410,9 +2417,70 @@ function startCollapsiblePanelObserver(){
  });
  collapsiblePanelObserver.observe(document.querySelector('.app')||document.body,{childList:true,subtree:true});
 }
+
+const STUDY_FEATURE_VISIBILITY_KEY='study_feature_visibility_v1';
+const STUDY_FEATURE_GROUPS=[
+ {id:'study',title:'Estudos',description:'Plano, matérias, revisões e ferramentas de aprendizagem.',items:[
+  ['dashboard','Visão geral'],['plan','Meu plano'],['subjects','Matérias'],['timer','Cronômetro'],['stats','Estatísticas'],['gamification','Conquistas'],['reviews','Revisões'],['questions','Questões'],['materials','Materiais'],['research','Oráculo Jurídico'],['feynman','Mentor'],['flashcards','Flashcards']
+ ]},
+ {id:'personal',title:'Organização pessoal',description:'Rotina, compromissos, registros e leituras.',items:[
+  ['myday','Meu dia'],['tasks','Tarefas'],['capture','Captura rápida'],['notes','Caderno'],['agenda','Agenda'],['reading','Leituras'],['habits','Hábitos'],['musicDiary','Diário musical']
+ ]},
+ {id:'start',title:'Navegação',description:'Páginas gerais da plataforma.',items:[['home','Início']]}
+];
+function getStudyFeatureVisibility(){try{return JSON.parse(localStorage.getItem(STUDY_FEATURE_VISIBILITY_KEY)||'{}')||{}}catch(e){return {}}}
+function isStudyFeatureEnabled(id){return getStudyFeatureVisibility()[id]!==false}
+function setStudyFeatureEnabled(id,enabled){
+ const state=getStudyFeatureVisibility();state[id]=!!enabled;localStorage.setItem(STUDY_FEATURE_VISIBILITY_KEY,JSON.stringify(state));
+ if(id==='study'||id==='personal'||id==='start'){
+  const group=STUDY_FEATURE_GROUPS.find(g=>g.id===id);if(group)group.items.forEach(item=>{state[item[0]]=!!enabled});localStorage.setItem(STUDY_FEATURE_VISIBILITY_KEY,JSON.stringify(state));
+ }
+ renderStudyFeatureSettings();applyStudyFeatureVisibility();
+}
+function renderStudyFeatureSettings(){
+ const root=document.getElementById('studyFeatureControls');if(!root)return;
+ const state=getStudyFeatureVisibility();
+ root.innerHTML=STUDY_FEATURE_GROUPS.map(group=>{
+  const enabled=group.items.some(item=>state[item[0]]!==false);
+  const all=group.items.every(item=>state[item[0]]!==false);
+  return '<section class="study-feature-group" style="border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:10px"><div class="settings-row"><div><div class="settings-label">'+group.title+'</div><div class="settings-help">'+group.description+'</div></div><label class="study-feature-toggle"><input type="checkbox" data-feature-group="'+group.id+'" '+(all?'checked':'')+' onchange="setStudyFeatureEnabled(\''+group.id+'\',this.checked)"><span>Ativar tudo</span></label><span></span></div><div class="study-feature-children" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin-top:10px">'+group.items.map(item=>'<label class="study-feature-option" style="display:flex;align-items:center;gap:9px;padding:9px 10px;border:1px solid var(--line);border-radius:9px;cursor:pointer"><input type="checkbox" data-feature-option="'+item[0]+'" '+(state[item[0]]!==false?'checked':'')+' onchange="setStudyFeatureEnabled(\''+item[0]+'\',this.checked)"><span>'+item[1]+'</span></label>').join('')+'</div></section>';
+ }).join('');
+}
+function applyStudyFeatureVisibility(){
+ const state=getStudyFeatureVisibility();
+ document.querySelectorAll('.nav-item[data-view]').forEach(item=>{
+  const id=item.dataset.view;if(id==='settings')return;
+  item.style.display=state[id]===false?'none':'';
+ });
+ document.querySelectorAll('.view[id^="view-"]').forEach(view=>{
+  const id=view.id.slice(5);if(id==='settings')return;
+  view.dataset.featureDisabled=state[id]===false?'true':'false';
+  if(state[id]===false)view.classList.remove('active');
+ });
+ const groupMap=[['studyNavGroup','study'],['personalNavGroup','personal']];
+ groupMap.forEach(([elementId,groupId])=>{
+  const el=document.getElementById(elementId);if(!el)return;
+  const group=STUDY_FEATURE_GROUPS.find(g=>g.id===groupId);
+  const visible=group&&group.items.some(item=>state[item[0]]!==false);
+  el.style.display=visible?'':'none';
+ });
+ const startGroup=document.getElementById('startNavGroup');
+ if(startGroup)startGroup.style.display=state.home===false?'none':'';
+ const current=localStorage.getItem(STUDY_CURRENT_VIEW_KEY)||'dashboard';
+ if(state[current]===false)showView('settings');
+ const diaryNav=document.getElementById('musicDiaryNavItem');
+ if(diaryNav)diaryNav.style.display=state.musicDiary===false?'none':'';
+}
+function resetStudyFeatureVisibility(){
+ localStorage.removeItem(STUDY_FEATURE_VISIBILITY_KEY);
+ renderStudyFeatureSettings();applyStudyFeatureVisibility();
+ toast('Todas as funções do Study foram reativadas.');
+}
+
 const STUDY_CURRENT_VIEW_KEY='study_current_view_v1';
 function showView(name,save=true){
   if(!document.getElementById('view-'+name))name='dashboard';
+  if(name!=='settings'&&!isStudyFeatureEnabled(name))name='settings';
   const musicPanel=document.getElementById('musicPanelAlbums'),musicWidget=document.getElementById('studyMusicWidget'),musicMount=document.getElementById('musicDiaryMount');
   if(name!=='musicDiary'&&musicPanel&&musicWidget&&musicMount&&musicMount.contains(musicPanel)){
     const playlistPanel=document.getElementById('musicPanelPlaylists');
@@ -2452,6 +2520,7 @@ function showView(name,save=true){
   if(titles[name]){document.getElementById('pageTitle').textContent=titles[name][0];document.getElementById('pageSub').textContent=titles[name][1]}
 }
 document.querySelectorAll('.nav-item[data-view]').forEach(n=>n.addEventListener('click',()=>showView(n.dataset.view)));
+renderStudyFeatureSettings();applyStudyFeatureVisibility();
 
 let modalEditId=null;
 function openSubjectModal(id=null){
