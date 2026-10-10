@@ -446,7 +446,7 @@ body.dark .reading-stars span.filled{color:#f1b83b}
     <div class="nav-title">Principal</div>
     <div class="nav-item" data-view="home"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9v12h14V9M9 21v-7h6v7"/></svg></span>Início</div>
     <div class="nav-item active" data-view="myday"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/></svg></span>Meu dia</div>
-    <div class="nav-item" role="button" tabindex="0" onclick="showView('myday');document.getElementById('studyMusicWidget')?.scrollIntoView({behavior:'smooth',block:'start'})" onkeydown="if(event.key==='Enter'){showView('myday');document.getElementById('studyMusicWidget')?.scrollIntoView({behavior:'smooth',block:'start'})}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>Som para estudar</div>
+    <div class="nav-item" id="studyMusicShortcut" role="button" tabindex="0" onclick="showView('myday');document.getElementById('studyMusicWidget')?.scrollIntoView({behavior:'smooth',block:'start'})" onkeydown="if(event.key==='Enter'){showView('myday');document.getElementById('studyMusicWidget')?.scrollIntoView({behavior:'smooth',block:'start'})}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>Som para estudar</div>
     <div class="nav-item" data-view="settings"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/><path d="m19.4 15 .1.1 1.1.9-1.5 2.6-1.4-.6a8 8 0 0 1-1.6.9l-.2 1.5h-3l-.3-1.5a8 8 0 0 1-1.6-.9l-1.4.6-1.5-2.6 1.1-.9a7 7 0 0 1 0-1.9l-1.1-.9 1.5-2.6 1.4.6a8 8 0 0 1 1.6-.9l.3-1.5h3l.2 1.5a8 8 0 0 1 1.6.9l1.4-.6 1.5 2.6-1.1.9a7 7 0 0 1-.1 1.8Z" transform="translate(-1 -1) scale(1.08)"/></svg></span>Configurações</div>
   </div>
   <div class="nav-group study-nav-group" id="studyNavGroup">
@@ -2424,7 +2424,7 @@ const STUDY_FEATURE_GROUPS=[
   ['dashboard','Visão geral'],['plan','Meu plano'],['subjects','Matérias'],['timer','Cronômetro'],['stats','Estatísticas'],['gamification','Conquistas'],['reviews','Revisões'],['questions','Questões'],['materials','Materiais'],['research','Oráculo Jurídico'],['feynman','Mentor'],['flashcards','Flashcards']
  ]},
  {id:'personal',title:'Organização pessoal',description:'Rotina, compromissos, registros e leituras.',items:[
-  ['myday','Meu dia'],['tasks','Tarefas'],['capture','Captura rápida'],['notes','Caderno'],['agenda','Agenda'],['reading','Leituras'],['habits','Hábitos'],['musicDiary','Diário musical']
+  ['myday','Meu dia'],['tasks','Tarefas'],['capture','Captura rápida'],['notes','Caderno'],['agenda','Agenda'],['reading','Leituras'],['habits','Hábitos'],['musicPlaylists','Playlists para estudar'],['musicDiary','Diário musical']
  ]},
  {id:'start',title:'Navegação',description:'Páginas gerais da plataforma.',items:[['home','Início']]}
 ];
@@ -2470,6 +2470,17 @@ function applyStudyFeatureVisibility(){
  if(state[current]===false)showView('settings');
  const diaryNav=document.getElementById('musicDiaryNavItem');
  if(diaryNav)diaryNav.style.display=state.musicDiary===false?'none':'';
+ const musicShortcut=document.getElementById('studyMusicShortcut');
+ if(musicShortcut)musicShortcut.style.display=state.musicPlaylists===false?'none':'';
+ const musicWidget=document.getElementById('studyMusicWidget');
+ if(musicWidget){
+  const playlistTab=document.getElementById('musicTabPlaylists'),playlistPanel=document.getElementById('musicPanelPlaylists');
+  if(playlistTab)playlistTab.style.display=state.musicPlaylists===false?'none':'';
+  if(playlistPanel)playlistPanel.hidden=state.musicPlaylists===false||!playlistTab?.classList.contains('active');
+  if(state.musicPlaylists===false&&document.getElementById('musicTabAlbums')?.classList.contains('active')===false){
+   document.getElementById('musicTabAlbums')?.click();
+  }
+ }
 }
 function resetStudyFeatureVisibility(){
  localStorage.removeItem(STUDY_FEATURE_VISIBILITY_KEY);
