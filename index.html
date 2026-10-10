@@ -475,7 +475,7 @@ body.dark .reading-stars span.filled{color:#f1b83b}
     <div class="nav-item" data-view="agenda"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg></span>Agenda</div>
     <div class="nav-item" data-view="reading"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v14M12 7C9 4 5 4 3 5v14c3-1 6-1 9 2M12 7c3-3 7-3 9-2v14c-3-1-6-1-9 2"/></svg></span>Leituras</div>
     <div class="nav-item" data-view="habits"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.5-3"/></svg></span>Hábitos</div>
-    <div class="nav-item" role="button" tabindex="0" onclick="openStudyMusicDiary()" onkeydown="if(event.key==='Enter'){openStudyMusicDiary()}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>Diário musical</div>
+    <div class="nav-item" id="musicDiaryNavItem" role="button" tabindex="0" onclick="openStudyMusicDiary()" onkeydown="if(event.key==='Enter'){openStudyMusicDiary()}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>Diário musical</div>
     </div>
   </div>
   <div class="nav-group">
@@ -4024,7 +4024,7 @@ async function loadStudyMusicCover(target,title,artist){
 function studyMusicToday(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function getStudyMusicAlbums(){try{const data=JSON.parse(localStorage.getItem(STUDY_MUSIC_ALBUMS_KEY)||'[]');return Array.isArray(data)?data:[]}catch(e){return []}}
 function saveStudyMusicAlbums(items){localStorage.setItem(STUDY_MUSIC_ALBUMS_KEY,JSON.stringify(items))}
-function openStudyMusicDiary(){showView('myday');switchStudyMusicTab('albums');requestAnimationFrame(()=>document.getElementById('studyMusicWidget')?.scrollIntoView({behavior:'smooth',block:'start'}))}
+function openStudyMusicDiary(){showView('myday');document.getElementById('musicDiaryNavItem')?.classList.add('active');switchStudyMusicTab('albums');requestAnimationFrame(()=>document.getElementById('studyMusicWidget')?.scrollIntoView({behavior:'smooth',block:'start'}))}
 function switchStudyMusicTab(tab){
  const albums=tab==='albums',pp=document.getElementById('musicPanelPlaylists'),ap=document.getElementById('musicPanelAlbums'),pt=document.getElementById('musicTabPlaylists'),at=document.getElementById('musicTabAlbums');
  if(!pp||!ap)return;
