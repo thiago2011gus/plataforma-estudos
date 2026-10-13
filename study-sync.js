@@ -81,7 +81,7 @@
     if(!email||!password){setStatus('Informe e-mail e senha.');return;}
     setStatus(mode==='signup'?'Criando conta…':'Entrando…');
     try{
-      const res=mode==='signup'?await client.auth.signUp({email,password}):await client.auth.signInWithPassword({email,password});
+      const res=mode==='signup'?await client.auth.signUp({email,password,options:{emailRedirectTo:'https://thiago2011gus.github.io/plataforma-estudos/'}}):await client.auth.signInWithPassword({email,password});
       if(res.error)throw res.error;
       if(mode==='signup'&&!res.data.session){setStatus('Conta criada. Confira seu e-mail para confirmar o cadastro e depois entre.');return;}
       user=res.data.user;
