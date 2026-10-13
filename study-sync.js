@@ -51,15 +51,16 @@
   function ensureUI(){
     if(document.getElementById('studySyncButton'))return;
     const style=$('style'); style.textContent=`
-#studySyncButton{position:fixed;right:18px;top:14px;z-index:99990;border:1px solid var(--line,#ddd);border-radius:999px;padding:9px 13px;background:var(--surface,#fff);color:var(--text,#202825);font:600 13px system-ui;box-shadow:0 4px 18px #0002;cursor:pointer} #studySyncButton:hover{border-color:var(--accent,#2f6254)}
-#studySyncPanel{position:fixed;right:18px;top:62px;bottom:auto;z-index:99991;width:min(360px,calc(100vw - 28px));background:var(--surface,#fff);color:var(--text,#202825);border:1px solid var(--line,#ddd);border-radius:16px;padding:18px;box-shadow:0 10px 35px #0003;font:14px system-ui;display:none}
+#studySyncButton{position:fixed;right:18px;bottom:18px;top:auto;z-index:99990;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line,#ddd);border-radius:50%;padding:0;background:var(--surface,#fff);color:var(--text,#202825);font:600 20px system-ui;box-shadow:0 4px 18px #0002;cursor:pointer} #studySyncButton:hover{border-color:var(--accent,#2f6254)}
+#studySyncPanel{position:fixed;right:18px;bottom:72px;top:auto;z-index:99991;width:min(360px,calc(100vw - 28px));background:var(--surface,#fff);color:var(--text,#202825);border:1px solid var(--line,#ddd);border-radius:16px;padding:18px;box-shadow:0 10px 35px #0003;font:14px system-ui;display:none}
 #studySyncPanel h3{margin:0 0 8px;font-size:17px}#studySyncPanel p{line-height:1.45;color:var(--muted,#777)}
 #studySyncPanel input{display:block;width:100%;box-sizing:border-box;margin:8px 0;padding:10px;border:1px solid var(--line,#ccc);border-radius:8px;background:var(--surface2,#fff);color:var(--text,#222)}
 #studySyncPanel button{border:0;border-radius:8px;padding:9px 12px;margin:4px 4px 4px 0;cursor:pointer;background:var(--accent,#2f6254);color:white}
 #studySyncPanel button.secondary{background:var(--surface2,#eee);color:var(--text,#222);border:1px solid var(--line,#ddd)}
 #studySyncStatus{font-size:12px;margin-top:8px;overflow-wrap:anywhere}`;
     document.head.appendChild(style);
-    const toggle=btn('♙ Conta',()=>{const p=document.getElementById('studySyncPanel');p.style.display=p.style.display==='block'?'none':'block';});
+    const toggle=btn('♙',()=>{const p=document.getElementById('studySyncPanel');p.style.display=p.style.display==='block'?'none':'block';});
+    toggle.title='Conta e sincronização';toggle.setAttribute('aria-label','Abrir conta e sincronização');
     toggle.id='studySyncButton';document.body.appendChild(toggle);
     const panel=$('section',{id:'studySyncPanel','aria-label':'Sincronização do Study'});
     panel.appendChild($('h3',{},'Study na nuvem'));
@@ -69,7 +70,7 @@
     panel.append(email,pass);
     panel.appendChild(btn('Entrar',()=>auth('signin',email.value,pass.value)));
     panel.appendChild(btn('Criar conta',()=>auth('signup',email.value,pass.value),'secondary'));
-    panel.appendChild(btn('Sair',async()=>{if(client)await client.auth.signOut();user=null;stopSync();renderLoggedOut();document.getElementById('studySyncButton').textContent='♙ Conta';setStatus('Sessão encerrada. Os dados locais permanecem neste dispositivo.');},'secondary'));
+    panel.appendChild(btn('Sair',async()=>{if(client)await client.auth.signOut();user=null;stopSync();renderLoggedOut();document.getElementById('studySyncButton').textContent='♙';setStatus('Sessão encerrada. Os dados locais permanecem neste dispositivo.');},'secondary'));
     const status=$('div',{id:'studySyncStatus'},'Não conectado. Os dados ainda ficam neste dispositivo até entrar na conta.');
     panel.appendChild(status);
     const note=$('p');note.style.fontSize='11px';note.textContent='Na primeira conexão, os registros serão combinados; em conflitos simples, os valores deste dispositivo prevalecem. Faça uma cópia de segurança antes de usar em vários dispositivos.';panel.appendChild(note);
@@ -85,7 +86,7 @@
       if(res.error)throw res.error;
       if(mode==='signup'&&!res.data.session){setStatus('Conta criada. Confira seu e-mail para confirmar o cadastro e depois entre.');return;}
       user=res.data.user;
-      if(user){document.getElementById('studySyncEmail').style.display='none';document.getElementById('studySyncPassword').style.display='none';setStatus('Conectado como '+user.email+' — preparando sincronização…');document.getElementById('studySyncButton').textContent='♙ '+user.email;await syncOnce(true);startSync();}
+      if(user){document.getElementById('studySyncEmail').style.display='none';document.getElementById('studySyncPassword').style.display='none';setStatus('Conectado como '+user.email+' — preparando sincronização…');document.getElementById('studySyncButton').textContent='♙';await syncOnce(true);startSync();}
     }catch(e){setStatus('Erro de autenticação: '+(e.message||'verifique e-mail e senha.'));}
   }
   async function fetchCloud(){
