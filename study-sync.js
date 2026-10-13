@@ -4,6 +4,8 @@
   const SUPABASE_KEY = 'sb_publishable_JS9P242moE37xp_1uD22XQ_yYacxqek';
   const META_KEY = '__study_cloud_sync_meta_v1';
   const INTERNAL_PREFIXES = ['sb-', 'supabase.auth.'];
+  /* Preferências visuais ficam neste navegador: a nuvem não deve trocar o tema no recarregamento. */
+  const LOCAL_ONLY_KEYS = new Set(['study_theme','study_darkness','study_appearance']);
   let client, user, busy = false, timer = null, lastLocal = {}, lastRemote = {}, firstSync = true;
 
   const $ = (tag, attrs = {}, text = '') => {
@@ -17,7 +19,7 @@
     const out=[];
     for(let i=0;i<localStorage.length;i++){
       const k=localStorage.key(i);
-      if(!k || k===META_KEY || INTERNAL_PREFIXES.some(p=>k.startsWith(p))) continue;
+      if(!k || k===META_KEY || LOCAL_ONLY_KEYS.has(k) || INTERNAL_PREFIXES.some(p=>k.startsWith(p))) continue;
       out.push(k);
     }
     return out;
@@ -27,7 +29,7 @@
   }
   function writeLocal(o){
     Object.entries(o||{}).forEach(([k,v])=>{
-      if(k===META_KEY || INTERNAL_PREFIXES.some(p=>k.startsWith(p))) return;
+      if(k===META_KEY || LOCAL_ONLY_KEYS.has(k) || INTERNAL_PREFIXES.some(p=>k.startsWith(p))) return;
       try{localStorage.setItem(k,JSON.stringify(v));}catch(e){console.warn('Study sync: não foi possível gravar',k,e);}
     });
   }
