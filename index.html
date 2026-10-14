@@ -2697,6 +2697,10 @@ function formatHours(sec){const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/6
 function formatShort(sec){const m=Math.round(sec/60);return m<60?m+'min':Math.floor(m/60)+'h '+String(m%60).padStart(2,'0')}
 function localDateKey(d){const x=d||new Date();return new Date(x.getTime()-x.getTimezoneOffset()*60000).toISOString().slice(0,10)}
 let timerInterval=null;
+let timerAnchorMs=0;
+let timerBaseSeconds=0;
+function updateStopwatchFromClock(){if(!timerRunning||timerMode!=='stopwatch'||!timerAnchorMs)return;const elapsed=Math.max(0,Math.floor((Date.now()-timerAnchorMs)/1000));timerSeconds=timerBaseSeconds+elapsed;currentSessionSeconds=elapsed;localStorage.setItem(TIMER_KEY,String(timerSeconds));renderTimer();}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&timerRunning&&timerMode==='stopwatch')updateStopwatchFromClock();});
 
 function loadPomodoroSettings(){
   try{return {...pomodoroDefaults,...JSON.parse(localStorage.getItem(POMODORO_KEY)||'{}')}}catch(e){return {...pomodoroDefaults}}
@@ -2765,34 +2769,31 @@ function renderTimer(){
   syncPomodoroInputs();
 }
 function startTimerInterval(){
+  if(timerInterval)clearInterval(timerInterval);
   timerInterval=setInterval(()=>{
     if(timerMode==='stopwatch'){
+      updateStopwatchFromClock();
+      return;
+    }
+    pomodoroRemaining--;
+    if(pomodoroPhase==='focus'){
       timerSeconds++;
       currentSessionSeconds++;
       localStorage.setItem(TIMER_KEY,timerSeconds);
-    }else{
-      pomodoroRemaining--;
-      if(pomodoroPhase==='focus'){
-        timerSeconds++;
-        currentSessionSeconds++;
-        localStorage.setItem(TIMER_KEY,timerSeconds);
-      }
-      if(pomodoroRemaining<=0){
-        advancePomodoro();
-        return;
-      }
     }
+    if(pomodoroRemaining<=0){advancePomodoro();return;}
     renderTimer();
   },1000);
 }
 function toggleTimer(){
-  if(timerRunning){timerRunning=false;clearInterval(timerInterval);recordStudySession();renderTimer();toast('Sessão pausada e registrada.');return}
+  if(timerRunning){if(timerMode==='stopwatch')updateStopwatchFromClock();timerRunning=false;clearInterval(timerInterval);timerInterval=null;recordStudySession();renderTimer();toast('Sessão pausada e registrada.');return}
   if(!subjects.length){alert('Cadastre uma matéria antes de iniciar.');showView('subjects');return}
   if(timerMode==='pomodoro' && pomodoroRemaining<=0){
     pomodoroPhase='focus';pomodoroCycle=1;pomodoroRemaining=pomodoroSettings.focus*60;pomodoroTotal=pomodoroRemaining;
   }
   timerRunning=true;
   if(currentSessionSeconds===0)sessionStartedAt=new Date().toISOString();
+  if(timerMode==='stopwatch'){timerAnchorMs=Date.now();timerBaseSeconds=timerSeconds;}
   startTimerInterval();
   renderTimer();
 }
@@ -2824,7 +2825,7 @@ function advancePomodoro(){
   renderTimer();
 }
 function resetTimer(){
-  if(timerRunning){timerRunning=false;clearInterval(timerInterval)}
+  if(timerRunning){if(timerMode==='stopwatch')updateStopwatchFromClock();timerRunning=false;clearInterval(timerInterval);timerInterval=null}
   recordStudySession();
   if(timerMode==='pomodoro'){
     pomodoroPhase='focus';pomodoroCycle=1;
