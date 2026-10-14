@@ -830,7 +830,7 @@ body.dark .reading-stars span.filled{color:#f1b83b}
     <div class="reading-library-toolbar">
       <label class="reading-search-label"><span>Buscar na biblioteca</span><input id="readingSearch" type="search" placeholder="Título, autor, país..." oninput="renderReadings()"></label>
       <label><span>Categoria</span><select id="readingCategoryFilter" onchange="renderReadings()"><option value="">Todas as categorias</option></select></label>
-      <label><span>Ordenar por</span><select id="readingSort" onchange="renderReadings()"><option value="added-desc">Adicionados recentemente</option><option value="title">Título (A–Z)</option><option value="rating-desc">Melhor avaliados</option><option value="start-desc">Data de início</option><option value="finish-desc">Data de término</option><option value="progress-desc">Progresso</option></select></label>
+      <label><span>Ordenar por</span><select id="readingSort" onchange="renderReadings()"><option value="edited-desc" selected>Editados recentemente</option><option value="added-desc">Adicionados recentemente</option><option value="title">Título (A–Z)</option><option value="rating-desc">Melhor avaliados</option><option value="start-desc">Data de início</option><option value="finish-desc">Data de término</option><option value="progress-desc">Progresso</option></select></label>
       <div id="readingLibraryCount" class="reading-library-count"></div>
     </div>
     <div class="reading-grid" id="readingGrid"></div>
