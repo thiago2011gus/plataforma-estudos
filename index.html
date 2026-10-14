@@ -2699,9 +2699,10 @@ function localDateKey(d){const x=d||new Date();return new Date(x.getTime()-x.get
 let timerInterval=null;
 let timerAnchorMs=0;
 let timerBaseSeconds=0;
+let timerSessionBaseSeconds=0;
 const TIMER_RUNTIME_KEY='study_timer_runtime_v1';
-function saveTimerRuntime(){try{localStorage.setItem(TIMER_RUNTIME_KEY,JSON.stringify({running:timerRunning,mode:timerMode,anchorMs:timerAnchorMs,baseSeconds:timerBaseSeconds,sessionSeconds:currentSessionSeconds,sessionStartedAt}));}catch(e){}}
-function updateStopwatchFromClock(){if(!timerRunning||timerMode!=='stopwatch'||!timerAnchorMs)return;const elapsed=Math.max(0,Math.floor((Date.now()-timerAnchorMs)/1000));timerSeconds=timerBaseSeconds+elapsed;currentSessionSeconds=(Number(timerBaseSeconds)||0)-Number(timerBaseSeconds||0)+elapsed;localStorage.setItem(TIMER_KEY,String(timerSeconds));saveTimerRuntime();renderTimer();}
+function saveTimerRuntime(){try{localStorage.setItem(TIMER_RUNTIME_KEY,JSON.stringify({running:timerRunning,mode:timerMode,anchorMs:timerAnchorMs,baseSeconds:timerBaseSeconds,sessionSeconds:currentSessionSeconds,sessionBaseSeconds:timerSessionBaseSeconds,sessionStartedAt}));}catch(e){}}
+function updateStopwatchFromClock(){if(!timerRunning||timerMode!=='stopwatch'||!timerAnchorMs)return;const elapsed=Math.max(0,Math.floor((Date.now()-timerAnchorMs)/1000));timerSeconds=timerBaseSeconds+elapsed;currentSessionSeconds=timerSessionBaseSeconds+elapsed;localStorage.setItem(TIMER_KEY,String(timerSeconds));saveTimerRuntime();renderTimer();}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&timerRunning){if(timerMode==='stopwatch')updateStopwatchFromClock();else syncPomodoroClock();}});
 
 function loadPomodoroSettings(){
@@ -2770,7 +2771,7 @@ function renderTimer(){
   }
   syncPomodoroInputs();
 }
-function syncPomodoroClock(){if(!timerRunning||timerMode!=='pomodoro')return;const state=JSON.parse(localStorage.getItem(TIMER_RUNTIME_KEY)||'{}');if(state.running&&state.mode==='pomodoro'&&state.anchorMs){const elapsed=Math.max(0,Math.floor((Date.now()-state.anchorMs)/1000));if(elapsed>0){const focusSeconds=pomodoroPhase==='focus'?elapsed:0;pomodoroRemaining=Math.max(0,pomodoroRemaining-elapsed);timerSeconds+=focusSeconds;currentSessionSeconds+=focusSeconds;state.anchorMs=Date.now();localStorage.setItem(TIMER_KEY,String(timerSeconds));saveTimerRuntime();if(pomodoroRemaining<=0)advancePomodoro();else renderTimer();}}}
+function syncPomodoroClock(){if(!timerRunning||timerMode!=='pomodoro'||!timerAnchorMs)return;const now=Date.now(),elapsed=Math.max(0,Math.floor((now-timerAnchorMs)/1000));if(elapsed>0){const focusSeconds=pomodoroPhase==='focus'?elapsed:0;pomodoroRemaining=Math.max(0,pomodoroRemaining-elapsed);timerSeconds+=focusSeconds;currentSessionSeconds+=focusSeconds;timerAnchorMs+=elapsed*1000;localStorage.setItem(TIMER_KEY,String(timerSeconds));saveTimerRuntime();if(pomodoroRemaining<=0)advancePomodoro();else renderTimer();}}
 function startTimerInterval(){
   if(timerInterval)clearInterval(timerInterval);
   timerInterval=setInterval(()=>{
@@ -2795,8 +2796,8 @@ function toggleTimer(){
     pomodoroPhase='focus';pomodoroCycle=1;pomodoroRemaining=pomodoroSettings.focus*60;pomodoroTotal=pomodoroRemaining;
   }
   timerRunning=true;
-  if(currentSessionSeconds===0)sessionStartedAt=new Date().toISOString();
-  if(timerMode==='stopwatch'){timerAnchorMs=Date.now();timerBaseSeconds=timerSeconds;}else{timerAnchorMs=Date.now();}
+  if(currentSessionSeconds===0){sessionStartedAt=new Date().toISOString();timerSessionBaseSeconds=0;}else{timerSessionBaseSeconds=currentSessionSeconds;}
+  timerAnchorMs=Date.now();if(timerMode==='stopwatch')timerBaseSeconds=timerSeconds;
   saveTimerRuntime();startTimerInterval();
   renderTimer();
 }
