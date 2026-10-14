@@ -632,7 +632,7 @@ body.dark .reading-stars span.filled{color:#f1b83b}
         <select class="select" id="timerSubject" onchange="renderTimerTopics()"></select>
         <select class="select" id="timerTopic" style="margin-top:8px"></select>
         <div class="timer-display" id="timerDisplay">00:00:00</div>
-        <div class="timer-actions"><button class="btn btn-primary" id="timerToggle" onclick="toggleTimer()">Iniciar</button><button class="btn btn-secondary" onclick="resetTimer()">Reiniciar</button></div>
+        <div class="timer-actions"><button class="btn btn-primary" id="timerToggle" onclick="toggleTimer()">Iniciar</button></div><div class="timer-label" style="margin-top:12px">Ao finalizar, clique em “Registrar tempo” para salvar a sessão.</div>
       </div>
     </div>
 
@@ -670,36 +670,15 @@ body.dark .reading-stars span.filled{color:#f1b83b}
 </section>
   <section class="view" id="view-timer">
   <div class="card timer">
-    <div class="timer-mode-switch">
-      <button class="seg active" id="timerModeStopwatch" onclick="setTimerMode('stopwatch')">Cronômetro</button>
-      <button class="seg" id="timerModePomodoro" onclick="setTimerMode('pomodoro')">Pomodoro</button>
-    </div>
-
-    <div class="section-title" id="timerTitle">Cronômetro</div>
-    <div class="timer-label" style="margin-top:9px">Matéria atual</div>
+    <div class="section-title">Registro de estudo</div>
+    <div class="timer-label" style="margin-top:9px">Escolha a matéria e, se quiser, o assunto.</div>
     <select class="select" id="timerSubject2" onchange="renderTimerTopics()"></select>
     <select class="select" id="timerTopic2" style="margin-top:8px"></select>
-
-    <div class="pomodoro-phase" id="pomodoroPhase">Foco</div>
     <div class="timer-display" id="timerDisplay2">00:00:00</div>
-    <div class="pomodoro-progress"><div id="pomodoroProgress"></div></div>
-    <div class="pomodoro-cycle" id="pomodoroCycle"></div>
-
     <div class="timer-actions">
       <button class="btn btn-primary" id="timerToggle2" onclick="toggleTimer()">Iniciar</button>
-      <button class="btn btn-secondary" onclick="resetTimer()">Reiniciar</button>
     </div>
-
-    <div class="pomodoro-settings" id="pomodoroSettings">
-      <div class="timer-settings-title">Personalizar Pomodoro</div>
-      <div class="timer-settings-grid">
-        <label>Foco <input id="pomodoroFocus" type="number" min="1" max="180"></label>
-        <label>Pausa curta <input id="pomodoroShort" type="number" min="1" max="60"></label>
-        <label>Pausa longa <input id="pomodoroLong" type="number" min="1" max="120"></label>
-        <label>Ciclos <input id="pomodoroCycles" type="number" min="1" max="12"></label>
-      </div>
-      <button class="small-btn" onclick="savePomodoroSettings()">Salvar configuração</button>
-    </div>
+    <div class="timer-label" style="margin-top:14px">Inicie quando começar a estudar e registre o tempo ao terminar.</div>
   </div>
 </section>
   <section class="view" id="view-gamification">
@@ -2663,114 +2642,68 @@ function deleteTopic(sid,index){
   s.topics.splice(index,1);saveSubjects();toast('Tópico removido.');
 }
 
-const POMODORO_KEY='study_pomodoro_v1';
-const TIMER_MODE_KEY='study_timer_mode_v1';
-const pomodoroDefaults={focus:25,short:5,long:15,cycles:4};
-let pomodoroSettings=loadPomodoroSettings();
-let timerMode=localStorage.getItem(TIMER_MODE_KEY)||'stopwatch';
-let pomodoroPhase='focus';
-let pomodoroCycle=1;
-let pomodoroRemaining=pomodoroSettings.focus*60;
-let pomodoroTotal=pomodoroSettings.focus*60;
-
 const STUDY_LOG_KEY='study_time_log_v1';
-let timerSeconds=Number(localStorage.getItem(TIMER_KEY)||0);
+let timerSeconds=0;
 let timerRunning=false;
 let currentSessionSeconds=0;
 let sessionStartedAt=null;
+let timerInterval=null;
+let timerAnchorMs=0;
+let timerSessionSubjectId='';
+let timerSessionTopicId='';
 function getStudyLog(){try{return JSON.parse(localStorage.getItem(STUDY_LOG_KEY)||'[]')}catch(e){return []}}
 function saveStudyLog(log){localStorage.setItem(STUDY_LOG_KEY,JSON.stringify(log))}
 function selectedTimerSubjectId(){const full=document.getElementById('view-timer')?.classList.contains('active');return (full?document.getElementById('timerSubject2')?.value:document.getElementById('timerSubject')?.value)||''}
 function selectedTimerTopicId(){const full=document.getElementById('view-timer')?.classList.contains('active');return (full?document.getElementById('timerTopic2')?.value:document.getElementById('timerTopic')?.value)||''}
+function renderTimer(){
+  const elapsed=timerRunning?Math.max(0,Math.floor((Date.now()-timerAnchorMs)/1000)):timerSeconds;
+  const h=String(Math.floor(elapsed/3600)).padStart(2,'0');
+  const m=String(Math.floor((elapsed%3600)/60)).padStart(2,'0');
+  const s=String(elapsed%60).padStart(2,'0');
+  ['timerDisplay','timerDisplay2'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=h+':'+m+':'+s});
+  ['timerToggle','timerToggle2'].forEach(id=>{const el=document.getElementById(id);if(el){el.textContent=timerRunning?'Registrar tempo':'Iniciar';el.classList.toggle('btn-primary',!timerRunning);el.classList.toggle('btn-secondary',timerRunning)}});
+}
 function recordStudySession(){
   if(currentSessionSeconds<=0)return;
-  const subjectId=selectedTimerSubjectId(),topicId=selectedTimerTopicId();
+  const subjectId=timerSessionSubjectId||selectedTimerSubjectId();
+  const topicId=timerSessionTopicId||selectedTimerTopicId();
   const log=getStudyLog();
-  log.push({date:new Date().toISOString().slice(0,10),seconds:currentSessionSeconds,subjectId,topicId,startedAt:sessionStartedAt||new Date().toISOString()});
+  log.push({date:localDateKey(),seconds:currentSessionSeconds,subjectId,topicId,startedAt:sessionStartedAt||new Date().toISOString()});
   saveStudyLog(log);
   const xp=Math.floor(currentSessionSeconds/300)*2;
-  if(xp>0){const g=gameEnsure();g.sessions++;g.studySeconds+=currentSessionSeconds;saveGame(g);gameAward(xp,'tempo de estudo');}else{const g=gameEnsure();g.sessions++;g.studySeconds+=currentSessionSeconds;saveGame(g);}
-  currentSessionSeconds=0;sessionStartedAt=null;
+  const g=gameEnsure();g.sessions++;g.studySeconds+=currentSessionSeconds;saveGame(g);
+  if(xp>0)gameAward(xp,'tempo de estudo');
+  currentSessionSeconds=0;sessionStartedAt=null;timerSessionSubjectId='';timerSessionTopicId='';
   renderStats();
 }
 function formatHours(sec){const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60);return h+'h '+String(m).padStart(2,'0')}
 function formatShort(sec){const m=Math.round(sec/60);return m<60?m+'min':Math.floor(m/60)+'h '+String(m%60).padStart(2,'0')}
 function localDateKey(d){const x=d||new Date();return new Date(x.getTime()-x.getTimezoneOffset()*60000).toISOString().slice(0,10)}
-let timerInterval=null;
-let timerAnchorMs=0;
-let timerBaseSeconds=0;
-let timerSessionBaseSeconds=0;
-const TIMER_RUNTIME_KEY='study_timer_runtime_v1';
-function saveTimerRuntime(){try{localStorage.setItem(TIMER_RUNTIME_KEY,JSON.stringify({running:timerRunning,mode:timerMode,anchorMs:timerAnchorMs,baseSeconds:timerBaseSeconds,sessionSeconds:currentSessionSeconds,sessionBaseSeconds:timerSessionBaseSeconds,sessionStartedAt,pomodoroRemaining,pomodoroPhase,pomodoroCycle}));}catch(e){}}
-function updateStopwatchFromClock(){
-  if(!timerRunning||timerMode!=='stopwatch'||!timerAnchorMs)return;
-  const elapsed=Math.max(0,Math.floor((Date.now()-timerAnchorMs)/1000));
-  timerSeconds=timerBaseSeconds+elapsed;
-  currentSessionSeconds=timerSessionBaseSeconds+elapsed;
-  localStorage.setItem(TIMER_KEY,String(timerSeconds));saveTimerRuntime();renderTimer();
-}
-function syncPomodoroClock(){
-  if(!timerRunning||timerMode!=='pomodoro'||!timerAnchorMs)return;
-  const now=Date.now(),elapsed=Math.max(0,Math.floor((now-timerAnchorMs)/1000));
-  if(elapsed<1)return;
-  if(pomodoroPhase==='focus'){timerSeconds+=elapsed;currentSessionSeconds+=elapsed;localStorage.setItem(TIMER_KEY,String(timerSeconds));}
-  pomodoroRemaining=Math.max(0,pomodoroRemaining-elapsed);timerAnchorMs+=elapsed*1000;saveTimerRuntime();
-  if(pomodoroRemaining<=0)advancePomodoro();else renderTimer();
-}
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&timerRunning){if(timerMode==='stopwatch')updateStopwatchFromClock();else syncPomodoroClock();}});
-function startTimerInterval(){if(timerInterval)clearInterval(timerInterval);timerInterval=setInterval(()=>{if(timerMode==='stopwatch')updateStopwatchFromClock();else syncPomodoroClock();},250);}
 function toggleTimer(){
   if(timerRunning){
-    if(timerMode==='stopwatch')updateStopwatchFromClock();else syncPomodoroClock();
-    timerRunning=false;if(timerInterval)clearInterval(timerInterval);timerInterval=null;saveTimerRuntime();recordStudySession();renderTimer();toast('Sessão pausada e registrada.');return;
+    timerSeconds=Math.max(0,Math.floor((Date.now()-timerAnchorMs)/1000));
+    currentSessionSeconds=timerSeconds;
+    timerRunning=false;
+    if(timerInterval)clearInterval(timerInterval);
+    timerInterval=null;
+    recordStudySession();
+    timerSeconds=0;
+    renderTimer();
+    toast('Tempo de estudo registrado.');
+    renderDashboard();
+    return;
   }
   if(!subjects.length){alert('Cadastre uma matéria antes de iniciar.');showView('subjects');return}
-  if(timerMode==='pomodoro'&&pomodoroRemaining<=0){pomodoroPhase='focus';pomodoroCycle=1;pomodoroRemaining=pomodoroSettings.focus*60;pomodoroTotal=pomodoroRemaining;}
+  timerSessionSubjectId=selectedTimerSubjectId();
+  timerSessionTopicId=selectedTimerTopicId();
+  sessionStartedAt=new Date().toISOString();
+  timerAnchorMs=Date.now();
+  timerSeconds=0;
   timerRunning=true;
-  if(currentSessionSeconds===0){sessionStartedAt=new Date().toISOString();timerSessionBaseSeconds=0;}else{timerSessionBaseSeconds=currentSessionSeconds;}
-  timerAnchorMs=Date.now();if(timerMode==='stopwatch')timerBaseSeconds=timerSeconds;
-  saveTimerRuntime();startTimerInterval();renderTimer();
-}
-
-function advancePomodoro(){
-  if(pomodoroPhase==='focus'){
-    if(pomodoroCycle>=pomodoroSettings.cycles){
-      pomodoroPhase='long';
-      pomodoroRemaining=pomodoroSettings.long*60;
-      pomodoroTotal=pomodoroRemaining;
-    }else{
-      pomodoroPhase='short';
-      pomodoroRemaining=pomodoroSettings.short*60;
-      pomodoroTotal=pomodoroRemaining;
-    }
-    toast('Foco concluído. Hora da pausa.');
-  }else if(pomodoroPhase==='short'){
-    pomodoroCycle++;
-    pomodoroPhase='focus';
-    pomodoroRemaining=pomodoroSettings.focus*60;
-    pomodoroTotal=pomodoroRemaining;
-    toast('Pausa concluída. Volte ao foco.');
-  }else{
-    pomodoroPhase='focus';
-    pomodoroCycle=1;
-    pomodoroRemaining=pomodoroSettings.focus*60;
-    pomodoroTotal=pomodoroRemaining;
-    toast('Ciclo completo. Novo bloco de foco.');
-  }
   renderTimer();
+  if(timerInterval)clearInterval(timerInterval);
+  timerInterval=setInterval(renderTimer,500);
 }
-function resetTimer(){
-  if(timerRunning){if(timerMode==='stopwatch')updateStopwatchFromClock();else syncPomodoroClock();timerRunning=false;clearInterval(timerInterval);timerInterval=null;saveTimerRuntime()}
-  recordStudySession();
-  if(timerMode==='pomodoro'){
-    pomodoroPhase='focus';pomodoroCycle=1;
-    pomodoroRemaining=pomodoroSettings.focus*60;pomodoroTotal=pomodoroRemaining;
-  }else{
-    timerSeconds=0;localStorage.removeItem(TIMER_KEY);
-  }
-  renderTimer();toast('Cronômetro reiniciado.');
-}
-
 function toast(msg){
   const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');
   clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove('show'),2200);
