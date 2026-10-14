@@ -5,7 +5,7 @@
   const META_KEY = '__study_cloud_sync_meta_v1';
   const INTERNAL_PREFIXES = ['sb-', 'supabase.auth.'];
   /* Preferências visuais ficam neste navegador: a nuvem não deve trocar o tema no recarregamento. */
-  const LOCAL_ONLY_KEYS = new Set(['study_theme','study_darkness','study_appearance']);
+  const LOCAL_ONLY_KEYS = new Set(['study_theme','study_darkness','study_appearance','study_timer_v2','study_timer_runtime_v1']);
   let client, user, busy = false, timer = null, lastLocal = {}, lastRemote = {}, firstSync = true;
 
   const $ = (tag, attrs = {}, text = '') => {
