@@ -2701,106 +2701,37 @@ let timerAnchorMs=0;
 let timerBaseSeconds=0;
 let timerSessionBaseSeconds=0;
 const TIMER_RUNTIME_KEY='study_timer_runtime_v1';
-function saveTimerRuntime(){try{localStorage.setItem(TIMER_RUNTIME_KEY,JSON.stringify({running:timerRunning,mode:timerMode,anchorMs:timerAnchorMs,baseSeconds:timerBaseSeconds,sessionSeconds:currentSessionSeconds,sessionBaseSeconds:timerSessionBaseSeconds,sessionStartedAt}));}catch(e){}}
-function updateStopwatchFromClock(){if(!timerRunning||timerMode!=='stopwatch'||!timerAnchorMs)return;const elapsed=Math.max(0,Math.floor((Date.now()-timerAnchorMs)/1000));timerSeconds=timerBaseSeconds+elapsed;currentSessionSeconds=timerSessionBaseSeconds+elapsed;localStorage.setItem(TIMER_KEY,String(timerSeconds));saveTimerRuntime();renderTimer();}
+function saveTimerRuntime(){try{localStorage.setItem(TIMER_RUNTIME_KEY,JSON.stringify({running:timerRunning,mode:timerMode,anchorMs:timerAnchorMs,baseSeconds:timerBaseSeconds,sessionSeconds:currentSessionSeconds,sessionBaseSeconds:timerSessionBaseSeconds,sessionStartedAt,pomodoroRemaining,pomodoroPhase,pomodoroCycle}));}catch(e){}}
+function updateStopwatchFromClock(){
+  if(!timerRunning||timerMode!=='stopwatch'||!timerAnchorMs)return;
+  const elapsed=Math.max(0,Math.floor((Date.now()-timerAnchorMs)/1000));
+  timerSeconds=timerBaseSeconds+elapsed;
+  currentSessionSeconds=timerSessionBaseSeconds+elapsed;
+  localStorage.setItem(TIMER_KEY,String(timerSeconds));saveTimerRuntime();renderTimer();
+}
+function syncPomodoroClock(){
+  if(!timerRunning||timerMode!=='pomodoro'||!timerAnchorMs)return;
+  const now=Date.now(),elapsed=Math.max(0,Math.floor((now-timerAnchorMs)/1000));
+  if(elapsed<1)return;
+  if(pomodoroPhase==='focus'){timerSeconds+=elapsed;currentSessionSeconds+=elapsed;localStorage.setItem(TIMER_KEY,String(timerSeconds));}
+  pomodoroRemaining=Math.max(0,pomodoroRemaining-elapsed);timerAnchorMs+=elapsed*1000;saveTimerRuntime();
+  if(pomodoroRemaining<=0)advancePomodoro();else renderTimer();
+}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&timerRunning){if(timerMode==='stopwatch')updateStopwatchFromClock();else syncPomodoroClock();}});
-
-function loadPomodoroSettings(){
-  try{return {...pomodoroDefaults,...JSON.parse(localStorage.getItem(POMODORO_KEY)||'{}')}}catch(e){return {...pomodoroDefaults}}
-}
-function savePomodoroSettings(){
-  const vals={
-    focus:Math.min(180,Math.max(1,Number(document.getElementById('pomodoroFocus')?.value)||25)),
-    short:Math.min(60,Math.max(1,Number(document.getElementById('pomodoroShort')?.value)||5)),
-    long:Math.min(120,Math.max(1,Number(document.getElementById('pomodoroLong')?.value)||15)),
-    cycles:Math.min(12,Math.max(1,Number(document.getElementById('pomodoroCycles')?.value)||4))
-  };
-  pomodoroSettings=vals;
-  localStorage.setItem(POMODORO_KEY,JSON.stringify(vals));
-  if(!timerRunning && timerMode==='pomodoro'){
-    pomodoroPhase='focus';pomodoroCycle=1;
-    pomodoroRemaining=vals.focus*60;pomodoroTotal=vals.focus*60;
-  }
-  renderTimer();
-  toast('Configuração do Pomodoro salva.');
-}
-function syncPomodoroInputs(){
-  const map={pomodoroFocus:pomodoroSettings.focus,pomodoroShort:pomodoroSettings.short,pomodoroLong:pomodoroSettings.long,pomodoroCycles:pomodoroSettings.cycles};
-  Object.entries(map).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.value=v});
-}
-function setTimerMode(mode){
-  if(timerRunning){toast('Pause o cronômetro antes de trocar o modo.');return}
-  timerMode=mode;
-  localStorage.setItem(TIMER_MODE_KEY,mode);
-  if(mode==='pomodoro'){
-    pomodoroPhase='focus';pomodoroCycle=1;
-    pomodoroRemaining=pomodoroSettings.focus*60;pomodoroTotal=pomodoroSettings.focus*60;
-  }
-  renderTimer();
-}
-function fmt(sec){const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;return [h,m,s].map(x=>String(x).padStart(2,'0')).join(':')}
-function fmtPomodoro(sec){const m=Math.floor(sec/60),s=sec%60;return [m,s].map(x=>String(x).padStart(2,'0')).join(':')}
-function renderTimer(){
-  const display=timerMode==='pomodoro'?fmtPomodoro(pomodoroRemaining):fmt(timerSeconds);
-  const ids=['timerDisplay','timerDisplay2'];
-  ids.forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=display});
-  const totalMinutes=Math.floor(timerSeconds/60),h=Math.floor(totalMinutes/60),m=totalMinutes%60;
-  const dash=document.getElementById('dashStudy');if(dash)dash.textContent=`${h}h ${String(m).padStart(2,'0')}`;
-  ['timerToggle','timerToggle2'].forEach(id=>{const b=document.getElementById(id);if(b)b.textContent=timerRunning?'Pausar':'Iniciar'});
-
-  const title=document.getElementById('timerTitle');
-  const phase=document.getElementById('pomodoroPhase');
-  const progress=document.getElementById('pomodoroProgress');
-  const cycle=document.getElementById('pomodoroCycle');
-  const settings=document.getElementById('pomodoroSettings');
-  const stop=document.getElementById('timerModeStopwatch');
-  const pomo=document.getElementById('timerModePomodoro');
-  if(title)title.textContent=timerMode==='pomodoro'?'Pomodoro':'Cronômetro';
-  if(settings)settings.style.display=timerMode==='pomodoro'?'block':'none';
-  if(stop)stop.classList.toggle('active',timerMode==='stopwatch');
-  if(pomo)pomo.classList.toggle('active',timerMode==='pomodoro');
-  if(phase)phase.style.display=timerMode==='pomodoro'?'block':'none';
-  if(cycle)cycle.style.display=timerMode==='pomodoro'?'block':'none';
-  if(progress){
-    progress.parentElement.style.display=timerMode==='pomodoro'?'block':'none';
-    progress.style.width=timerMode==='pomodoro'?Math.max(0,Math.min(100,(1-pomodoroRemaining/pomodoroTotal)*100))+'%':'0%';
-  }
-  if(timerMode==='pomodoro'){
-    if(phase)phase.textContent=pomodoroPhase==='focus'?'Foco':pomodoroPhase==='short'?'Pausa curta':'Pausa longa';
-    if(cycle)cycle.textContent=`Ciclo ${pomodoroCycle} de ${pomodoroSettings.cycles}`;
-  }
-  syncPomodoroInputs();
-}
-function syncPomodoroClock(){if(!timerRunning||timerMode!=='pomodoro'||!timerAnchorMs)return;const now=Date.now(),elapsed=Math.max(0,Math.floor((now-timerAnchorMs)/1000));if(elapsed>0){const focusSeconds=pomodoroPhase==='focus'?elapsed:0;pomodoroRemaining=Math.max(0,pomodoroRemaining-elapsed);timerSeconds+=focusSeconds;currentSessionSeconds+=focusSeconds;timerAnchorMs+=elapsed*1000;localStorage.setItem(TIMER_KEY,String(timerSeconds));saveTimerRuntime();if(pomodoroRemaining<=0)advancePomodoro();else renderTimer();}}
-function startTimerInterval(){
-  if(timerInterval)clearInterval(timerInterval);
-  timerInterval=setInterval(()=>{
-    if(timerMode==='stopwatch'){
-      updateStopwatchFromClock();
-      return;
-    }
-    syncPomodoroClock();
-    if(pomodoroPhase==='focus'){
-      timerSeconds++;
-      currentSessionSeconds++;
-      localStorage.setItem(TIMER_KEY,timerSeconds);
-    }
-    if(pomodoroRemaining<=0){advancePomodoro();return;}
-    renderTimer();
-  },1000);
-}
+function startTimerInterval(){if(timerInterval)clearInterval(timerInterval);timerInterval=setInterval(()=>{if(timerMode==='stopwatch')updateStopwatchFromClock();else syncPomodoroClock();},250);}
 function toggleTimer(){
-  if(timerRunning){if(timerMode==='stopwatch')updateStopwatchFromClock();else syncPomodoroClock();timerRunning=false;clearInterval(timerInterval);timerInterval=null;saveTimerRuntime();recordStudySession();renderTimer();toast('Sessão pausada e registrada.');return}
-  if(!subjects.length){alert('Cadastre uma matéria antes de iniciar.');showView('subjects');return}
-  if(timerMode==='pomodoro' && pomodoroRemaining<=0){
-    pomodoroPhase='focus';pomodoroCycle=1;pomodoroRemaining=pomodoroSettings.focus*60;pomodoroTotal=pomodoroRemaining;
+  if(timerRunning){
+    if(timerMode==='stopwatch')updateStopwatchFromClock();else syncPomodoroClock();
+    timerRunning=false;if(timerInterval)clearInterval(timerInterval);timerInterval=null;saveTimerRuntime();recordStudySession();renderTimer();toast('Sessão pausada e registrada.');return;
   }
+  if(!subjects.length){alert('Cadastre uma matéria antes de iniciar.');showView('subjects');return}
+  if(timerMode==='pomodoro'&&pomodoroRemaining<=0){pomodoroPhase='focus';pomodoroCycle=1;pomodoroRemaining=pomodoroSettings.focus*60;pomodoroTotal=pomodoroRemaining;}
   timerRunning=true;
   if(currentSessionSeconds===0){sessionStartedAt=new Date().toISOString();timerSessionBaseSeconds=0;}else{timerSessionBaseSeconds=currentSessionSeconds;}
   timerAnchorMs=Date.now();if(timerMode==='stopwatch')timerBaseSeconds=timerSeconds;
-  saveTimerRuntime();startTimerInterval();
-  renderTimer();
+  saveTimerRuntime();startTimerInterval();renderTimer();
 }
+
 function advancePomodoro(){
   if(pomodoroPhase==='focus'){
     if(pomodoroCycle>=pomodoroSettings.cycles){
