@@ -443,8 +443,17 @@ body.dark .reading-stars span.filled{color:#f1b83b}
 .study-record-modal .field{margin-bottom:11px}
 .study-record-modal .field label{font-size:12px}
 .study-duration-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.study-history-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 0 14px;margin-bottom:4px;border-bottom:1px solid var(--line)}
+.study-history-select-all,.study-history-checkbox{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--text);cursor:pointer}
+.study-history-select-all input,.study-history-checkbox input{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
+.study-history-selected-count{font-size:11px;color:var(--muted)}
+.study-history-bulk-actions{display:flex;gap:7px;flex-wrap:wrap;margin-left:auto}
+.study-history-bulk-actions button:disabled{opacity:.45;cursor:not-allowed}
+.study-history-delete-all{color:var(--danger);border-color:color-mix(in srgb,var(--danger) 35%,var(--line))}
 .study-history-list{display:grid;gap:0}
-.study-history-row{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding:13px 0;border-bottom:1px solid var(--line)}
+.study-history-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
+.study-history-checkbox{padding-top:2px;flex-shrink:0}
+.study-history-checkbox input{margin:0}
 .study-history-row:last-child{border-bottom:0}
 .study-history-main{min-width:0}
 .study-history-title{font-size:13px;font-weight:700}
@@ -455,7 +464,7 @@ body.dark .reading-stars span.filled{color:#f1b83b}
 .study-plan-record{margin-top:18px;padding:14px;border:1px solid var(--line);background:var(--surface2);border-radius:12px}
 .study-plan-record-heading{font-size:12px;font-weight:750;color:var(--accent);margin-bottom:7px}
 .study-plan-record-details{display:grid;gap:4px;font-size:12px}
-@media(max-width:620px){.study-history-row{display:block}.study-history-actions{margin-top:10px}.study-record-modal .modal-actions{flex-wrap:wrap}.dashboard-plan-only{margin-bottom:14px}}
+@media(max-width:620px){.study-history-row{display:grid;grid-template-columns:20px minmax(0,1fr);gap:9px}.study-history-checkbox{grid-row:1;grid-column:1}.study-history-main{grid-row:1;grid-column:2}.study-history-actions{grid-column:2;margin-top:8px}.study-history-bulk-actions{margin-left:0}.study-record-modal .modal-actions{flex-wrap:wrap}.dashboard-plan-only{margin-bottom:14px}}
 
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -714,7 +723,7 @@ body.dark .reading-stars span.filled{color:#f1b83b}
     </div>
     <div class="stats-grid" style="margin-top:18px">
       <div class="card section-card">
-        <div class="head"><div class="section-title">Tempo por assunto</div></div>
+        <div class="head" style="gap:12px;align-items:center;flex-wrap:wrap"><div class="section-title">Tempo por assunto</div><label class="stats-topic-filter-label" for="statsTopicSubjectFilter">Matéria <select class="select" id="statsTopicSubjectFilter" onchange="renderStats()" style="margin-left:6px;max-width:220px"><option value="__all__">Todas as matérias</option></select></label></div>
         <div id="statsTopicChart"></div>
       </div>
       <div class="card section-card">
@@ -1928,22 +1937,36 @@ function renderStats(){
     el.innerHTML=rows.slice(0,10).map(x=>'<div class="stat-row"><div class="stat-row-head"><span class="stat-row-name">'+escapeHtml(x.name)+'</span><span class="stat-row-value">'+formatShort(x.sec)+'</span></div><div class="stat-row-track"><div class="stat-row-fill" style="width:'+Math.round(x.sec/max*100)+'%"></div></div></div>').join('');
   };
   renderRows(subjectRows,'statsSubjectChart');
+  const topicFilter=document.getElementById('statsTopicSubjectFilter');
+  const selectedTopicSubject=topicFilter?.value||'__all__';
+  if(topicFilter){
+    const recordedSubjects=[...new Set(log.map(x=>getStudySubjectName(x)))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+    topicFilter.innerHTML='<option value="__all__">Todas as matérias</option>'+recordedSubjects.map(name=>'<option value="'+escapeHtml(name)+'">'+escapeHtml(name)+'</option>').join('');
+    topicFilter.value=recordedSubjects.includes(selectedTopicSubject)?selectedTopicSubject:'__all__';
+  }
   const topicTotals={};
-  log.forEach(x=>{const topic=getStudyTopicName(x);if(!topic)return;const key=getStudySubjectName(x)+' · '+topic;topicTotals[key]=(topicTotals[key]||0)+(Number(x.seconds)||0)});
+  log.forEach(x=>{
+    if(topicFilter&&topicFilter.value!=='__all__'&&getStudySubjectName(x)!==topicFilter.value)return;
+    const topic=getStudyTopicName(x);if(!topic)return;
+    const key=(topicFilter&&topicFilter.value!=='__all__'?'':getStudySubjectName(x)+' · ')+topic;
+    topicTotals[key]=(topicTotals[key]||0)+(Number(x.seconds)||0);
+  });
   const topicRows=Object.entries(topicTotals).map(([name,sec])=>({name,sec})).sort((a,b)=>b.sec-a.sec);
   renderRows(topicRows,'statsTopicChart');
   const history=document.getElementById('statsHistory');
   if(history){
     const entries=[...log].sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||String(b.updatedAt||b.startedAt||'').localeCompare(String(a.updatedAt||a.startedAt||'')));
-    history.innerHTML=entries.length?'<div class="study-history-list">'+entries.map(x=>{
+    history.innerHTML=entries.length?'<div class="study-history-toolbar"><label class="study-history-select-all"><input type="checkbox" id="studyHistorySelectAll" onchange="toggleAllStudyRecords(this.checked)"> Selecionar todos</label><span class="study-history-selected-count" id="studyHistorySelectedCount">0 selecionados</span><div class="study-history-bulk-actions"><button class="small-btn" type="button" onclick="deleteSelectedStudyRecords()">Excluir selecionados</button><button class="small-btn study-history-delete-all" type="button" onclick="deleteAllStudyRecords()">Excluir todo o histórico</button></div></div><div class="study-history-list">'+entries.map(x=>{
+      const id=escapeHtml(String(x.id||''));
       const subject=escapeHtml(getStudySubjectName(x));
       const topic=escapeHtml(getStudyTopicName(x)||'Sem assunto informado');
       const date=escapeHtml(x.date||'Data não informada');
       const duration=escapeHtml(formatStudyDuration(x.seconds));
       const notes=x.notes?'<div class="study-history-notes">'+escapeHtml(x.notes)+'</div>':'';
       const source=x.source==='plan'?'Meu plano':'Registro anterior';
-      return '<div class="study-history-row"><div class="study-history-main"><div class="study-history-title">'+subject+'</div><div class="study-history-topic">'+topic+'</div><div class="study-history-meta">'+date+' · '+duration+' · '+source+'</div>'+notes+'</div><div class="study-history-actions"><button class="small-btn" onclick="editStudyRecord(\''+String(x.id).replace(/'/g,'')+'\')">Editar</button><button class="small-btn" onclick="deleteStudyRecord(\''+String(x.id).replace(/'/g,'')+'\')">Excluir</button></div></div>';
+      return '<div class="study-history-row"><label class="study-history-checkbox" aria-label="Selecionar registro"><input type="checkbox" class="study-history-record-checkbox" value="'+id+'" onchange="updateStudyHistorySelection()"> </label><div class="study-history-main"><div class="study-history-title">'+subject+'</div><div class="study-history-topic">'+topic+'</div><div class="study-history-meta">'+date+' · '+duration+' · '+source+'</div>'+notes+'</div><div class="study-history-actions"><button class="small-btn" onclick="editStudyRecord(\''+String(x.id).replace(/'/g,'')+'\')">Editar</button><button class="small-btn" onclick="deleteStudyRecord(\''+String(x.id).replace(/'/g,'')+'\')">Excluir</button></div></div>';
     }).join('')+'</div>':'<div class="stats-empty">Nenhum estudo registrado ainda. Conclua uma etapa em Meu plano para começar seu histórico.</div>';
+    updateStudyHistorySelection();
   }
   const learning=document.getElementById('statsLearningSummary');if(learning){const perf=Object.values(getTopicPerformance()),qAll=getWrongQuestions(),qDue=dueWrongQuestions().length,totalQuestions=perf.reduce((n,x)=>n+Number(x.total||0),0),correctQuestions=perf.reduce((n,x)=>n+Number(x.correct||0),0),accuracy=totalQuestions?Math.round(correctQuestions/totalQuestions*100):null;learning.innerHTML='<div class="learning-summary-grid"><div class="learning-summary-item"><div class="learning-summary-label">Taxa de acerto registrada</div><div class="learning-summary-value">'+(accuracy===null?'—':accuracy+'%')+'</div><div class="learning-summary-note">'+totalQuestions+' questão(ões) contabilizadas</div></div><div class="learning-summary-item"><div class="learning-summary-label">Banco de erros</div><div class="learning-summary-value">'+qAll.length+'</div><div class="learning-summary-note">Questões erradas salvas</div></div><div class="learning-summary-item"><div class="learning-summary-label">Revisões vencidas</div><div class="learning-summary-value">'+(qDue+getFlashcards().filter(c=>!c.dueDate||c.dueDate<=today).length)+'</div><div class="learning-summary-note">Questões e flashcards</div></div><div class="learning-summary-item"><div class="learning-summary-label">Meta diária</div><div class="learning-summary-value">'+Math.min(100,Math.round(todaySec/10800*100))+'%</div><div class="learning-summary-note">'+formatHours(todaySec)+' de 3h registradas hoje</div></div></div>'}
 }
@@ -2743,12 +2766,46 @@ function openStudyRecordModal(recordId='',stepIndex=-1,advance=false){
 function closeStudyRecordModal(){document.getElementById('studyRecordModal')?.classList.remove('open')}
 function editStudyRecord(id){openStudyRecordModal(String(id),-1,false)}
 function editPlanStudyRecord(id,index){openStudyRecordModal(String(id),Number(index),false)}
+function refreshStudyRecordViews(){
+  renderStats();renderPlan();renderDashboardPlan();
+}
+function updateStudyHistorySelection(){
+  const boxes=[...document.querySelectorAll('.study-history-record-checkbox')];
+  const selected=boxes.filter(box=>box.checked).length;
+  const count=document.getElementById('studyHistorySelectedCount');
+  if(count)count.textContent=selected+' selecionado'+(selected===1?'':'s');
+  const all=document.getElementById('studyHistorySelectAll');
+  if(all){all.checked=boxes.length>0&&selected===boxes.length;all.indeterminate=selected>0&&selected<boxes.length}
+  const bulkButtons=document.querySelectorAll('.study-history-bulk-actions button');
+  if(bulkButtons[0])bulkButtons[0].disabled=selected===0;
+}
+function toggleAllStudyRecords(checked){
+  document.querySelectorAll('.study-history-record-checkbox').forEach(box=>{box.checked=!!checked});
+  updateStudyHistorySelection();
+}
+function deleteSelectedStudyRecords(){
+  const selected=[...document.querySelectorAll('.study-history-record-checkbox:checked')].map(box=>box.value);
+  if(!selected.length){toast('Selecione pelo menos um registro.');return}
+  if(!confirm('Excluir '+selected.length+' registro(s) selecionado(s)? Essa ação não pode ser desfeita.'))return;
+  const remove=new Set(selected),log=getStudyLog();
+  saveStudyLog(log.filter(x=>!remove.has(String(x.id))));
+  refreshStudyRecordViews();
+  toast(selected.length+' registro(s) excluído(s).');
+}
+function deleteAllStudyRecords(){
+  const count=getStudyLog().length;
+  if(!count){toast('O histórico já está vazio.');return}
+  if(!confirm('Excluir TODOS os '+count+' registros do histórico de estudo? Essa ação não pode ser desfeita.'))return;
+  saveStudyLog([]);
+  refreshStudyRecordViews();
+  toast('Histórico de estudo excluído.');
+}
 function deleteStudyRecord(id){
   const log=getStudyLog(),record=log.find(x=>x.id===String(id));
   if(!record)return;
   if(!confirm('Excluir este registro de estudo? Essa ação não pode ser desfeita.'))return;
   saveStudyLog(log.filter(x=>x.id!==String(id)));
-  renderStats();renderPlan();renderDashboardPlan();
+  refreshStudyRecordViews();
   toast('Registro excluído.');
 }
 function saveStudyRecordFromModal(){
