@@ -2699,8 +2699,10 @@ function localDateKey(d){const x=d||new Date();return new Date(x.getTime()-x.get
 let timerInterval=null;
 let timerAnchorMs=0;
 let timerBaseSeconds=0;
-function updateStopwatchFromClock(){if(!timerRunning||timerMode!=='stopwatch'||!timerAnchorMs)return;const elapsed=Math.max(0,Math.floor((Date.now()-timerAnchorMs)/1000));timerSeconds=timerBaseSeconds+elapsed;currentSessionSeconds=elapsed;localStorage.setItem(TIMER_KEY,String(timerSeconds));renderTimer();}
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&timerRunning&&timerMode==='stopwatch')updateStopwatchFromClock();});
+const TIMER_RUNTIME_KEY='study_timer_runtime_v1';
+function saveTimerRuntime(){try{localStorage.setItem(TIMER_RUNTIME_KEY,JSON.stringify({running:timerRunning,mode:timerMode,anchorMs:timerAnchorMs,baseSeconds:timerBaseSeconds,sessionSeconds:currentSessionSeconds,sessionStartedAt}));}catch(e){}}
+function updateStopwatchFromClock(){if(!timerRunning||timerMode!=='stopwatch'||!timerAnchorMs)return;const elapsed=Math.max(0,Math.floor((Date.now()-timerAnchorMs)/1000));timerSeconds=timerBaseSeconds+elapsed;currentSessionSeconds=(Number(timerBaseSeconds)||0)-Number(timerBaseSeconds||0)+elapsed;localStorage.setItem(TIMER_KEY,String(timerSeconds));saveTimerRuntime();renderTimer();}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&timerRunning){if(timerMode==='stopwatch')updateStopwatchFromClock();else syncPomodoroClock();}});
 
 function loadPomodoroSettings(){
   try{return {...pomodoroDefaults,...JSON.parse(localStorage.getItem(POMODORO_KEY)||'{}')}}catch(e){return {...pomodoroDefaults}}
@@ -2768,6 +2770,7 @@ function renderTimer(){
   }
   syncPomodoroInputs();
 }
+function syncPomodoroClock(){if(!timerRunning||timerMode!=='pomodoro')return;const state=JSON.parse(localStorage.getItem(TIMER_RUNTIME_KEY)||'{}');if(state.running&&state.mode==='pomodoro'&&state.anchorMs){const elapsed=Math.max(0,Math.floor((Date.now()-state.anchorMs)/1000));if(elapsed>0){const focusSeconds=pomodoroPhase==='focus'?elapsed:0;pomodoroRemaining=Math.max(0,pomodoroRemaining-elapsed);timerSeconds+=focusSeconds;currentSessionSeconds+=focusSeconds;state.anchorMs=Date.now();localStorage.setItem(TIMER_KEY,String(timerSeconds));saveTimerRuntime();if(pomodoroRemaining<=0)advancePomodoro();else renderTimer();}}}
 function startTimerInterval(){
   if(timerInterval)clearInterval(timerInterval);
   timerInterval=setInterval(()=>{
@@ -2775,7 +2778,7 @@ function startTimerInterval(){
       updateStopwatchFromClock();
       return;
     }
-    pomodoroRemaining--;
+    syncPomodoroClock();
     if(pomodoroPhase==='focus'){
       timerSeconds++;
       currentSessionSeconds++;
@@ -2786,15 +2789,15 @@ function startTimerInterval(){
   },1000);
 }
 function toggleTimer(){
-  if(timerRunning){if(timerMode==='stopwatch')updateStopwatchFromClock();timerRunning=false;clearInterval(timerInterval);timerInterval=null;recordStudySession();renderTimer();toast('Sessão pausada e registrada.');return}
+  if(timerRunning){if(timerMode==='stopwatch')updateStopwatchFromClock();else syncPomodoroClock();timerRunning=false;clearInterval(timerInterval);timerInterval=null;saveTimerRuntime();recordStudySession();renderTimer();toast('Sessão pausada e registrada.');return}
   if(!subjects.length){alert('Cadastre uma matéria antes de iniciar.');showView('subjects');return}
   if(timerMode==='pomodoro' && pomodoroRemaining<=0){
     pomodoroPhase='focus';pomodoroCycle=1;pomodoroRemaining=pomodoroSettings.focus*60;pomodoroTotal=pomodoroRemaining;
   }
   timerRunning=true;
   if(currentSessionSeconds===0)sessionStartedAt=new Date().toISOString();
-  if(timerMode==='stopwatch'){timerAnchorMs=Date.now();timerBaseSeconds=timerSeconds;}
-  startTimerInterval();
+  if(timerMode==='stopwatch'){timerAnchorMs=Date.now();timerBaseSeconds=timerSeconds;}else{timerAnchorMs=Date.now();}
+  saveTimerRuntime();startTimerInterval();
   renderTimer();
 }
 function advancePomodoro(){
@@ -2825,7 +2828,7 @@ function advancePomodoro(){
   renderTimer();
 }
 function resetTimer(){
-  if(timerRunning){if(timerMode==='stopwatch')updateStopwatchFromClock();timerRunning=false;clearInterval(timerInterval);timerInterval=null}
+  if(timerRunning){if(timerMode==='stopwatch')updateStopwatchFromClock();else syncPomodoroClock();timerRunning=false;clearInterval(timerInterval);timerInterval=null;saveTimerRuntime()}
   recordStudySession();
   if(timerMode==='pomodoro'){
     pomodoroPhase='focus';pomodoroCycle=1;
