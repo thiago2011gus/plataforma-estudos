@@ -2695,13 +2695,24 @@ function deleteTopic(sid,index){
 }
 
 const STUDY_LOG_KEY='study_time_log_v1';
+const STUDY_LOG_DELETED_KEY='study_time_log_deleted_ids_v1';
+function getDeletedStudyRecordIds(){
+  try{const ids=JSON.parse(localStorage.getItem(STUDY_LOG_DELETED_KEY)||'[]');return new Set(Array.isArray(ids)?ids.map(String):[])}catch(e){return new Set()}
+}
+function markStudyRecordsDeleted(ids){
+  const all=getDeletedStudyRecordIds();
+  (ids||[]).forEach(id=>{if(id!==undefined&&id!==null&&String(id))all.add(String(id))});
+  localStorage.setItem(STUDY_LOG_DELETED_KEY,JSON.stringify([...all]));
+}
 function getStudyLog(){
   try{
-    const log=JSON.parse(localStorage.getItem(STUDY_LOG_KEY)||'[]');
-    if(!Array.isArray(log))return [];
+    const parsed=JSON.parse(localStorage.getItem(STUDY_LOG_KEY)||'[]');
+    if(!Array.isArray(parsed))return [];
     let changed=false;
-    log.forEach(item=>{if(item&&typeof item==='object'&&!item.id){item.id=uid();changed=true}});
-    if(changed)localStorage.setItem(STUDY_LOG_KEY,JSON.stringify(log));
+    parsed.forEach(item=>{if(item&&typeof item==='object'&&!item.id){item.id=uid();changed=true}});
+    const deleted=getDeletedStudyRecordIds();
+    const log=parsed.filter(item=>!item||!deleted.has(String(item.id)));
+    if(changed||log.length!==parsed.length)localStorage.setItem(STUDY_LOG_KEY,JSON.stringify(log));
     return log;
   }catch(e){return []}
 }
@@ -2787,7 +2798,8 @@ function deleteSelectedStudyRecords(){
   const selected=[...document.querySelectorAll('.study-history-record-checkbox:checked')].map(box=>box.value);
   if(!selected.length){toast('Selecione pelo menos um registro.');return}
   if(!confirm('Excluir '+selected.length+' registro(s) selecionado(s)? Essa ação não pode ser desfeita.'))return;
-  const remove=new Set(selected),log=getStudyLog();
+  const log=getStudyLog(),remove=new Set(selected);
+  markStudyRecordsDeleted(selected);
   saveStudyLog(log.filter(x=>!remove.has(String(x.id))));
   refreshStudyRecordViews();
   toast(selected.length+' registro(s) excluído(s).');
@@ -2796,6 +2808,7 @@ function deleteAllStudyRecords(){
   const count=getStudyLog().length;
   if(!count){toast('O histórico já está vazio.');return}
   if(!confirm('Excluir TODOS os '+count+' registros do histórico de estudo? Essa ação não pode ser desfeita.'))return;
+  markStudyRecordsDeleted(getStudyLog().map(x=>x.id));
   saveStudyLog([]);
   refreshStudyRecordViews();
   toast('Histórico de estudo excluído.');
@@ -2804,6 +2817,7 @@ function deleteStudyRecord(id){
   const log=getStudyLog(),record=log.find(x=>x.id===String(id));
   if(!record)return;
   if(!confirm('Excluir este registro de estudo? Essa ação não pode ser desfeita.'))return;
+  markStudyRecordsDeleted([String(id)]);
   saveStudyLog(log.filter(x=>x.id!==String(id)));
   refreshStudyRecordViews();
   toast('Registro excluído.');
