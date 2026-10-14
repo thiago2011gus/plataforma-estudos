@@ -437,6 +437,26 @@ body.dark .reading-stars span.filled{color:#f1b83b}
 @media(max-width:480px){.reading-library-toolbar{grid-template-columns:1fr}.reading-library-toolbar .reading-search-label{grid-column:auto}.reading-card-title-row .reading-title{font-size:14px}.reading-cover{width:62px;height:90px}}
 
 @media(max-width:720px){.reading-insights>summary{align-items:flex-start;padding:14px}.reading-insights-summary{justify-content:flex-end}.reading-insights-content{padding:0 12px 12px}.reading-insights-facts{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.reading-insights-charts{grid-template-columns:1fr}.reading-insight-fact{padding:10px}.reading-insight-fact-value{font-size:14px}}@media(max-width:390px){.reading-insights>summary{flex-direction:column}.reading-insights-summary{justify-content:flex-start}}
+
+.dashboard-plan-only{display:grid;grid-template-columns:1fr;margin-bottom:18px}
+.study-record-modal{background:var(--surface);color:var(--text);max-height:calc(100vh - 36px);overflow-y:auto}
+.study-record-modal .field{margin-bottom:11px}
+.study-record-modal .field label{font-size:12px}
+.study-duration-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.study-history-list{display:grid;gap:0}
+.study-history-row{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding:13px 0;border-bottom:1px solid var(--line)}
+.study-history-row:last-child{border-bottom:0}
+.study-history-main{min-width:0}
+.study-history-title{font-size:13px;font-weight:700}
+.study-history-topic{font-size:12px;margin-top:3px}
+.study-history-meta{font-size:11px;color:var(--muted);margin-top:5px}
+.study-history-notes,.study-plan-record-notes{font-size:12px;color:var(--muted);margin-top:6px;white-space:pre-wrap;overflow-wrap:anywhere}
+.study-history-actions{display:flex;gap:6px;flex-shrink:0}
+.study-plan-record{margin-top:18px;padding:14px;border:1px solid var(--line);background:var(--surface2);border-radius:12px}
+.study-plan-record-heading{font-size:12px;font-weight:750;color:var(--accent);margin-bottom:7px}
+.study-plan-record-details{display:grid;gap:4px;font-size:12px}
+@media(max-width:620px){.study-history-row{display:block}.study-history-actions{margin-top:10px}.study-record-modal .modal-actions{flex-wrap:wrap}.dashboard-plan-only{margin-bottom:14px}}
+
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -457,7 +477,6 @@ body.dark .reading-stars span.filled{color:#f1b83b}
     <div class="nav-item" data-view="dashboard"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9v12h14V9M9 21v-7h6v7"/></svg></span>Visão geral</div>
     <div class="nav-item" data-view="plan"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>Meu plano</div>
     <div class="nav-item" data-view="subjects"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span>Matérias</div>
-    <div class="nav-item" data-view="timer"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6M12 2v3"/></svg></span>Cronômetro</div>
     <div class="nav-item" data-view="stats"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10h4v10M10 20V4h4v16M16 20v-7h4v7"/></svg></span>Estatísticas</div>
     <div class="nav-item" data-view="gamification"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg></span>Conquistas</div>
     <div class="nav-item" data-view="reviews"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.5-3"/></svg></span>Revisões</div>
@@ -621,18 +640,10 @@ body.dark .reading-stars span.filled{color:#f1b83b}
       <div class="gamification-dashboard-side"><div class="game-mini-label">Sequência</div><div class="game-mini-value" id="dashGameStreak">0 dias</div><div class="game-mini-label" style="margin-top:12px">Conquistas</div><div class="game-mini-value" id="dashGameAchievements">0</div></div>
     </div>
 
-    <div class="grid2">
+    <div class="dashboard-plan-only">
       <div class="card section-card">
         <div class="head"><div class="section-title">Plano de hoje</div><button class="link-btn" onclick="showView('plan')">Ver plano completo</button></div>
         <div id="dashboardTodayPlan"></div>
-      </div>
-      <div class="card timer">
-        <div class="head"><div class="section-title">Sessão de estudo</div></div>
-        <div class="timer-label">Matéria atual</div>
-        <select class="select" id="timerSubject" onchange="renderTimerTopics()"></select>
-        <select class="select" id="timerTopic" style="margin-top:8px"></select>
-        <div class="timer-display" id="timerDisplay">00:00:00</div>
-        <div class="timer-actions"><button class="btn btn-primary" id="timerToggle" onclick="toggleTimer()">Iniciar</button></div><div class="timer-label" style="margin-top:12px">Ao finalizar, clique em “Registrar tempo” para salvar a sessão.</div>
       </div>
     </div>
 
@@ -667,19 +678,6 @@ body.dark .reading-stars span.filled{color:#f1b83b}
   <div class="trail-current" id="trailCurrent"></div>
   <div class="trail-next-title">Próximas etapas</div>
   <div class="trail-next" id="scheduleGrid"></div>
-</section>
-  <section class="view" id="view-timer">
-  <div class="card timer">
-    <div class="section-title">Registro de estudo</div>
-    <div class="timer-label" style="margin-top:9px">Escolha a matéria e, se quiser, o assunto.</div>
-    <select class="select" id="timerSubject2" onchange="renderTimerTopics()"></select>
-    <select class="select" id="timerTopic2" style="margin-top:8px"></select>
-    <div class="timer-display" id="timerDisplay2">00:00:00</div>
-    <div class="timer-actions">
-      <button class="btn btn-primary" id="timerToggle2" onclick="toggleTimer()">Iniciar</button>
-    </div>
-    <div class="timer-label" style="margin-top:14px">Inicie quando começar a estudar e registre o tempo ao terminar.</div>
-  </div>
 </section>
   <section class="view" id="view-gamification">
     <div class="page-head">
@@ -720,7 +718,7 @@ body.dark .reading-stars span.filled{color:#f1b83b}
         <div id="statsTopicChart"></div>
       </div>
       <div class="card section-card">
-        <div class="head"><div class="section-title">Resumo do histórico</div></div>
+        <div class="head"><div><div class="section-title">Histórico de estudo</div><div class="desc">Edite ou exclua qualquer registro salvo.</div></div></div>
         <div id="statsHistory"></div>
       </div>
     </div>
@@ -1169,6 +1167,24 @@ body.dark .reading-stars span.filled{color:#f1b83b}
   </div>
 </div>
 <div class="toast" id="toast"></div>
+<div class="modal-backdrop" id="studyRecordModal" onclick="if(event.target===this)closeStudyRecordModal()">
+  <div class="modal study-record-modal" role="dialog" aria-modal="true" aria-labelledby="studyRecordTitle">
+    <h3 id="studyRecordTitle">Registrar estudo</h3>
+    <p id="studyRecordDescription">Informe os dados da sessão.</p>
+    <input type="hidden" id="studyRecordId">
+    <input type="hidden" id="studyRecordStepIndex">
+    <input type="hidden" id="studyRecordAdvance">
+    <div class="field"><label for="studyRecordSubject">Matéria</label><input id="studyRecordSubject" maxlength="180" placeholder="Ex.: Direito Constitucional"></div>
+    <div class="field"><label for="studyRecordTopic">Assunto / etapa</label><input id="studyRecordTopic" maxlength="240" placeholder="Ex.: Constitucionalismo e Constituição"></div>
+    <div class="field"><label for="studyRecordDate">Data em que estudou</label><input id="studyRecordDate" type="date" required></div>
+    <div class="study-duration-fields">
+      <div class="field"><label for="studyRecordHours">Horas</label><input id="studyRecordHours" type="number" min="0" max="999" step="1" value="0" inputmode="numeric"></div>
+      <div class="field"><label for="studyRecordMinutes">Minutos</label><input id="studyRecordMinutes" type="number" min="0" max="59" step="1" value="0" inputmode="numeric"></div>
+    </div>
+    <div class="field"><label for="studyRecordNotes">Observações (opcional)</label><textarea id="studyRecordNotes" rows="3" placeholder="Anotações sobre a sessão, páginas estudadas etc."></textarea></div>
+    <div class="modal-actions"><button class="btn btn-secondary" type="button" onclick="closeStudyRecordModal()">Cancelar</button><button class="btn btn-primary" id="studyRecordSaveButton" type="button" onclick="saveStudyRecordFromModal()">Salvar registro</button></div>
+  </div>
+</div>
 
 <script src="cronograma.js?v=2"></script>
 <script>
@@ -1902,8 +1918,9 @@ function renderStats(){
     const max=Math.max(...days.map(x=>x.sec),1);
     daily.innerHTML=days.map(d=>'<div class="stats-bar-wrap"><div class="stats-bar-value">'+(d.sec?formatShort(d.sec):'')+'</div><div class="stats-bar" style="height:'+Math.max(2,Math.round(d.sec/max*125))+'px"></div><div class="stats-bar-label">'+d.label+'</div></div>').join('');
   }
-  const subjectTotals={};log.forEach(x=>{subjectTotals[x.subjectId]=(subjectTotals[x.subjectId]||0)+x.seconds});
-  const subjectRows=Object.entries(subjectTotals).map(([id,sec])=>({name:subjects.find(s=>s.id===id)?.name||'Matéria removida',sec})).sort((a,b)=>b.sec-a.sec);
+  const subjectTotals={};
+  log.forEach(x=>{const name=getStudySubjectName(x);subjectTotals[name]=(subjectTotals[name]||0)+(Number(x.seconds)||0)});
+  const subjectRows=Object.entries(subjectTotals).map(([name,sec])=>({name,sec})).sort((a,b)=>b.sec-a.sec);
   const renderRows=(rows,id)=>{
     const el=document.getElementById(id);if(!el)return;
     if(!rows.length){el.innerHTML='<div class="stats-empty">Ainda não há sessões registradas.</div>';return}
@@ -1911,11 +1928,23 @@ function renderStats(){
     el.innerHTML=rows.slice(0,10).map(x=>'<div class="stat-row"><div class="stat-row-head"><span class="stat-row-name">'+escapeHtml(x.name)+'</span><span class="stat-row-value">'+formatShort(x.sec)+'</span></div><div class="stat-row-track"><div class="stat-row-fill" style="width:'+Math.round(x.sec/max*100)+'%"></div></div></div>').join('');
   };
   renderRows(subjectRows,'statsSubjectChart');
-  const topicTotals={};log.forEach(x=>{if(x.topicId!=='')topicTotals[x.subjectId+'|'+x.topicId]=(topicTotals[x.subjectId+'|'+x.topicId]||0)+x.seconds});
-  const topicRows=Object.entries(topicTotals).map(([key,sec])=>{const [sid,tid]=key.split('|');const s=subjects.find(x=>x.id===sid);return{name:(s?.name||'Matéria')+' · '+(s?.topics?.[Number(tid)]?.name||'Assunto'),sec}}).sort((a,b)=>b.sec-a.sec);
+  const topicTotals={};
+  log.forEach(x=>{const topic=getStudyTopicName(x);if(!topic)return;const key=getStudySubjectName(x)+' · '+topic;topicTotals[key]=(topicTotals[key]||0)+(Number(x.seconds)||0)});
+  const topicRows=Object.entries(topicTotals).map(([name,sec])=>({name,sec})).sort((a,b)=>b.sec-a.sec);
   renderRows(topicRows,'statsTopicChart');
   const history=document.getElementById('statsHistory');
-  if(history)history.innerHTML=log.length?'<div class="stats-empty">Sessões registradas: <strong>'+log.length+'</strong><br>Dias com estudo: <strong>'+activeDays+'</strong><br>Tempo médio por sessão: <strong>'+formatShort(log.length?totalSec/log.length:0)+'</strong></div>':'<div class="stats-empty">Comece uma sessão no cronômetro para construir seu histórico.</div>';
+  if(history){
+    const entries=[...log].sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||String(b.updatedAt||b.startedAt||'').localeCompare(String(a.updatedAt||a.startedAt||'')));
+    history.innerHTML=entries.length?'<div class="study-history-list">'+entries.map(x=>{
+      const subject=escapeHtml(getStudySubjectName(x));
+      const topic=escapeHtml(getStudyTopicName(x)||'Sem assunto informado');
+      const date=escapeHtml(x.date||'Data não informada');
+      const duration=escapeHtml(formatStudyDuration(x.seconds));
+      const notes=x.notes?'<div class="study-history-notes">'+escapeHtml(x.notes)+'</div>':'';
+      const source=x.source==='plan'?'Meu plano':'Registro anterior';
+      return '<div class="study-history-row"><div class="study-history-main"><div class="study-history-title">'+subject+'</div><div class="study-history-topic">'+topic+'</div><div class="study-history-meta">'+date+' · '+duration+' · '+source+'</div>'+notes+'</div><div class="study-history-actions"><button class="small-btn" onclick="editStudyRecord(\''+String(x.id).replace(/'/g,'')+'\')">Editar</button><button class="small-btn" onclick="deleteStudyRecord(\''+String(x.id).replace(/'/g,'')+'\')">Excluir</button></div></div>';
+    }).join('')+'</div>':'<div class="stats-empty">Nenhum estudo registrado ainda. Conclua uma etapa em Meu plano para começar seu histórico.</div>';
+  }
   const learning=document.getElementById('statsLearningSummary');if(learning){const perf=Object.values(getTopicPerformance()),qAll=getWrongQuestions(),qDue=dueWrongQuestions().length,totalQuestions=perf.reduce((n,x)=>n+Number(x.total||0),0),correctQuestions=perf.reduce((n,x)=>n+Number(x.correct||0),0),accuracy=totalQuestions?Math.round(correctQuestions/totalQuestions*100):null;learning.innerHTML='<div class="learning-summary-grid"><div class="learning-summary-item"><div class="learning-summary-label">Taxa de acerto registrada</div><div class="learning-summary-value">'+(accuracy===null?'—':accuracy+'%')+'</div><div class="learning-summary-note">'+totalQuestions+' questão(ões) contabilizadas</div></div><div class="learning-summary-item"><div class="learning-summary-label">Banco de erros</div><div class="learning-summary-value">'+qAll.length+'</div><div class="learning-summary-note">Questões erradas salvas</div></div><div class="learning-summary-item"><div class="learning-summary-label">Revisões vencidas</div><div class="learning-summary-value">'+(qDue+getFlashcards().filter(c=>!c.dueDate||c.dueDate<=today).length)+'</div><div class="learning-summary-note">Questões e flashcards</div></div><div class="learning-summary-item"><div class="learning-summary-label">Meta diária</div><div class="learning-summary-value">'+Math.min(100,Math.round(todaySec/10800*100))+'%</div><div class="learning-summary-note">'+formatHours(todaySec)+' de 3h registradas hoje</div></div></div>'}
 }
 
@@ -2643,66 +2672,151 @@ function deleteTopic(sid,index){
 }
 
 const STUDY_LOG_KEY='study_time_log_v1';
-let timerSeconds=0;
-let timerRunning=false;
-let currentSessionSeconds=0;
-let sessionStartedAt=null;
-let timerInterval=null;
-let timerAnchorMs=0;
-let timerSessionSubjectId='';
-let timerSessionTopicId='';
-function getStudyLog(){try{return JSON.parse(localStorage.getItem(STUDY_LOG_KEY)||'[]')}catch(e){return []}}
+function getStudyLog(){
+  try{
+    const log=JSON.parse(localStorage.getItem(STUDY_LOG_KEY)||'[]');
+    if(!Array.isArray(log))return [];
+    let changed=false;
+    log.forEach(item=>{if(item&&typeof item==='object'&&!item.id){item.id=uid();changed=true}});
+    if(changed)localStorage.setItem(STUDY_LOG_KEY,JSON.stringify(log));
+    return log;
+  }catch(e){return []}
+}
 function saveStudyLog(log){localStorage.setItem(STUDY_LOG_KEY,JSON.stringify(log))}
-function selectedTimerSubjectId(){const full=document.getElementById('view-timer')?.classList.contains('active');return (full?document.getElementById('timerSubject2')?.value:document.getElementById('timerSubject')?.value)||''}
-function selectedTimerTopicId(){const full=document.getElementById('view-timer')?.classList.contains('active');return (full?document.getElementById('timerTopic2')?.value:document.getElementById('timerTopic')?.value)||''}
-function renderTimer(){
-  const elapsed=timerRunning?Math.max(0,Math.floor((Date.now()-timerAnchorMs)/1000)):timerSeconds;
-  const h=String(Math.floor(elapsed/3600)).padStart(2,'0');
-  const m=String(Math.floor((elapsed%3600)/60)).padStart(2,'0');
-  const s=String(elapsed%60).padStart(2,'0');
-  ['timerDisplay','timerDisplay2'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=h+':'+m+':'+s});
-  ['timerToggle','timerToggle2'].forEach(id=>{const el=document.getElementById(id);if(el){el.textContent=timerRunning?'Registrar tempo':'Iniciar';el.classList.toggle('btn-primary',!timerRunning);el.classList.toggle('btn-secondary',timerRunning)}});
+function getStudySubjectName(record){
+  if(record?.subjectName)return String(record.subjectName);
+  return subjects.find(s=>s.id===record?.subjectId)?.name||'Matéria não identificada';
 }
-function recordStudySession(){
-  if(currentSessionSeconds<=0)return;
-  const subjectId=timerSessionSubjectId||selectedTimerSubjectId();
-  const topicId=timerSessionTopicId||selectedTimerTopicId();
-  const log=getStudyLog();
-  log.push({date:localDateKey(),seconds:currentSessionSeconds,subjectId,topicId,startedAt:sessionStartedAt||new Date().toISOString()});
-  saveStudyLog(log);
-  const xp=Math.floor(currentSessionSeconds/300)*2;
-  const g=gameEnsure();g.sessions++;g.studySeconds+=currentSessionSeconds;saveGame(g);
-  if(xp>0)gameAward(xp,'tempo de estudo');
-  currentSessionSeconds=0;sessionStartedAt=null;timerSessionSubjectId='';timerSessionTopicId='';
-  renderStats();
-}
-function formatHours(sec){const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60);return h+'h '+String(m).padStart(2,'0')}
-function formatShort(sec){const m=Math.round(sec/60);return m<60?m+'min':Math.floor(m/60)+'h '+String(m%60).padStart(2,'0')}
-function localDateKey(d){const x=d||new Date();return new Date(x.getTime()-x.getTimezoneOffset()*60000).toISOString().slice(0,10)}
-function toggleTimer(){
-  if(timerRunning){
-    timerSeconds=Math.max(0,Math.floor((Date.now()-timerAnchorMs)/1000));
-    currentSessionSeconds=timerSeconds;
-    timerRunning=false;
-    if(timerInterval)clearInterval(timerInterval);
-    timerInterval=null;
-    recordStudySession();
-    timerSeconds=0;
-    renderTimer();
-    toast('Tempo de estudo registrado.');
-    renderDashboard();
-    return;
+function getStudyTopicName(record){
+  if(record?.topicName)return String(record.topicName);
+  if(record?.topicId!==undefined&&record.topicId!==null&&record.topicId!==''){
+    const s=subjects.find(x=>x.id===record.subjectId);
+    return s?.topics?.[Number(record.topicId)]?.name||'';
   }
-  if(!subjects.length){alert('Cadastre uma matéria antes de iniciar.');showView('subjects');return}
-  timerSessionSubjectId=selectedTimerSubjectId();
-  timerSessionTopicId=selectedTimerTopicId();
-  sessionStartedAt=new Date().toISOString();
-  timerAnchorMs=Date.now();
-  timerSeconds=0;
-  timerRunning=true;
-  renderTimer();
-  if(timerInterval)clearInterval(timerInterval);
-  timerInterval=setInterval(renderTimer,500);
+  return '';
+}
+function formatHours(sec){const h=Math.floor(Math.max(0,Number(sec)||0)/3600),m=Math.floor((Math.max(0,Number(sec)||0)%3600)/60);return h+'h '+String(m).padStart(2,'0')}
+function formatShort(sec){const total=Math.max(0,Number(sec)||0),m=Math.round(total/60);return m<60?m+'min':Math.floor(m/60)+'h '+String(m%60).padStart(2,'0')}
+function formatStudyDuration(sec){
+  const n=Math.max(0,Math.round(Number(sec)||0)),h=Math.floor(n/3600),m=Math.floor((n%3600)/60);
+  if(h&&m)return h+'h '+String(m).padStart(2,'0')+'min';
+  if(h)return h+'h';
+  return m+'min';
+}
+function localDateKey(d){const x=d||new Date();return new Date(x.getTime()-x.getTimezoneOffset()*60000).toISOString().slice(0,10)}
+function renderTimer(){}
+function planStepKey(step,index){
+  const topic=String(step?.content||'').replace(/^AULA\s*\d+[A-Z]?\s*/i,'').trim();
+  return String(step?.week??'')+'|'+String(step?.day??'')+'|'+topic;
+}
+function getPlanStudyRecord(step,index){
+  const key=planStepKey(step,index);
+  return getStudyLog().find(x=>x.source==='plan'&&x.stepKey===key)||null;
+}
+function openStudyRecordModal(recordId='',stepIndex=-1,advance=false){
+  const steps=getTrailSteps();
+  const step=stepIndex>=0?steps[stepIndex]:null;
+  const record=recordId?getStudyLog().find(x=>x.id===recordId):null;
+  if(recordId&&!record){toast('Este registro não foi encontrado.');return}
+  const subjectDefault=step?(step.subjects||[])[0]||'':'';
+  const topicDefault=step?String(step.content||'').replace(/^AULA\s*\d+[A-Z]?\s*/i,'').trim():'';
+  const fill=(id,value)=>{const el=document.getElementById(id);if(el)el.value=value??''};
+  fill('studyRecordId',record?.id||'');
+  fill('studyRecordStepIndex',stepIndex>=0?String(stepIndex):'');
+  fill('studyRecordAdvance',advance?'1':'0');
+  fill('studyRecordSubject',record?getStudySubjectName(record):subjectDefault);
+  fill('studyRecordTopic',record?getStudyTopicName(record):topicDefault);
+  fill('studyRecordDate',record?.date||localDateKey());
+  const seconds=Math.max(0,Number(record?.seconds)||0);
+  fill('studyRecordHours',Math.floor(seconds/3600));
+  fill('studyRecordMinutes',Math.floor((seconds%3600)/60));
+  fill('studyRecordNotes',record?.notes||'');
+  const title=document.getElementById('studyRecordTitle');
+  const desc=document.getElementById('studyRecordDescription');
+  const save=document.getElementById('studyRecordSaveButton');
+  if(title)title.textContent=record?'Editar registro de estudo':'Registrar estudo';
+  if(desc)desc.textContent=step?(advance?'Preencha os dados desta etapa. Ao salvar, ela será registrada e o plano avançará.':'Registro desta etapa do plano. Você pode corrigir os dados quando quiser.'):'Corrija as informações desta sessão de estudo.';
+  if(save)save.textContent=advance?'Salvar e avançar':'Salvar registro';
+  document.getElementById('studyRecordModal')?.classList.add('open');
+  setTimeout(()=>document.getElementById('studyRecordSubject')?.focus(),50);
+}
+function closeStudyRecordModal(){document.getElementById('studyRecordModal')?.classList.remove('open')}
+function editStudyRecord(id){openStudyRecordModal(String(id),-1,false)}
+function editPlanStudyRecord(id,index){openStudyRecordModal(String(id),Number(index),false)}
+function deleteStudyRecord(id){
+  const log=getStudyLog(),record=log.find(x=>x.id===String(id));
+  if(!record)return;
+  if(!confirm('Excluir este registro de estudo? Essa ação não pode ser desfeita.'))return;
+  saveStudyLog(log.filter(x=>x.id!==String(id)));
+  renderStats();renderPlan();renderDashboardPlan();
+  toast('Registro excluído.');
+}
+function saveStudyRecordFromModal(){
+  const recordId=document.getElementById('studyRecordId')?.value||'';
+  const stepIndexValue=document.getElementById('studyRecordStepIndex')?.value??'';
+  const stepIndex=stepIndexValue===''?-1:Number(stepIndexValue);
+  const advance=document.getElementById('studyRecordAdvance')?.value==='1';
+  const subjectName=(document.getElementById('studyRecordSubject')?.value||'').trim();
+  const topicName=(document.getElementById('studyRecordTopic')?.value||'').trim();
+  const date=document.getElementById('studyRecordDate')?.value||'';
+  const hours=Math.max(0,Math.min(999,Math.floor(Number(document.getElementById('studyRecordHours')?.value)||0)));
+  const minutes=Math.max(0,Math.min(59,Math.floor(Number(document.getElementById('studyRecordMinutes')?.value)||0)));
+  const seconds=hours*3600+minutes*60;
+  const notes=(document.getElementById('studyRecordNotes')?.value||'').trim();
+  if(!subjectName){alert('Informe a matéria.');return}
+  if(!topicName){alert('Informe o assunto ou a etapa estudada.');return}
+  if(!date){alert('Informe a data em que estudou.');return}
+  if(seconds<=0){alert('Informe um tempo de estudo maior que zero.');return}
+  const log=getStudyLog();
+  let record=recordId?log.find(x=>x.id===recordId):null;
+  const isNew=!record;
+  if(recordId&&!record){alert('O registro não foi encontrado. Atualize a página e tente novamente.');return}
+  const matchedSubject=subjects.find(s=>s.name.trim().toLocaleLowerCase()===subjectName.toLocaleLowerCase());
+  const prior=record?{...record}:{};
+  const value={
+    ...prior,
+    id:record?.id||uid(),
+    date,
+    seconds,
+    subjectId:matchedSubject?.id||record?.subjectId||'',
+    topicId:matchedSubject?.topics?.findIndex(t=>String(t.name||'').trim().toLocaleLowerCase()===topicName.toLocaleLowerCase())>=0
+      ?String(matchedSubject.topics.findIndex(t=>String(t.name||'').trim().toLocaleLowerCase()===topicName.toLocaleLowerCase()))
+      :(record?.topicId??''),
+    subjectName,
+    topicName,
+    notes,
+    updatedAt:new Date().toISOString()
+  };
+  if(advance&&stepIndex>=0){
+    const steps=getTrailSteps(),step=steps[stepIndex];
+    if(!step){alert('Não foi possível localizar a etapa do plano.');return}
+    value.source='plan';
+    value.stepKey=planStepKey(step,stepIndex);
+    value.stepIndex=stepIndex;
+    value.stepWeek=step.week;
+    value.stepDay=step.day;
+  }
+  if(record){Object.assign(record,value);saveStudyLog(log)}
+  else{log.push({...value,startedAt:new Date(date+'T12:00:00').toISOString(),source:advance?'plan':'manual'});saveStudyLog(log)}
+  closeStudyRecordModal();
+  renderStats();
+  if(advance&&stepIndex>=0){
+    if(isNew){
+      const step=getTrailSteps()[stepIndex],key=planStepKey(step,stepIndex),claims=getGameClaims();
+      if(!claims['trail:'+key]){gameAward(25,'etapa da trilha concluída','trail:'+key);claims['trail:'+key]=1;saveGameClaims(claims);const g=gameEnsure();g.trail++;saveGame(g)}
+    }
+    if(stepIndex<getTrailSteps().length-1){
+      localStorage.setItem(SCHEDULE_UNDO_KEY,String(stepIndex));
+      setTrailIndex(stepIndex+1);
+      toast('Estudo registrado. Próxima etapa liberada.');
+    }else{
+      setTrailIndex(stepIndex);
+      toast('Estudo registrado. Você chegou à última etapa da trilha.');
+    }
+  }else{
+    renderPlan();renderDashboardPlan();
+    toast(record?'Registro atualizado.':'Registro salvo.');
+  }
 }
 function toast(msg){
   const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');
@@ -3060,15 +3174,10 @@ function undoCompleteTrailStep(){
   toast('Conclusão desfeita. Você voltou para a etapa anterior.');
 }
 function completeTrailStep(){
-  const steps=getTrailSteps();
-  const current=getTrailIndex();
-  if(current>=steps.length-1){toast('Você chegou ao fim da trilha. Parabéns!');return}
-  localStorage.setItem(SCHEDULE_UNDO_KEY,String(current));
-  gameAward(25,'etapa da trilha concluída','trail:'+current);
-  const claims=getGameClaims();claims['trail:'+localDateKey()]=1;saveGameClaims(claims);
-  const g=gameEnsure();g.trail++;saveGame(g);
-  setTrailIndex(current+1);
-  toast('Etapa concluída. Próxima etapa liberada.');
+  const steps=getTrailSteps(),current=getTrailIndex(),step=steps[current];
+  if(!step)return;
+  const existing=getPlanStudyRecord(step,current);
+  openStudyRecordModal(existing?.id||'',current,true);
 }
 function populateTrailJumpSelect(){
   const el=document.getElementById('trailJumpSelect');if(!el)return;
@@ -3078,6 +3187,14 @@ function populateTrailJumpSelect(){
 }
 function scheduleDisplayText(text){return escapeHtml(String(text||'').replace(/^AULA\s*\d+[A-Z]?\s*/i,'').trim())}
 function scheduleSubjectsLabel(day){return (day.subjects||[]).join(' · ')||'Estudo / revisão'}
+function renderPlanStudyRecord(step,index,record){
+  if(!record)return '';
+  const subject=escapeHtml(getStudySubjectName(record));
+  const topic=escapeHtml(getStudyTopicName(record)||'Sem assunto adicional');
+  const notes=record.notes?'<div class="study-plan-record-notes">'+escapeHtml(record.notes)+'</div>':'';
+  return '<div class="study-plan-record"><div class="study-plan-record-heading">Estudo registrado</div><div class="study-plan-record-details"><strong>'+subject+'</strong><span>'+topic+'</span><span>'+escapeHtml(record.date||'Data não informada')+' · '+escapeHtml(formatStudyDuration(record.seconds))+'</span></div>'+notes+'<button class="small-btn" style="margin-top:10px" onclick="editPlanStudyRecord(\''+String(record.id).replace(/'/g,'')+'\','+index+')">Editar registro</button></div>';
+}
+
 function renderPlan(){
   if(!window.STUDY_SCHEDULE)return;
   const steps=getTrailSteps();if(!steps.length)return;
@@ -3090,7 +3207,10 @@ function renderPlan(){
   const content=current.content&&current.content!=='-'?scheduleDisplayText(current.content):'Sem conteúdo principal informado.';
   const q=current.questions&&current.questions!=='-'?'<div class="schedule-q"><strong>Questões / legislação:</strong><br>'+scheduleDisplayText(current.questions)+'</div>':'';
   const undoBtn=canUndoTrail()?'<button class="btn btn-secondary" onclick="undoCompleteTrailStep()">↩ Desfazer conclusão</button>':'';
-  currentEl.innerHTML='<div class="trail-current-card"><div class="trail-current-kicker">Etapa '+(currentIndex+1)+' · Semana '+current.week+'</div><div class="trail-current-title">'+escapeHtml(current.day)+'</div><div class="schedule-kicker" style="margin-top:10px">'+escapeHtml(scheduleSubjectsLabel(current))+'</div><div class="trail-current-content">'+content+'</div>'+q+'<div class="trail-current-actions"><button class="btn btn-secondary" onclick="previousTrailStep()" '+(currentIndex===0?'disabled':'')+'>← Anterior</button><div style="display:flex;gap:8px"><button class="small-btn" onclick="startFeynmanFromSchedule('+current.week+',\''+current.day+'\')">✦ Feynman</button><button class="small-btn" onclick="openTopicPerformanceFromPlan()">Desempenho</button><button class="small-btn" onclick="researchFromSchedule('+current.week+',\''+current.day+'\')">⌕ Oráculo</button><button class="btn btn-primary" onclick="completeTrailStep()">Concluir e avançar →</button>'+undoBtn+'</div></div></div>';
+  const savedRecord=getPlanStudyRecord(current,currentIndex);
+  const completionLabel=savedRecord?(currentIndex===steps.length-1?'Editar registro':'Editar registro e avançar →'):(currentIndex===steps.length-1?'Registrar conclusão':'Concluir e avançar →');
+  const recordPanel=renderPlanStudyRecord(current,currentIndex,savedRecord);
+  currentEl.innerHTML='<div class="trail-current-card"><div class="trail-current-kicker">Etapa '+(currentIndex+1)+' · Semana '+current.week+'</div><div class="trail-current-title">'+escapeHtml(current.day)+'</div><div class="schedule-kicker" style="margin-top:10px">'+escapeHtml(scheduleSubjectsLabel(current))+'</div><div class="trail-current-content">'+content+'</div>'+q+recordPanel+'<div class="trail-current-actions"><button class="btn btn-secondary" onclick="previousTrailStep()" '+(currentIndex===0?'disabled':'')+'>← Anterior</button><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="small-btn" onclick="startFeynmanFromSchedule('+current.week+',\''+current.day+'\')">✦ Feynman</button><button class="small-btn" onclick="openTopicPerformanceFromPlan()">Desempenho</button><button class="small-btn" onclick="researchFromSchedule('+current.week+',\''+current.day+'\')">⌕ Oráculo</button><button class="btn btn-primary" onclick="completeTrailStep()">'+completionLabel+'</button>'+undoBtn+'</div></div></div>';
   const next=steps.slice(currentIndex+1,currentIndex+4);
   grid.innerHTML=next.length?next.map((d,j)=>'<div class="card schedule-day"><div class="schedule-day-head"><div class="schedule-day-name">Etapa '+(currentIndex+j+2)+' · Semana '+d.week+'</div><div class="trail-done">Próxima</div></div><div class="schedule-kicker">'+escapeHtml(scheduleSubjectsLabel(d))+'</div><div class="schedule-content">'+scheduleDisplayText(d.content||'Sem conteúdo principal')+'</div>'+(d.questions&&d.questions!=='-'?'<div class="schedule-q"><strong>Questões / legislação:</strong><br>'+scheduleDisplayText(d.questions)+'</div>':'')+'</div>').join(''):'<div class="empty">Você chegou ao fim da trilha.</div>';
 }function getScheduleDay(weekNumber,dayName){
