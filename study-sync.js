@@ -49,6 +49,16 @@
   }
   function stableId(x){ if(x&&typeof x==='object'){const id=x.id??x.uuid??x.key; if(id!==undefined)return 'id:'+String(id);} return 'json:'+JSON.stringify(x); }
   function mergeMaps(a,b){const out={...b};Object.keys(a).forEach(k=>out[k]=mergeValue(a[k],b[k]));return out;}
+  /* Registros apagados precisam continuar apagados ao mesclar dispositivos. */
+  function applyStudyLogTombstones(payload){
+    const deleted=payload?.study_time_log_deleted_ids_v1;
+    const history=payload?.study_time_log_v1;
+    if(Array.isArray(deleted)&&deleted.length&&Array.isArray(history)){
+      const ids=new Set(deleted.map(String));
+      payload.study_time_log_v1=history.filter(item=>!item||!ids.has(String(item.id)));
+    }
+    return payload;
+  }
   function setStatus(s){const el=document.getElementById('studySyncStatus');if(el)el.textContent=s;}
   function ensureUI(){
     if(document.getElementById('studySyncButton'))return;
@@ -104,14 +114,15 @@
     try{
       const local=readLocal(), row=await fetchCloud(), cloud=row?.payload||{};
       let merged;
-      if(!row){merged=local;await pushCloud(merged);setStatus('Primeira cópia enviada à nuvem.');}
-      else if(isFirst||firstSync){merged=mergeMaps(local,cloud);writeLocal(merged);await pushCloud(merged);setStatus('Dados locais e da nuvem combinados. Sincronização ativa.');}
+      if(!row){merged=applyStudyLogTombstones(local);await pushCloud(merged);setStatus('Primeira cópia enviada à nuvem.');}
+      else if(isFirst||firstSync){merged=applyStudyLogTombstones(mergeMaps(local,cloud));writeLocal(merged);await pushCloud(merged);setStatus('Dados locais e da nuvem combinados. Sincronização ativa.');}
       else {
         const localNow=readLocal(), localChanged={}, remoteChanged={};
         Object.keys({...lastLocal,...localNow}).forEach(k=>{if(!equal(localNow[k],lastLocal[k]))localChanged[k]=localNow[k];});
         Object.keys({...lastRemote,...cloud}).forEach(k=>{if(!equal(cloud[k],lastRemote[k]))remoteChanged[k]=cloud[k];});
         merged={...cloud,...localNow};
         Object.keys(remoteChanged).forEach(k=>{if(!(k in localChanged))merged[k]=cloud[k];else merged[k]=mergeValue(localChanged[k],cloud[k]);});
+        merged=applyStudyLogTombstones(merged);
         writeLocal(merged);
         if(!equal(merged,cloud))await pushCloud(merged);
         setStatus('Sincronizado · '+new Date().toLocaleTimeString());
