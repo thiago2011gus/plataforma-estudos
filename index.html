@@ -3821,6 +3821,7 @@ async function openChatGPT(){
 
 
   gameAward(15,'sessão Mentor','mentor:'+localDateKey()+'|'+(document.getElementById('mentorTopic')?.value||getFeynmanLauncherContext().topic||'sem-tema')+'|'+Date.now());
+    const game=gameEnsure();game.feynman++;saveGame(game);renderGamification();
 
   window.open(
     'https://chatgpt.com/',
