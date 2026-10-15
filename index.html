@@ -3255,7 +3255,7 @@ function openStudySessionForCurrentStep(){
   if(!step)return;
   openStudyRecordModal('',-1,false);
   const subject=(step.subjects||[])[0]||'';
-  const topic=String(step.content||'').replace(/^AULA\\s*\\d+[A-Z]?\\s*/i,'').trim();
+  const topic=String(step.content||'').replace(/^AULA\s*\d+[A-Z]?\s*/i,'').trim();
   const subjectField=document.getElementById('studyRecordSubject');
   const topicField=document.getElementById('studyRecordTopic');
   const title=document.getElementById('studyRecordTitle');
