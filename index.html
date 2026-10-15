@@ -3250,6 +3250,23 @@ function completeTrailStep(){
   const existing=getPlanStudyRecord(step,current);
   openStudyRecordModal(existing?.id||'',current,true);
 }
+function openStudySessionForCurrentStep(){
+  const steps=getTrailSteps(),current=getTrailIndex(),step=steps[current];
+  if(!step)return;
+  openStudyRecordModal('',-1,false);
+  const subject=(step.subjects||[])[0]||'';
+  const topic=String(step.content||'').replace(/^AULA\\s*\\d+[A-Z]?\\s*/i,'').trim();
+  const subjectField=document.getElementById('studyRecordSubject');
+  const topicField=document.getElementById('studyRecordTopic');
+  const title=document.getElementById('studyRecordTitle');
+  const desc=document.getElementById('studyRecordDescription');
+  const save=document.getElementById('studyRecordSaveButton');
+  if(subjectField)subjectField.value=subject;
+  if(topicField)topicField.value=topic;
+  if(title)title.textContent='Registrar sessão de estudo';
+  if(desc)desc.textContent='Registre o tempo estudado. Isso não concluirá nem avançará a etapa do plano.';
+  if(save)save.textContent='Salvar sessão';
+}
 function populateTrailJumpSelect(){
   const el=document.getElementById('trailJumpSelect');if(!el)return;
   const steps=getTrailSteps(),current=getTrailIndex();
@@ -3279,9 +3296,9 @@ function renderPlan(){
   const q=current.questions&&current.questions!=='-'?'<div class="schedule-q"><strong>Questões / legislação:</strong><br>'+scheduleDisplayText(current.questions)+'</div>':'';
   const undoBtn=canUndoTrail()?'<button class="btn btn-secondary" onclick="undoCompleteTrailStep()">↩ Desfazer conclusão</button>':'';
   const savedRecord=getPlanStudyRecord(current,currentIndex);
-  const completionLabel=savedRecord?(currentIndex===steps.length-1?'Editar registro':'Editar registro e avançar →'):(currentIndex===steps.length-1?'Registrar conclusão':'Concluir e avançar →');
+  const completionLabel=savedRecord?'Concluir etapa e avançar →':'Concluir etapa e avançar →';
   const recordPanel=renderPlanStudyRecord(current,currentIndex,savedRecord);
-  currentEl.innerHTML='<div class="trail-current-card"><div class="trail-current-kicker">Etapa '+(currentIndex+1)+' · Semana '+current.week+'</div><div class="trail-current-title">'+escapeHtml(current.day)+'</div><div class="schedule-kicker" style="margin-top:10px">'+escapeHtml(scheduleSubjectsLabel(current))+'</div><div class="trail-current-content">'+content+'</div>'+q+recordPanel+'<div class="trail-current-actions"><button class="btn btn-secondary" onclick="previousTrailStep()" '+(currentIndex===0?'disabled':'')+'>← Anterior</button><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="small-btn" onclick="startFeynmanFromSchedule('+current.week+',\''+current.day+'\')">✦ Feynman</button><button class="small-btn" onclick="openTopicPerformanceFromPlan()">Desempenho</button><button class="small-btn" onclick="researchFromSchedule('+current.week+',\''+current.day+'\')">⌕ Oráculo</button><button class="btn btn-primary" onclick="completeTrailStep()">'+completionLabel+'</button>'+undoBtn+'</div></div></div>';
+  currentEl.innerHTML='<div class="trail-current-card"><div class="trail-current-kicker">Etapa '+(currentIndex+1)+' · Semana '+current.week+'</div><div class="trail-current-title">'+escapeHtml(current.day)+'</div><div class="schedule-kicker" style="margin-top:10px">'+escapeHtml(scheduleSubjectsLabel(current))+'</div><div class="trail-current-content">'+content+'</div>'+q+recordPanel+'<div class="trail-current-actions"><button class="btn btn-secondary" onclick="previousTrailStep()" '+(currentIndex===0?'disabled':'')+'>← Anterior</button><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="small-btn" onclick="startFeynmanFromSchedule('+current.week+',\''+current.day+'\')">✦ Feynman</button><button class="small-btn" onclick="openTopicPerformanceFromPlan()">Desempenho</button><button class="small-btn" onclick="researchFromSchedule('+current.week+',\''+current.day+'\')">⌕ Oráculo</button><button class="btn btn-secondary" onclick="openStudySessionForCurrentStep()">＋ Registrar sessão</button><button class="btn btn-primary" onclick="completeTrailStep()">'+completionLabel+'</button>'+undoBtn+'</div></div></div>';
   const next=steps.slice(currentIndex+1,currentIndex+4);
   grid.innerHTML=next.length?next.map((d,j)=>'<div class="card schedule-day"><div class="schedule-day-head"><div class="schedule-day-name">Etapa '+(currentIndex+j+2)+' · Semana '+d.week+'</div><div class="trail-done">Próxima</div></div><div class="schedule-kicker">'+escapeHtml(scheduleSubjectsLabel(d))+'</div><div class="schedule-content">'+scheduleDisplayText(d.content||'Sem conteúdo principal')+'</div>'+(d.questions&&d.questions!=='-'?'<div class="schedule-q"><strong>Questões / legislação:</strong><br>'+scheduleDisplayText(d.questions)+'</div>':'')+'</div>').join(''):'<div class="empty">Você chegou ao fim da trilha.</div>';
 }function getScheduleDay(weekNumber,dayName){
