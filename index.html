@@ -1890,7 +1890,7 @@ function gameRank(level){return GAME_LEVELS[Math.min(level-1,GAME_LEVELS.length-
 function gameAward(xp,reason,claim){if(xp<=0)return false;const claims=getGameClaims();if(claim&&claims[claim])return false;if(claim)claims[claim]=1;const g=gameEnsure();g.xp+=xp;saveGame(g);saveGameClaims(claims);if(reason)toast('+'+xp+' XP · '+reason);renderGamification();return true}
 function gameActiveDays(){return new Set(getStudyLog().map(x=>x.date)).size}
 function gameStreak(){const dates=new Set(getStudyLog().map(x=>x.date));let d=new Date(),count=0;while(dates.has(localDateKey(d))){count++;d.setDate(d.getDate()-1)}return count}
-function gameStats(){const g=gameEnsure();g.activeDays=gameActiveDays();return g}
+function gameStats(){const g=gameEnsure(),log=getStudyLog();g.sessions=log.length;g.studySeconds=log.reduce((sum,item)=>sum+Math.max(0,Number(item.seconds)||0),0);g.activeDays=new Set(log.map(item=>item.date).filter(Boolean)).size;return g}
 function renderGamification(){
  const g=gameStats(),level=gameLevel(g.xp),base=(level-1)*100,next=level*100,inside=g.xp-base,pct=Math.min(100,inside/100*100),rank=gameRank(level),streak=gameStreak();
  ['gameLevel','dashGameLevel'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='Nível '+level});
