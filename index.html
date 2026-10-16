@@ -597,7 +597,7 @@ body.dark .reading-stars span.filled{color:#f1b83b}
         <button class="music-tab" id="musicTabAlbums" type="button" role="tab" aria-selected="false" aria-controls="musicPanelAlbums" onclick="switchStudyMusicTab('albums')"><span aria-hidden="true">◉</span> Álbuns ouvidos <span class="music-tab-count" id="studyMusicAlbumCount">0</span></button>
       </div>
       <div id="musicPanelPlaylists" class="music-tab-panel" role="tabpanel" aria-labelledby="musicTabPlaylists">
-        <div class="music-add-panel"><div class="music-add-heading"><span class="music-add-icon">♫</span><div><div class="music-add-title">Sua trilha de concentração</div><div class="music-add-subtitle">Adicione uma playlist ou um vídeo individual.</div></div></div><div class="music-settings"><div class="music-add-field"><label for="studySpotifyUrl">Spotify</label><input id="studySpotifyUrl" type="url" placeholder="Link de playlist ou faixa do Spotify"><button class="btn btn-secondary" type="button" onclick="addStudyMusicPlaylist('spotify')">+ Adicionar Spotify</button></div><div class="music-add-field"><label for="studyYoutubeUrl">YouTube</label><input id="studyYoutubeUrl" type="url" placeholder="Link de playlist ou vídeo do YouTube"><button class="btn btn-secondary" type="button" onclick="addStudyMusicPlaylist('youtube')">+ Adicionar YouTube</button></div></div></div>
+        <div class="music-add-panel"><div class="music-add-heading"><span class="music-add-icon">♫</span><div><div class="music-add-title">Sua trilha de concentração</div><div class="music-add-subtitle">Adicione uma playlist ou um vídeo individual.</div></div></div><div class="music-settings"><div class="music-add-field"><label for="studySpotifyUrl">Spotify</label><input id="studySpotifyUrl" type="url" placeholder="Link de playlist ou faixa do Spotify"><button class="btn btn-secondary" type="button" onclick="addStudyMusicPlaylist('spotify')">+ Adicionar Spotify</button></div><div class="music-add-field"><label for="studyYoutubeUrl">YouTube</label><input id="studyYoutubeUrl" type="url" placeholder="Link de playlist, vídeo ou canal do YouTube"><button class="btn btn-secondary" type="button" onclick="addStudyMusicPlaylist('youtube')">+ Adicionar YouTube</button></div></div></div>
         <div id="studyMusicPlayers" class="music-players"><div class="organizer-empty">Adicione uma playlist para exibir o player aqui.</div></div>
         <div class="music-note">A reprodução depende das regras do Spotify/YouTube e pode exigir login. O Study não inicia o áudio automaticamente.</div>
       </div>
@@ -4088,6 +4088,20 @@ loadStudyMusicSettings();
 </script>
 <script>
 const STUDY_MUSIC_KEY='study_music_playlists_v1';
+function musicYouTubeChannelUrl(raw){
+ try{
+  let input=String(raw||'').trim();
+  if(!/^https?:\/\//i.test(input)&&/^(www\.|m\.|music\.)?youtube\.com\//i.test(input))input='https://'+input;
+  const u=new URL(input),host=u.hostname.toLowerCase();
+  if(!['youtube.com','www.youtube.com','m.youtube.com','music.youtube.com'].includes(host))return null;
+  const path=u.pathname.replace(/\/+$/,'');
+  let channelPath='';
+  if(/^\/@[A-Za-z0-9._-]+(?:\/live)?$/.test(path))channelPath=path.replace(/\/live$/,'');
+  else if(/^\/(?:channel|c|user)\/[A-Za-z0-9_-]+(?:\/live)?$/.test(path))channelPath=path.replace(/\/live$/,'');
+  if(!channelPath)return null;
+  return 'https://www.youtube.com'+channelPath+'/live';
+ }catch(e){return null}
+}
 function musicEmbedUrl(raw,provider){
  try{
   let input=String(raw||'').trim();
@@ -4125,10 +4139,10 @@ function loadStudyMusicSettings(){const sp=document.getElementById('studySpotify
 function addStudyMusicPlaylist(provider){
  const input=document.getElementById(provider==='spotify'?'studySpotifyUrl':'studyYoutubeUrl'),url=(input?.value||'').trim();
  if(!url){toast('Cole o link da playlist antes de adicionar.');return}
- if(!musicEmbedUrl(url,provider)){toast('Não reconheci esse link. Copie o link de compartilhamento da playlist.');return}
+ if(!musicEmbedUrl(url,provider)&&!(provider==='youtube'&&musicYouTubeChannelUrl(url))){toast('Não reconheci esse link. Cole um link válido de playlist, vídeo ou canal do YouTube.');return}
  const playlists=getStudyMusicPlaylists();
  if(playlists.some(p=>p.provider===provider&&p.url===url)){toast('Essa playlist já foi adicionada.');return}
- playlists.push({id:'music-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),provider,url,title:provider==='spotify'?'Playlist do Spotify':'Playlist do YouTube'});
+ const channelUrl=provider==='youtube'?musicYouTubeChannelUrl(url):null;\n playlists.push({id:'music-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),provider,url:channelUrl||url,kind:channelUrl?'channel':'media',title:channelUrl?'Canal ao vivo':provider==='spotify'?'Playlist do Spotify':'Playlist do YouTube'});
  localStorage.setItem(STUDY_MUSIC_KEY,JSON.stringify({playlists}));if(input)input.value='';
  renderStudyMusicPlayers();toast('Playlist adicionada e salva neste navegador.');
 }
@@ -4144,18 +4158,25 @@ function moveStudyMusicPlaylist(sourceId,targetId){
  const [item]=playlists.splice(from,1);playlists.splice(to,0,item);saveStudyMusicPlaylists(playlists);renderStudyMusicPlayers();
 }
 function createStudyMusicPlayer(p){
- const src=musicEmbedUrl(p.url,p.provider);if(!src)return null;
+ const channelUrl=p.provider==='youtube'&&(p.kind==='channel'||musicYouTubeChannelUrl(p.url));
+ const src=musicEmbedUrl(p.url,p.provider);if(!src&&!channelUrl)return null;
  const label=p.provider==='spotify'?'Spotify':'YouTube',safeId=String(p.id).replace(/[^a-zA-Z0-9_-]/g,'');
  const card=document.createElement('div');card.className='music-player';card.dataset.musicId=String(p.id);card.draggable=true;
  const heading=document.createElement('div');heading.className='music-player-title';
  const dragTitle=document.createElement('span');dragTitle.className='music-drag-handle';dragTitle.title='Arraste para reordenar';dragTitle.setAttribute('aria-label','Arraste para reordenar playlist');
  const grip=document.createElement('span');grip.className='music-drag-grip';grip.setAttribute('aria-hidden','true');grip.textContent='⠿';
- const title=document.createElement('span');title.textContent=label+' · '+(p.title||'Playlist');dragTitle.append(grip,title);
+ const title=document.createElement('span');title.textContent=(channelUrl?'Canal do YouTube':label)+' · '+(p.title||(channelUrl?'Canal ao vivo':'Playlist'));dragTitle.append(grip,title);
  const del=document.createElement('button');del.className='btn btn-danger music-delete';del.type='button';del.textContent='Excluir';del.addEventListener('click',()=>deleteStudyMusicPlaylist(safeId));
  heading.append(dragTitle,del);
- const iframe=document.createElement('iframe');iframe.src=src;iframe.title=label+' playlist de estudo';iframe.loading='lazy';iframe.allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';iframe.referrerPolicy='strict-origin-when-cross-origin';iframe.allowFullscreen=true;
- const link=document.createElement('a');link.className='music-open-link';link.href=p.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Abrir no '+label+' ↗';
- card.append(heading,iframe,link);
+ if(channelUrl){
+  const info=document.createElement('div');info.className='music-note';info.textContent='Canal salvo. Abra a página de transmissões ao vivo para ouvir a live atual; canais não podem ser reproduzidos diretamente no player incorporado do Study.';
+  const link=document.createElement('a');link.className='music-open-link';link.href=channelUrl;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Abrir lives do canal no YouTube ↗';
+  card.append(heading,info,link);
+ }else{
+  const iframe=document.createElement('iframe');iframe.src=src;iframe.title=label+' playlist de estudo';iframe.loading='lazy';iframe.allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';iframe.referrerPolicy='strict-origin-when-cross-origin';iframe.allowFullscreen=true;
+  const link=document.createElement('a');link.className='music-open-link';link.href=p.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Abrir no '+label+' ↗';
+  card.append(heading,iframe,link);
+ }
  card.addEventListener('dragstart',event=>{if(event.target.closest('button,a')){event.preventDefault();return}card.classList.add('music-dragging');if(event.dataTransfer){event.dataTransfer.effectAllowed='move';event.dataTransfer.setData('text/plain',String(p.id))}});
  card.addEventListener('dragover',event=>{event.preventDefault();if(event.dataTransfer)event.dataTransfer.dropEffect='move';card.classList.add('music-drop-target')});
  card.addEventListener('dragleave',event=>{if(!card.contains(event.relatedTarget))card.classList.remove('music-drop-target')});
@@ -4165,7 +4186,7 @@ function createStudyMusicPlayer(p){
 }
 function renderStudyMusicPlayers(){
  const box=document.getElementById('studyMusicPlayers');if(!box)return;
- const playlists=getStudyMusicPlaylists(),valid=playlists.filter(p=>musicEmbedUrl(p.url,p.provider));
+ const playlists=getStudyMusicPlaylists(),valid=playlists.filter(p=>musicEmbedUrl(p.url,p.provider)||(p.provider==='youtube'&&(p.kind==='channel'||musicYouTubeChannelUrl(p.url))));
  if(!valid.length){box.innerHTML='<div class="organizer-empty" style="grid-column:1/-1">Nenhuma playlist adicionada. Elas ficarão salvas até você excluí-las.</div>';return}
  box.querySelector('.organizer-empty')?.remove();
  const current=new Map(Array.from(box.querySelectorAll('.music-player[data-music-id]')).map(card=>[card.dataset.musicId,card]));
