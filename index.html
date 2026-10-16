@@ -4160,7 +4160,7 @@ function moveStudyMusicPlaylist(sourceId,targetId){
  const [item]=playlists.splice(from,1);playlists.splice(to,0,item);saveStudyMusicPlaylists(playlists);renderStudyMusicPlayers();
 }
 function createStudyMusicPlayer(p){
- const channelUrl=p.provider==='youtube'&&(p.kind==='channel'||musicYouTubeChannelUrl(p.url));
+ const channelUrl=p.provider==='youtube'?(musicYouTubeChannelUrl(p.url)||(p.kind==='channel'?p.url:null)):null;
  const src=musicEmbedUrl(p.url,p.provider);if(!src&&!channelUrl)return null;
  const label=p.provider==='spotify'?'Spotify':'YouTube',safeId=String(p.id).replace(/[^a-zA-Z0-9_-]/g,'');
  const card=document.createElement('div');card.className='music-player';card.dataset.musicId=String(p.id);card.draggable=true;
