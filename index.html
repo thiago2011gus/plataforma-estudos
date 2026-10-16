@@ -4141,8 +4141,10 @@ function addStudyMusicPlaylist(provider){
  if(!url){toast('Cole o link da playlist antes de adicionar.');return}
  if(!musicEmbedUrl(url,provider)&&!(provider==='youtube'&&musicYouTubeChannelUrl(url))){toast('Não reconheci esse link. Cole um link válido de playlist, vídeo ou canal do YouTube.');return}
  const playlists=getStudyMusicPlaylists();
- if(playlists.some(p=>p.provider===provider&&p.url===url)){toast('Essa playlist já foi adicionada.');return}
- const channelUrl=provider==='youtube'?musicYouTubeChannelUrl(url):null;\n playlists.push({id:'music-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),provider,url:channelUrl||url,kind:channelUrl?'channel':'media',title:channelUrl?'Canal ao vivo':provider==='spotify'?'Playlist do Spotify':'Playlist do YouTube'});
+ const channelUrl=provider==='youtube'?musicYouTubeChannelUrl(url):null;
+ const normalizedUrl=channelUrl||url;
+ if(playlists.some(p=>p.provider===provider&&p.url===normalizedUrl)){toast('Esse link já foi adicionado.');return}
+ playlists.push({id:'music-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),provider,url:normalizedUrl,kind:channelUrl?'channel':'media',title:channelUrl?'Canal ao vivo':provider==='spotify'?'Playlist do Spotify':'Playlist do YouTube'});
  localStorage.setItem(STUDY_MUSIC_KEY,JSON.stringify({playlists}));if(input)input.value='';
  renderStudyMusicPlayers();toast('Playlist adicionada e salva neste navegador.');
 }
