@@ -28,10 +28,47 @@
     const o={}; eligibleKeys().forEach(k=>{ try{o[k]=JSON.parse(localStorage.getItem(k));}catch{o[k]=localStorage.getItem(k);} }); return o;
   }
   function writeLocal(o){
-    Object.entries(o||{}).forEach(([k,v])=>{
+    const safe=o||{};
+    /* Também propaga exclusões de chaves, em vez de deixar valores antigos presos neste navegador. */
+    eligibleKeys().forEach(k=>{if(!Object.prototype.hasOwnProperty.call(safe,k)){try{localStorage.removeItem(k)}catch(e){console.warn('Study sync: não foi possível remover',k,e)}}});
+    Object.entries(safe).forEach(([k,v])=>{
       if(k===META_KEY || LOCAL_ONLY_KEYS.has(k) || INTERNAL_PREFIXES.some(p=>k.startsWith(p))) return;
       try{localStorage.setItem(k,JSON.stringify(v));}catch(e){console.warn('Study sync: não foi possível gravar',k,e);}
     });
+  }
+  function readBaseline(){
+    try{const value=JSON.parse(localStorage.getItem(META_KEY)||'null');return value&&value.local&&value.cloud?value:null}catch{return null}
+  }
+  function saveBaseline(local,cloud){
+    try{localStorage.setItem(META_KEY,JSON.stringify({local,cloud,syncedAt:new Date().toISOString()}))}catch(e){console.warn('Study sync: não foi possível guardar a referência de sincronização',e)}
+  }
+  function mergeForNewDevice(local,cloud){
+    if(local===undefined)return cloud;
+    if(cloud===undefined)return local;
+    if(Array.isArray(local)&&Array.isArray(cloud)){
+      const out=[...cloud],indexById=new Map();
+      out.forEach((item,i)=>indexById.set(stableId(item),i));
+      local.forEach(item=>{
+        const id=stableId(item),index=indexById.get(id);
+        if(index===undefined){indexById.set(id,out.length);out.push(item);return}
+        if(id.startsWith('json:')){if(!out.some(existing=>equal(existing,item)))out.push(item);return}
+        const remote=out[index];
+        if(item&&remote&&typeof item==='object'&&typeof remote==='object'&&!Array.isArray(item)&&!Array.isArray(remote)){
+          const lt=Date.parse(item.updatedAt||item.updated_at||''),rt=Date.parse(remote.updatedAt||remote.updated_at||'');
+          let winner=Number.isFinite(lt)&&Number.isFinite(rt)?(lt>=rt?item:remote):remote;
+          if(Array.isArray(item.diary)||Array.isArray(remote.diary))winner={...winner,diary:mergeValue(item.diary||[],remote.diary||[])};
+          out[index]=winner;
+        }
+      });
+      return out;
+    }
+    if(local&&cloud&&typeof local==='object'&&typeof cloud==='object'&&!Array.isArray(local)&&!Array.isArray(cloud)){
+      const out={...local};
+      Object.keys(cloud).forEach(k=>out[k]=Object.prototype.hasOwnProperty.call(local,k)?mergeForNewDevice(local[k],cloud[k]):cloud[k]);
+      return out;
+    }
+    /* Em um dispositivo sem histórico de sincronização, a nuvem é a referência para conflitos escalares. */
+    return cloud;
   }
   function equal(a,b){ try{return JSON.stringify(a)===JSON.stringify(b)}catch{return a===b} }
   function mergeValue(local, cloud){
@@ -128,25 +165,48 @@
   async function syncOnce(isFirst=false){
     if(!user||busy)return;busy=true;
     try{
-      const local=readLocal(), row=await fetchCloud(), cloud={...(row?.payload||{})};
-      /* Sessões de leitura são transitórias e ficam neste dispositivo. Remove também versões antigas que tenham ficado na nuvem, para que uma sessão descartada não ressuscite após F5. */
+      const localNow=readLocal(), row=await fetchCloud(), cloud={...(row?.payload||{})};
       delete cloud.study_reading_timer_v1;
       let merged;
-      if(!row){merged=applyStudyLogTombstones(local);await pushCloud(merged);setStatus('Primeira cópia enviada à nuvem.');}
-      else if(isFirst||firstSync){merged=applyStudyLogTombstones(mergeMaps(local,cloud));writeLocal(merged);await pushCloud(merged);setStatus('Dados locais e da nuvem combinados. Sincronização ativa.');}
-      else {
-        const localNow=readLocal(), localChanged={}, remoteChanged={};
-        Object.keys({...lastLocal,...localNow}).forEach(k=>{if(!equal(localNow[k],lastLocal[k]))localChanged[k]=localNow[k];});
-        Object.keys({...lastRemote,...cloud}).forEach(k=>{if(!equal(cloud[k],lastRemote[k]))remoteChanged[k]=cloud[k];});
-        merged={...cloud,...localNow};
-        Object.keys(remoteChanged).forEach(k=>{if(!(k in localChanged))merged[k]=cloud[k];else merged[k]=mergeValue(localChanged[k],cloud[k]);});
+      if(!row){
+        merged=applyStudyLogTombstones(localNow);
+        delete merged.study_reading_timer_v1;
+        writeLocal(merged);
+        await pushCloud(merged);
+        setStatus('Primeira cópia enviada à nuvem.');
+      }else{
+        const baseline=readBaseline();
+        if(!baseline){
+          /* Primeira conexão deste navegador: mantém registros exclusivos locais, mas não deixa valores locais antigos sobrescreverem a cópia compartilhada. */
+          merged=mergeForNewDevice(localNow,cloud);
+        }else{
+          merged={};
+          const keys=new Set([...Object.keys(baseline.local||{}),...Object.keys(localNow),...Object.keys(baseline.cloud||{}),...Object.keys(cloud)]);
+          keys.forEach(k=>{
+            const localChanged=!equal(localNow[k],baseline.local?.[k]);
+            const cloudChanged=!equal(cloud[k],baseline.cloud?.[k]);
+            if(localChanged&&cloudChanged){
+              const value=mergeValue(localNow[k],cloud[k]);
+              if(value!==undefined)merged[k]=value;
+            }else if(localChanged){
+              if(localNow[k]!==undefined)merged[k]=localNow[k];
+            }else if(cloudChanged){
+              if(cloud[k]!==undefined)merged[k]=cloud[k];
+            }else{
+              const value=cloud[k]!==undefined?cloud[k]:localNow[k];
+              if(value!==undefined)merged[k]=value;
+            }
+          });
+        }
         merged=applyStudyLogTombstones(merged);
         delete merged.study_reading_timer_v1;
         writeLocal(merged);
         if(!equal(merged,cloud))await pushCloud(merged);
         setStatus('Sincronizado · '+new Date().toLocaleTimeString());
       }
-      lastLocal=readLocal();lastRemote=merged;firstSync=false;
+      const localFinal=readLocal();
+      saveBaseline(localFinal,merged);
+      lastLocal=localFinal;lastRemote=merged;firstSync=false;
     }catch(e){setStatus('Falha na sincronização: '+(e.message||'tente novamente em instantes.'));console.error('Study sync',e);}
     finally{busy=false;}
   }
