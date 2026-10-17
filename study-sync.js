@@ -5,7 +5,7 @@
   const META_KEY = '__study_cloud_sync_meta_v1';
   const INTERNAL_PREFIXES = ['sb-', 'supabase.auth.'];
   /* Preferências visuais ficam neste navegador: a nuvem não deve trocar o tema no recarregamento. */
-  const LOCAL_ONLY_KEYS = new Set(['study_theme','study_darkness','study_appearance','study_timer_v2','study_timer_runtime_v1']);
+  const LOCAL_ONLY_KEYS = new Set(['study_theme','study_darkness','study_appearance','study_timer_v2','study_timer_runtime_v1','study_reading_timer_v1']);
   let client, user, busy = false, timer = null, lastLocal = {}, lastRemote = {}, firstSync = true;
 
   const $ = (tag, attrs = {}, text = '') => {
@@ -128,7 +128,9 @@
   async function syncOnce(isFirst=false){
     if(!user||busy)return;busy=true;
     try{
-      const local=readLocal(), row=await fetchCloud(), cloud=row?.payload||{};
+      const local=readLocal(), row=await fetchCloud(), cloud={...(row?.payload||{})};
+      /* Sessões de leitura são transitórias e ficam neste dispositivo. Remove também versões antigas que tenham ficado na nuvem, para que uma sessão descartada não ressuscite após F5. */
+      delete cloud.study_reading_timer_v1;
       let merged;
       if(!row){merged=applyStudyLogTombstones(local);await pushCloud(merged);setStatus('Primeira cópia enviada à nuvem.');}
       else if(isFirst||firstSync){merged=applyStudyLogTombstones(mergeMaps(local,cloud));writeLocal(merged);await pushCloud(merged);setStatus('Dados locais e da nuvem combinados. Sincronização ativa.');}
@@ -139,6 +141,7 @@
         merged={...cloud,...localNow};
         Object.keys(remoteChanged).forEach(k=>{if(!(k in localChanged))merged[k]=cloud[k];else merged[k]=mergeValue(localChanged[k],cloud[k]);});
         merged=applyStudyLogTombstones(merged);
+        delete merged.study_reading_timer_v1;
         writeLocal(merged);
         if(!equal(merged,cloud))await pushCloud(merged);
         setStatus('Sincronizado · '+new Date().toLocaleTimeString());
