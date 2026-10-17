@@ -38,8 +38,24 @@
     if(local===undefined) return cloud;
     if(cloud===undefined) return local;
     if(Array.isArray(local)&&Array.isArray(cloud)){
-      const out=[...cloud], seen=new Set(cloud.map(x=>stableId(x)));
-      local.forEach(x=>{const id=stableId(x);if(!seen.has(id)){out.push(x);seen.add(id)}else if(id.startsWith('json:')&&!out.some(y=>equal(y,x)))out.push(x);});
+      const out=[...cloud], indexById=new Map();
+      out.forEach((item,i)=>indexById.set(stableId(item),i));
+      local.forEach(item=>{
+        const id=stableId(item), index=indexById.get(id);
+        if(index===undefined){indexById.set(id,out.length);out.push(item);return;}
+        if(id.startsWith('json:')){if(!out.some(existing=>equal(existing,item)))out.push(item);return;}
+        const remote=out[index];
+        if(item&&remote&&typeof item==='object'&&typeof remote==='object'&&!Array.isArray(item)&&!Array.isArray(remote)){
+          const localTime=Date.parse(item.updatedAt||item.updated_at||'');
+          const cloudTime=Date.parse(remote.updatedAt||remote.updated_at||'');
+          let winner=(Number.isFinite(localTime)&&Number.isFinite(cloudTime))?(localTime>=cloudTime?item:remote):item;
+          /* Mantém notas de leitura criadas em qualquer dispositivo, mesmo se o livro tiver conflito. */
+          if(Array.isArray(item.diary)||Array.isArray(remote.diary)){
+            winner={...winner,diary:mergeValue(item.diary||[],remote.diary||[])};
+          }
+          out[index]=winner;
+        }else out[index]=item;
+      });
       return out;
     }
     if(local&&cloud&&typeof local==='object'&&typeof cloud==='object'&&!Array.isArray(local)&&!Array.isArray(cloud)){
