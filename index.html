@@ -4228,6 +4228,7 @@ function openStudyMusicDiary(){
  const panel=document.getElementById('musicPanelAlbums'),mount=document.getElementById('musicDiaryMount');
  if(panel&&mount){mount.appendChild(panel);panel.hidden=false}
  showView('musicDiary');
+ renderStudyMusicAlbums();
  const item=document.getElementById('musicDiaryNavItem');if(item)item.classList.add('active');
  requestAnimationFrame(()=>mount?.scrollIntoView({behavior:'smooth',block:'start'}));
 }
