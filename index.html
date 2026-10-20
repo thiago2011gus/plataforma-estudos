@@ -3031,7 +3031,7 @@ function renderStudyDriveMaterials(){
       const size=file.size?formatStudyFileSize(Number(file.size)):'Tamanho indisponível';
       const modified=file.modifiedTime?'Atualizado em '+new Date(file.modifiedTime).toLocaleDateString('pt-BR'):'';
       const url=file.webViewLink||('https://drive.google.com/file/d/'+encodeURIComponent(file.id)+'/view');
-      return groupHeading+'<div class="card" style="padding:14px;margin-bottom:10px;box-shadow:none"><div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap"><div style="flex:1;min-width:200px"><div style="font-size:13px;font-weight:700;overflow-wrap:anywhere">'+escapeHtml(file.name)+'</div><div class="desc">'+escapeHtml(size)+' · '+escapeHtml(modified)+'</div></div><a class="small-btn" style="text-decoration:none" href="'+escapeHtml(url)+'" target="_blank" rel="noopener noreferrer">Abrir PDF ↗</a></div><div class="form-grid" style="margin-top:12px"><div class="field"><label>Matéria</label><select class="select" id="materialSubject_'+index+'" onchange="updateStudyMaterialTopicOptions('+index+')">'+subjectOptions+'</select></div><div class="field"><label>Assunto</label><select class="select" id="materialTopic_'+index+'">'+topicOptions+'</select></div></div><div class="toolbar" style="margin-top:10px;flex-direction:row;flex-wrap:wrap"><button class="small-btn" onclick="saveStudyMaterialAssociation('+index+')">Salvar associação</button>'+(file.subjectId&&file.topicName?'<span class="status done">Associado</span>':'<span class="status">Pendente de associação</span>')+'</div></div>';
+      return groupHeading+'<div class="card" style="padding:14px;margin-bottom:10px;box-shadow:none"><div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap"><div style="flex:1;min-width:200px"><div style="font-size:13px;font-weight:700;overflow-wrap:anywhere">'+escapeHtml(file.name)+'</div><div class="desc">'+escapeHtml(size)+' · '+escapeHtml(modified)+'</div></div><a class="small-btn" style="text-decoration:none" href="'+escapeHtml(url)+'" target="_blank" rel="noopener noreferrer">Abrir PDF ↗</a></div><div class="form-grid" style="margin-top:12px"><div class="field"><label>Matéria</label><select class="select" id="materialSubject_'+index+'" onchange="updateStudyMaterialTopicOptions('+index+')">'+subjectOptions+'</select></div><div class="field"><label>Assunto</label><select class="select" id="materialTopic_'+index+'">'+topicOptions+'</select></div></div><div class="toolbar" style="margin-top:10px;flex-direction:row;flex-wrap:wrap"><button class="small-btn" onclick="saveStudyMaterialAssociation('+index+')">Salvar associação</button>'+(file.subjectId&&file.topicName?'<span class="status done">Associado</span><button class="small-btn" onclick="removeStudyMaterialAssociation(\''+escapeHtml(String(file.id))+'\')">Remover associação</button>':'<span class="status">Pendente de associação</span>')+'<button class="small-btn" onclick="removeStudyMaterialFromCatalog(\''+escapeHtml(String(file.id))+'\')">Remover do catálogo</button></div></div>';
     }).join('');
   }
   const info=document.getElementById('studyMaterialsPageInfo');if(info)info.textContent=filtered.length?('Exibindo '+((studyMaterialsPage-1)*STUDY_MATERIALS_PAGE_SIZE+1)+'–'+Math.min(studyMaterialsPage*STUDY_MATERIALS_PAGE_SIZE,filtered.length)+' de '+filtered.length+' PDFs'):'0 PDFs';
@@ -3077,6 +3077,17 @@ async function syncStudyDriveMaterials(){
     if(status)status.textContent=found.length+' PDF(s) encontrado(s) nesta pasta. '+(items.length>found.length?'Associações de outros arquivos foram preservadas.':'');
     toast('Biblioteca sincronizada.');
   }catch(e){if(status)status.textContent='Não foi possível sincronizar: '+e.message;if(e.message!=='Client ID não configurado.')alert('Falha ao buscar PDFs no Google Drive: '+e.message)}
+}
+function removeStudyMaterialAssociation(fileId){
+  const items=getStudyDriveMaterials(),file=items.find(item=>String(item.id)===String(fileId));if(!file)return;
+  file.subjectId='';file.subjectName='';file.topicName='';delete file.associatedAt;
+  localStorage.setItem(STUDY_MATERIALS_KEY,JSON.stringify(items));renderStudyDriveMaterials();renderSubjectsPage();toast('Associação removida.');
+}
+function removeStudyMaterialFromCatalog(fileId){
+  const file=getStudyDriveMaterials().find(item=>String(item.id)===String(fileId));if(!file)return;
+  if(!confirm('Remover "'+(file.name||'este PDF')+'" do catálogo local? O arquivo não será excluído do Google Drive.'))return;
+  const items=getStudyDriveMaterials().filter(item=>String(item.id)!==String(fileId));
+  localStorage.setItem(STUDY_MATERIALS_KEY,JSON.stringify(items));renderStudyDriveMaterials();renderSubjectsPage();toast('PDF removido do catálogo local.');
 }
 function saveStudyMaterialAssociation(index){
   const items=getStudyDriveMaterials(),file=items[index];if(!file)return;
