@@ -3048,7 +3048,10 @@ function updateStudyMaterialTopicOptions(index){
 }
 async function syncStudyDriveMaterials(){
   const folderInput=document.getElementById('studyDriveFolderId');
-  const folderId=(folderInput?.value||'').trim();
+  let folderId=(folderInput?.value||'').trim();
+  // Aceita IDs colados com aspas simples ou duplas e remove espaços externos.
+  folderId=folderId.replace(/^["']+|["']+$/g,'').trim();
+  if(folderInput)folderInput.value=folderId;
   const status=document.getElementById('studyMaterialsStatus');
   if(!folderId){if(status)status.textContent='Informe o ID da pasta do Google Drive.';return}
   if(!/^[a-zA-Z0-9_-]{10,}$/.test(folderId)){if(status)status.textContent='O ID parece inválido. Copie apenas o identificador da URL da pasta.';return}
@@ -3086,7 +3089,10 @@ function saveStudyMaterialAssociation(index){
   localStorage.setItem(STUDY_MATERIALS_KEY,JSON.stringify(items));renderStudyDriveMaterials();renderSubjectsPage();toast('Associação do material salva.');
 }
 function loadStudyDriveMaterialsSettings(){
-  const input=document.getElementById('studyDriveFolderId');if(input)input.value=localStorage.getItem(STUDY_DRIVE_FOLDER_KEY)||'';
+  const input=document.getElementById('studyDriveFolderId');
+  const saved=(localStorage.getItem(STUDY_DRIVE_FOLDER_KEY)||'').trim().replace(/^["']+|["']+$/g,'').trim();
+  if(input)input.value=saved;
+  if(saved&&saved!==localStorage.getItem(STUDY_DRIVE_FOLDER_KEY))localStorage.setItem(STUDY_DRIVE_FOLDER_KEY,saved);
   renderStudyDriveMaterials();
 }
 
